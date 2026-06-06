@@ -1,0 +1,44 @@
+<div class="sr-page sr-container rules">
+  <app-page-header
+    eyebrow="The Local Rules"
+    title="How to Play"
+    subtitle="Golf's dumbest good idea, explained. Read it once, then let the cards run the show."
+  >
+    <a routerLink="/new-round" class="sr-btn sr-btn--gold">Start a Round</a>
+  </app-page-header>
+
+  <section aria-labelledby="how-heading">
+    <h2 id="how-heading" class="rules__section-title">How it works</h2>
+    <ol class="steps">
+      @for (step of steps; track step.title; let i = $index) {
+        <li class="sr-card step">
+          <span class="step__num">{{ i + 1 }}</span>
+          <div>
+            <h3 class="step__title">{{ step.title }}</h3>
+            <p class="step__copy">{{ step.copy }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section class="warnings" aria-labelledby="warn-heading">
+    <h2 id="warn-heading" class="rules__section-title">House rules &amp; common sense</h2>
+    <div class="warnings__grid">
+      @for (warning of warnings; track warning.title) {
+        <article class="sr-card warning">
+          <h3 class="warning__title">{{ warning.title }}</h3>
+          <p class="warning__copy">{{ warning.copy }}</p>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="sr-card disclaimer" aria-label="Disclaimer">
+    <p>
+      Scramble Roulette is a parody party game for consenting adults of legal drinking age. It is
+      not affiliated with any actual golf club, tournament, or green jacket. Play smart, tip your
+      beer cart attendant, and never drink and drive.
+    </p>
+  </section>
+</div>

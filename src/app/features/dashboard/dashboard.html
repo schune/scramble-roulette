@@ -1,0 +1,82 @@
+<div class="sr-page sr-container">
+  <app-page-header
+    eyebrow="The Clubhouse"
+    [title]="'Welcome, ' + displayName()"
+    subtitle="Round 'em up. Draw the damage. Try to keep it under triple bogey."
+  >
+    <a routerLink="/new-round" class="sr-btn sr-btn--gold">Start New Round</a>
+  </app-page-header>
+
+  @if (activeRound(); as active) {
+    <section class="sr-card resume resume--active" aria-live="polite">
+      <div>
+        <span class="sr-badge">Round in progress</span>
+        <h2 class="resume__title">Pick up where you left off</h2>
+        <p class="resume__copy">
+          Hole {{ active.currentHole }} of {{ active.holeCount }} · {{ active.players.length }} players
+        </p>
+      </div>
+      <a routerLink="/round" class="sr-btn sr-btn--primary">Continue Round</a>
+    </section>
+  } @else {
+    <section class="sr-card resume">
+      <div>
+        <h2 class="resume__title">No active round</h2>
+        <p class="resume__copy">The first tee is open. Gather the degenerates and deal the cards.</p>
+      </div>
+      <a routerLink="/new-round" class="sr-btn sr-btn--primary">Start Playing</a>
+    </section>
+  }
+
+  <section class="stats" aria-label="Career statistics">
+    @for (stat of stats(); track stat.label) {
+      <article class="sr-card stat">
+        <span class="stat__value">{{ stat.value }}</span>
+        <span class="stat__label">{{ stat.label }}</span>
+        <span class="stat__hint">{{ stat.hint }}</span>
+      </article>
+    }
+  </section>
+
+  <div class="dash-grid">
+    <section class="sr-card panel" aria-labelledby="recent-heading">
+      <div class="panel__head">
+        <h2 id="recent-heading" class="panel__title">Recent Rounds</h2>
+        <a routerLink="/previous-rounds" class="panel__link">View all</a>
+      </div>
+      @if (recentRounds.length > 0) {
+        <ul class="recent-list">
+          @for (round of recentRounds; track round.id) {
+            <li class="recent-row">
+              <a
+                class="recent-row__link"
+                routerLink="/scorecard"
+                [queryParams]="{ round: round.id }"
+              >
+                <span class="recent-row__date">{{ formatDate(round.completedAt ?? round.createdAt) }}</span>
+                <span class="recent-row__meta">{{ round.holeCount }} holes</span>
+                <span class="recent-row__topar">{{ toPar(round) }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="panel__empty">No rounds yet — your clubhouse history starts with round one.</p>
+      }
+    </section>
+
+    <section class="sr-card panel" aria-labelledby="links-heading">
+      <h2 id="links-heading" class="panel__title">Quick Links</h2>
+      <ul class="links-list">
+        @for (link of quickLinks; track link.path) {
+          <li>
+            <a class="link-row" [routerLink]="link.path">
+              <span class="link-row__label">{{ link.label }}</span>
+              <span class="link-row__desc">{{ link.description }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+</div>

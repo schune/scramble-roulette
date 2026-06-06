@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.app-main {
+  flex: 1 1 auto;
+}
+
+/* Accessible skip link */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 100;
+  padding: 0.65rem 1.1rem;
+  background: var(--sr-gold-500);
+  color: var(--sr-green-900);
+  border-radius: 999px;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  color: var(--sr-green-900);
+}
+
+.app-footer {
+  background: var(--sr-green-900);
+  color: var(--sr-cream-200);
+  border-top: 3px solid var(--sr-gold-500);
+  padding-block: 1.5rem;
+  margin-top: auto;
+}
+
+.app-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.app-footer__note {
+  color: var(--sr-gold-300);
+}

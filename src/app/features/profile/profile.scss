@@ -1,0 +1,221 @@
+:host {
+  display: block;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin: 0 0 1rem;
+}
+
+.panel__link {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.panel__empty {
+  margin: 0;
+  color: var(--sr-muted);
+}
+
+/* ---------- Layout ---------- */
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) 1fr;
+  gap: var(--sr-gap);
+  align-items: start;
+  margin-bottom: var(--sr-gap);
+}
+
+@media (max-width: 720px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Member card ---------- */
+.member {
+  text-align: center;
+}
+
+.member__avatar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--sr-green-600), var(--sr-green-900));
+  box-shadow: inset 0 0 0 4px var(--sr-gold-500);
+}
+
+.member__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member__initials {
+  font-family: var(--sr-font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--sr-cream-50);
+}
+
+.member__avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.member__upload {
+  cursor: pointer;
+}
+
+.member__error {
+  margin: 0.6rem 0 0;
+  color: var(--sr-danger);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.member__name {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.member__label {
+  display: block;
+  font-weight: 600;
+  color: var(--sr-green-800);
+  margin-bottom: 0.5rem;
+}
+
+.member__name-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.member__save {
+  flex: none;
+  min-height: 52px;
+  padding-inline: 1.25rem;
+}
+
+/* ---------- Stats ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.85rem;
+}
+
+.stat-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1rem;
+  border-radius: var(--sr-radius);
+  background: var(--sr-surface-alt);
+  border: 1px solid var(--sr-cream-300);
+}
+
+.stat-cell__value {
+  font-family: var(--sr-font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--sr-green-800);
+  line-height: 1;
+}
+
+.stat-cell__label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--sr-muted);
+}
+
+/* ---------- History ---------- */
+.history {
+  margin-bottom: var(--sr-gap);
+}
+
+.history__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--sr-radius);
+  background: var(--sr-surface-alt);
+  border: 1px solid var(--sr-cream-300);
+  color: var(--sr-ink);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.history-row:hover {
+  border-color: var(--sr-green-500);
+  background: var(--sr-cream-100);
+  color: var(--sr-ink);
+}
+
+.history-row__date {
+  font-weight: 600;
+}
+
+.history-row__meta {
+  color: var(--sr-muted);
+  font-size: 0.88rem;
+}
+
+.history-row__topar {
+  font-family: var(--sr-font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--sr-gold-700);
+}
+
+/* ---------- Social placeholder ---------- */
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: linear-gradient(150deg, var(--sr-green-700), var(--sr-green-900));
+  border-color: var(--sr-green-900);
+  color: var(--sr-cream-100);
+}
+
+.social .sr-badge {
+  background: rgba(250, 246, 234, 0.14);
+  color: var(--sr-gold-300);
+  border-color: rgba(250, 246, 234, 0.25);
+}
+
+.social__title {
+  color: var(--sr-cream-50);
+  margin: 0.6rem 0 0.4rem;
+}
+
+.social__copy {
+  margin: 0;
+  color: var(--sr-cream-200);
+  max-width: 60ch;
+}

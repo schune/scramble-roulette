@@ -1,0 +1,134 @@
+<div class="sr-page sr-container">
+  <app-page-header
+    [eyebrow]="isComplete() ? 'Final Card' : 'The Card'"
+    [title]="isComplete() ? 'Round Complete' : 'Scorecard'"
+    subtitle="Every hole, every stroke, and the card that caused the chaos."
+  >
+    @if (isComplete()) {
+      <a routerLink="/new-round" class="sr-btn sr-btn--gold">Play Again</a>
+      <a routerLink="/dashboard" class="sr-btn sr-btn--ghost">Back to Dashboard</a>
+    } @else if (round()) {
+      <a routerLink="/round" class="sr-btn sr-btn--ghost">Back to Round</a>
+    }
+  </app-page-header>
+
+  @if (round(); as r) {
+    @if (isComplete()) {
+      <!-- Share-style summary card -->
+      <section class="sr-card share-card" aria-label="Round summary">
+        <div class="share-card__top">
+          <span class="share-card__crest" aria-hidden="true">SR</span>
+          <div>
+            <p class="share-card__kicker">Round Complete</p>
+            <p class="share-card__date">{{ formatDate(r.completedAt ?? r.createdAt) }}</p>
+          </div>
+        </div>
+
+        <div class="share-card__score">
+          <span class="share-card__topar">{{ formatToPar(toPar()) }}</span>
+          <span class="share-card__strokes">{{ totalScore() }} strokes · {{ r.holeCount }} holes</span>
+        </div>
+
+        <div class="share-card__players">
+          @for (player of players(); track player.id) {
+            <span class="share-card__player">
+              <span class="share-card__chip" aria-hidden="true">{{ initials(player.name) }}</span>
+              {{ player.name }}
+            </span>
+          }
+        </div>
+
+        <p class="share-card__note">Screenshot to share — native sharing coming soon.</p>
+      </section>
+    } @else {
+      <section class="sr-card totals" aria-label="Round totals">
+        <div class="totals__stat">
+          <span class="totals__label">Players</span>
+          <span class="totals__val">{{ r.players.length }}</span>
+        </div>
+        <div class="totals__stat">
+          <span class="totals__label">Holes Played</span>
+          <span class="totals__val">{{ holes().length }} / {{ r.holeCount }}</span>
+        </div>
+        <div class="totals__stat">
+          <span class="totals__label">Total Score</span>
+          <span class="totals__val">{{ totalScore() }}</span>
+        </div>
+        <div class="totals__stat">
+          <span class="totals__label">To Par</span>
+          <span class="totals__val totals__val--accent">{{ formatToPar(toPar()) }}</span>
+        </div>
+      </section>
+    }
+
+    @if (holes().length > 0) {
+      <section class="sr-card table-wrap">
+        <div class="table-scroll">
+          <table class="card-table">
+            <caption class="card-table__caption">
+              {{ players().length }} players · {{ formatDate(r.completedAt ?? r.createdAt) }}
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Hole</th>
+                <th scope="col">Par</th>
+                <th scope="col">Score</th>
+                <th scope="col">To Par</th>
+                <th scope="col">Result</th>
+                <th scope="col">Card</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (hole of holes(); track hole.holeNumber) {
+                <tr>
+                  <th scope="row">{{ hole.holeNumber }}</th>
+                  <td>{{ hole.par ?? '—' }}</td>
+                  <td>{{ hole.score ?? '—' }}</td>
+                  <td>
+                    @if (hole.scoreToPar !== undefined) {
+                      <span [attr.data-tone]="tone(hole.scoreToPar)">
+                        {{ formatToPar(hole.scoreToPar) }}
+                      </span>
+                    } @else {
+                      —
+                    }
+                  </td>
+                  <td>{{ hole.resultLabel ?? '—' }}</td>
+                  <td class="card-table__card">{{ hole.card.name }}</td>
+                </tr>
+              }
+            </tbody>
+            @if (hasScores()) {
+              <tfoot>
+                <tr>
+                  <th scope="row">Total</th>
+                  <td>{{ totalPar() }}</td>
+                  <td>{{ totalScore() }}</td>
+                  <td>{{ formatToPar(toPar()) }}</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            }
+          </table>
+        </div>
+      </section>
+    } @else {
+      <section class="sr-card sr-empty">
+        <p class="sr-empty__title">No holes played yet</p>
+        <p class="sr-lead">Head back to the round and draw your first card.</p>
+        <a routerLink="/round" class="sr-btn sr-btn--primary">Go to Round</a>
+      </section>
+    }
+  } @else {
+    <section class="sr-card sr-empty">
+      <div class="sr-empty__crest" aria-hidden="true">SR</div>
+      <p class="sr-empty__title">No Active Round</p>
+      <p class="sr-lead">Start a round to begin filling out your scorecard.</p>
+      <div class="sr-empty__actions">
+        <a routerLink="/new-round" class="sr-btn sr-btn--primary">New Round</a>
+        <a routerLink="/previous-rounds" class="sr-btn sr-btn--ghost">Previous Rounds</a>
+      </div>
+    </section>
+  }
+</div>

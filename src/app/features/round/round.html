@@ -1,0 +1,231 @@
+@if (round(); as r) {
+  <div class="sr-page sr-container round">
+    <app-page-header eyebrow="On the Course" title="Round">
+      <a routerLink="/scorecard" class="sr-btn sr-btn--ghost">View Scorecard</a>
+    </app-page-header>
+
+    <div class="hole-bar">
+      <div class="hole-bar__hole">
+        <span class="hole-bar__label">Hole</span>
+        <span class="hole-bar__num">{{ r.currentHole }}</span>
+        <span class="hole-bar__of">of {{ r.holeCount }}</span>
+      </div>
+      <div class="hole-bar__totals">
+        <div class="hole-bar__total">
+          <span class="hole-bar__label">Total</span>
+          <span class="hole-bar__total-val">{{ totalScore() }}</span>
+        </div>
+        <div class="hole-bar__total">
+          <span class="hole-bar__label">To Par</span>
+          <span class="hole-bar__topar-val">{{ formatToPar(toPar()) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="round-grid">
+      <section class="play-col">
+        @if (currentCard(); as card) {
+          <!-- Drawn card -->
+          <article class="card-display" [attr.data-category]="card.category">
+            <header class="card-display__head">
+              <span class="sr-badge card-display__cat">{{ card.category }}</span>
+              <span class="card-display__pack">Standard Pack</span>
+            </header>
+            <h2 class="card-display__name">{{ card.name }}</h2>
+            <p class="card-display__text">{{ card.text }}</p>
+            @if (card.flavor) {
+              <p class="card-display__flavor">"{{ card.flavor }}"</p>
+            }
+          </article>
+
+          <!-- Score entry / summary -->
+          @if (editing()) {
+            <section class="sr-card entry" aria-label="Enter par and score">
+              <div class="entry__group">
+                <p class="entry__label">Par</p>
+                <div class="par-options" role="group" aria-label="Par">
+                  @for (option of parOptions; track option) {
+                    <button
+                      type="button"
+                      class="par-btn"
+                      [class.is-selected]="parInput() === option"
+                      [attr.aria-pressed]="parInput() === option"
+                      (click)="setPar(option)"
+                    >
+                      {{ option }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="entry__group">
+                <label class="entry__label" for="score-input">Team Score</label>
+                <div class="stepper">
+                  <button
+                    type="button"
+                    class="stepper__btn"
+                    aria-label="Decrease score"
+                    (click)="adjustScore(-1)"
+                  >
+                    −
+                  </button>
+                  <input
+                    id="score-input"
+                    class="sr-input stepper__input"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    [value]="scoreInput() ?? ''"
+                    (input)="onScoreInput($any($event.target).value)"
+                  />
+                  <button
+                    type="button"
+                    class="stepper__btn"
+                    aria-label="Increase score"
+                    (click)="adjustScore(1)"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              @if (resultPreview(); as preview) {
+                <p class="entry__preview" [attr.data-tone]="tone(preview.scoreToPar)">
+                  {{ preview.resultLabel }} ({{ formatToPar(preview.scoreToPar) }})
+                </p>
+              }
+
+              <button
+                type="button"
+                class="sr-btn sr-btn--primary sr-btn--block"
+                [disabled]="!canSave()"
+                (click)="saveScore()"
+              >
+                Lock It In
+              </button>
+            </section>
+          } @else if (currentHoleResult(); as hole) {
+            <section class="sr-card summary" aria-label="Hole result">
+              <div class="summary__scores">
+                <div class="summary__stat">
+                  <span class="summary__stat-label">Par</span>
+                  <span class="summary__stat-val">{{ hole.par }}</span>
+                </div>
+                <div class="summary__stat">
+                  <span class="summary__stat-label">Score</span>
+                  <span class="summary__stat-val">{{ hole.score }}</span>
+                </div>
+                @if (hole.resultLabel; as label) {
+                  <div class="summary__result" [attr.data-tone]="tone(hole.scoreToPar ?? 0)">
+                    <span class="summary__result-label">{{ label }}</span>
+                    <span class="summary__result-rel">{{ formatToPar(hole.scoreToPar ?? 0) }}</span>
+                  </div>
+                }
+              </div>
+
+              <div class="summary__actions">
+                <button type="button" class="sr-btn sr-btn--ghost" (click)="edit()">Edit</button>
+                @if (isFinalHole()) {
+                  <button
+                    type="button"
+                    class="sr-btn sr-btn--gold"
+                    [disabled]="!canAdvance()"
+                    (click)="finish()"
+                  >
+                    Finish Round
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="sr-btn sr-btn--primary"
+                    [disabled]="!canAdvance()"
+                    (click)="next()"
+                  >
+                    Proceed to Next Hole
+                  </button>
+                }
+              </div>
+            </section>
+          }
+        } @else {
+          <!-- Draw the card -->
+          <section class="sr-card table-felt" aria-label="Draw a card">
+            <p class="felt__eyebrow">Hole {{ r.currentHole }} of {{ r.holeCount }}</p>
+            <div class="card-back" [class.is-dealing]="dealing()" aria-hidden="true">
+              <span class="card-back__motif">SR</span>
+            </div>
+            @if (canDraw()) {
+              <h2 class="felt__title">Draw the Damage</h2>
+              <p class="felt__copy">
+                One card per hole. No repeats. Follow it, or face the consequences.
+              </p>
+              <button
+                type="button"
+                class="sr-btn sr-btn--gold"
+                [disabled]="dealing()"
+                (click)="draw()"
+              >
+                {{ dealing() ? 'Dealing…' : 'Draw Card' }}
+              </button>
+            } @else {
+              <h2 class="felt__title">The Deck's Tapped Out</h2>
+              <p class="felt__copy">
+                Every card in the Standard Pack has been dealt this round. Finish strong.
+              </p>
+            }
+          </section>
+        }
+
+        @if (r.currentHole > 1) {
+          <button type="button" class="undo-link" (click)="requestUndo()">
+            ← Previous Hole
+          </button>
+        }
+      </section>
+
+      <!-- Players -->
+      <aside class="sr-card players" aria-labelledby="players-heading">
+        <h2 id="players-heading" class="players__title">In the Group</h2>
+        <p class="players__count">{{ r.players.length }} players</p>
+        <ul class="players__list">
+          @for (player of r.players; track player.id) {
+            <li class="players__row">
+              <span class="players__chip" aria-hidden="true">{{ initials(player.name) }}</span>
+              <span class="players__name">{{ player.name }}</span>
+            </li>
+          }
+        </ul>
+      </aside>
+    </div>
+  </div>
+
+  @if (confirmingUndo()) {
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="undo-title">
+      <div class="modal__backdrop" (click)="cancelUndo()"></div>
+      <div class="modal__panel sr-card">
+        <h2 id="undo-title" class="modal__title">Go back a hole?</h2>
+        <p class="modal__copy">
+          Scramble Roulette is meant to be played one hole at a time. Going back should only
+          be used for mistakes, not because you hate the card. Continue?
+        </p>
+        <div class="modal__actions">
+          <button type="button" class="sr-btn sr-btn--ghost" (click)="cancelUndo()">
+            Stay Here
+          </button>
+          <button type="button" class="sr-btn sr-btn--primary" (click)="confirmUndo()">
+            Go Back Anyway
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+} @else {
+  <div class="sr-page sr-container round">
+    <section class="sr-card sr-empty">
+      <div class="sr-empty__crest" aria-hidden="true">SR</div>
+      <h1 class="sr-empty__title">No Active Round</h1>
+      <p class="sr-lead">The first tee is open. Set up a round to start scoring.</p>
+      <a routerLink="/new-round" class="sr-btn sr-btn--primary">Start a New Round</a>
+    </section>
+  </div>
+}

@@ -1,0 +1,153 @@
+<div class="sr-page sr-container new-round">
+  <app-page-header
+    eyebrow="First Tee"
+    title="New Round"
+    subtitle="Set the stage for a new scramble. Choose your format, add your players, and tee it up."
+  >
+    <a routerLink="/dashboard" class="sr-btn sr-btn--ghost">Cancel</a>
+  </app-page-header>
+
+  <div class="setup-grid">
+    <!-- Step 1: format -->
+    <section class="sr-card setup-section" aria-labelledby="format-heading">
+      <h2 id="format-heading" class="setup-section__title">
+        <span class="setup-section__step">1</span> Choose Format
+      </h2>
+      <p class="setup-section__sub">How many holes are you playing today?</p>
+
+      <div class="format-options" role="group" aria-label="Number of holes">
+        @for (option of holeOptions; track option) {
+          <button
+            type="button"
+            class="format-card"
+            [class.is-selected]="holeCount() === option"
+            [attr.aria-pressed]="holeCount() === option"
+            (click)="selectHoles(option)"
+          >
+            <span class="format-card__num">{{ option }}</span>
+            <span class="format-card__label">Holes</span>
+            <span class="format-card__meta">{{ option === 18 ? 'Full round' : 'Quick nine' }}</span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- Step 2: players -->
+    <section class="sr-card setup-section" aria-labelledby="players-heading">
+      <h2 id="players-heading" class="setup-section__title">
+        <span class="setup-section__step">2</span> Add Players
+      </h2>
+      <p class="setup-section__sub">You'll need at least two to start the draw.</p>
+
+      <form class="add-player" (submit)="$event.preventDefault()">
+        <div class="add-player__field">
+          <label class="sr-visually-hidden" for="player-name">Player name</label>
+          <input
+            id="player-name"
+            type="text"
+            class="sr-input"
+            placeholder="e.g. Bobby Jones"
+            autocomplete="off"
+            maxlength="40"
+            [class.sr-input--invalid]="nameControl.touched && nameControl.invalid"
+            [formControl]="nameControl"
+            (keyup.enter)="addPlayer()"
+          />
+        </div>
+        <button
+          type="button"
+          class="sr-btn sr-btn--primary add-player__btn"
+          (click)="addPlayer()"
+        >
+          Add Player
+        </button>
+      </form>
+
+      @if (nameControl.touched && nameControl.invalid) {
+        <p class="field-error" role="alert">Please enter a name to add a player.</p>
+      }
+
+      @if (players().length > 0) {
+        <ul class="player-list">
+          @for (player of players(); track player.id) {
+            <li class="player-row" [class.is-editing]="editingId() === player.id">
+              @if (editingId() === player.id) {
+                <input
+                  type="text"
+                  class="sr-input player-row__input"
+                  aria-label="Edit player name"
+                  maxlength="40"
+                  [class.sr-input--invalid]="editControl.touched && editControl.invalid"
+                  [formControl]="editControl"
+                  (keyup.enter)="saveEdit(player.id)"
+                  (keyup.escape)="cancelEdit()"
+                />
+                <div class="player-row__actions">
+                  <button
+                    type="button"
+                    class="row-btn row-btn--save"
+                    (click)="saveEdit(player.id)"
+                  >
+                    Save
+                  </button>
+                  <button type="button" class="row-btn" (click)="cancelEdit()">Cancel</button>
+                </div>
+              } @else {
+                <span class="player-row__chip" aria-hidden="true">{{ initials(player.name) }}</span>
+                <span class="player-row__name">{{ player.name }}</span>
+                <div class="player-row__actions">
+                  <button
+                    type="button"
+                    class="row-btn"
+                    (click)="startEdit(player.id, player.name)"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    class="row-btn row-btn--danger"
+                    [attr.aria-label]="'Remove ' + player.name"
+                    (click)="removePlayer(player.id)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="empty-players">
+          <span class="empty-players__mark" aria-hidden="true"></span>
+          <p class="empty-players__title">No players yet</p>
+          <p class="empty-players__copy">Add your foursome (or more) to fill out the card.</p>
+        </div>
+      }
+    </section>
+  </div>
+
+  <!-- Start bar -->
+  <div class="sr-card start-bar">
+    <p class="start-bar__status" aria-live="polite">
+      @if (!holeCount()) {
+        <span class="start-bar__hint">Choose a format to continue.</span>
+      } @else if (players().length < 2) {
+        <span class="start-bar__hint">
+          Add at least 2 players — you have {{ players().length }}.
+        </span>
+      } @else {
+        <span class="start-bar__ready">
+          Ready: {{ holeCount() }} holes · {{ players().length }} players.
+        </span>
+      }
+    </p>
+    <button
+      type="button"
+      class="sr-btn sr-btn--gold start-bar__btn"
+      [disabled]="!canStart()"
+      (click)="startRound()"
+    >
+      Start Round
+    </button>
+  </div>
+</div>

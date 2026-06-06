@@ -1,0 +1,56 @@
+<nav class="nav" aria-label="Primary">
+  <div class="nav__inner sr-container">
+    <a class="brand" routerLink="/" (click)="closeMenu()" aria-label="Scramble Roulette home">
+      <span class="brand__mark" aria-hidden="true">
+        <span class="brand__mark-inner">SR</span>
+      </span>
+      <span class="brand__text">
+        <span class="brand__name">Scramble Roulette</span>
+        <span class="brand__tag">Golf's dumbest good idea.</span>
+      </span>
+    </a>
+
+    <button
+      type="button"
+      class="nav__toggle"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="nav-menu"
+      aria-label="Toggle navigation menu"
+      (click)="toggleMenu()"
+    >
+      <span class="nav__toggle-bar" [class.is-open]="menuOpen()"></span>
+    </button>
+
+    <div id="nav-menu" class="nav__menu" [class.is-open]="menuOpen()">
+      <ul class="nav__links">
+        @for (link of links; track link.path) {
+          <li>
+            <a
+              [routerLink]="link.path"
+              routerLinkActive="is-active"
+              class="nav__link"
+              (click)="closeMenu()"
+            >
+              {{ link.label }}
+            </a>
+          </li>
+        }
+      </ul>
+
+      <div class="nav__actions">
+        <button
+          type="button"
+          class="nav__icon-btn"
+          [attr.aria-pressed]="muted()"
+          [attr.aria-label]="muted() ? 'Unmute sound effects' : 'Mute sound effects'"
+          (click)="toggleMute()"
+        >
+          {{ muted() ? 'Sound Off' : 'Sound On' }}
+        </button>
+        <a routerLink="/new-round" class="sr-btn sr-btn--gold nav__cta" (click)="closeMenu()">
+          New Round
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

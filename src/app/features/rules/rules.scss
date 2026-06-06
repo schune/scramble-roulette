@@ -1,0 +1,84 @@
+:host {
+  display: block;
+}
+
+.rules__section-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 0 0 1rem;
+}
+
+/* ---------- Steps ---------- */
+.steps {
+  list-style: none;
+  margin: 0 0 clamp(2rem, 5vw, 3rem);
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+}
+
+.step__num {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--sr-font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--sr-green-900);
+  background: linear-gradient(135deg, var(--sr-gold-300), var(--sr-gold-600));
+}
+
+.step__title {
+  font-size: 1.3rem;
+  margin: 0 0 0.2rem;
+}
+
+.step__copy {
+  margin: 0;
+  color: var(--sr-muted);
+}
+
+/* ---------- Warnings ---------- */
+.warnings {
+  margin-bottom: var(--sr-gap);
+}
+
+.warnings__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--sr-gap);
+}
+
+.warning {
+  border-left: 4px solid var(--sr-gold-500);
+}
+
+.warning__title {
+  font-size: 1.2rem;
+  margin: 0 0 0.35rem;
+}
+
+.warning__copy {
+  margin: 0;
+  color: var(--sr-muted);
+}
+
+/* ---------- Disclaimer ---------- */
+.disclaimer {
+  background: var(--sr-green-900);
+  border-color: var(--sr-green-900);
+}
+
+.disclaimer p {
+  margin: 0;
+  color: var(--sr-cream-200);
+  font-size: 0.92rem;
+}

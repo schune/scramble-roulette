@@ -1,0 +1,88 @@
+<div class="sr-page sr-container">
+  <app-page-header
+    eyebrow="The Archives"
+    title="Previous Rounds"
+    subtitle="A tradition unlike any other. Revisit past scrambles, champions, and card draws."
+  >
+    <a routerLink="/new-round" class="sr-btn sr-btn--gold">New Round</a>
+  </app-page-header>
+
+  @if (rounds().length > 0) {
+    <div class="round-list">
+      @for (round of rounds(); track round.id) {
+        <article class="sr-card round-card">
+          <header class="round-card__head">
+            <div>
+              <p class="round-card__date">{{ formatDate(round.completedAt ?? round.createdAt) }}</p>
+              <p class="round-card__players">{{ playerNames(round) }}</p>
+            </div>
+            <button
+              type="button"
+              class="round-card__remove"
+              [attr.aria-label]="'Remove round from ' + formatDate(round.completedAt ?? round.createdAt)"
+              (click)="requestDelete(round)"
+            >
+              Remove
+            </button>
+          </header>
+
+          <div class="round-card__stats">
+            <div class="round-card__stat">
+              <span class="round-card__stat-label">Holes</span>
+              <span class="round-card__stat-val">{{ round.holeCount }}</span>
+            </div>
+            <div class="round-card__stat">
+              <span class="round-card__stat-label">Total</span>
+              <span class="round-card__stat-val">{{ totalScore(round) }}</span>
+            </div>
+            <div class="round-card__stat">
+              <span class="round-card__stat-label">To Par</span>
+              <span class="round-card__stat-val round-card__stat-val--accent">{{ toPar(round) }}</span>
+            </div>
+          </div>
+
+          <details class="round-card__cards">
+            <summary>Cards drawn ({{ cardNames(round).length }})</summary>
+            <ul class="card-chips">
+              @for (name of cardNames(round); track $index) {
+                <li class="card-chip">{{ name }}</li>
+              }
+            </ul>
+          </details>
+
+          <a
+            class="sr-btn sr-btn--primary sr-btn--block round-card__view"
+            routerLink="/scorecard"
+            [queryParams]="{ round: round.id }"
+          >
+            View Scorecard
+          </a>
+        </article>
+      }
+    </div>
+  } @else {
+    <section class="sr-card sr-empty">
+      <div class="sr-empty__crest" aria-hidden="true">SR</div>
+      <h2 class="sr-empty__title">No Rounds Yet</h2>
+      <p class="sr-lead">Your history will appear here once you've finished your first round.</p>
+      <a routerLink="/new-round" class="sr-btn sr-btn--primary">Play Your First Round</a>
+    </section>
+  }
+</div>
+
+@if (pendingDelete(); as target) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div class="modal__backdrop" (click)="cancelDelete()"></div>
+    <div class="modal__panel sr-card">
+      <h2 id="delete-title" class="modal__title">Delete this round?</h2>
+      <p class="modal__copy">
+        {{ formatDate(target.completedAt ?? target.createdAt) }} · {{ playerNames(target) }}.
+        This removes it from your clubhouse history for good. No take-backs.
+      </p>
+      <div class="modal__actions">
+        <button type="button" class="sr-btn sr-btn--ghost" (click)="cancelDelete()">Keep It</button>
+        <button type="button" class="sr-btn sr-btn--danger" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+}

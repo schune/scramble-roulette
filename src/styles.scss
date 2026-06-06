@@ -1,1 +1,352 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   Scramble Roulette — Global Design System
+   Theme: Augusta National parody — deep green, cream, gold.
+   ============================================================ */
+
+:root {
+  /* Brand palette */
+  --sr-green-900: #07271d;
+  --sr-green-800: #0b3d2e; /* primary deep green */
+  --sr-green-700: #11503c;
+  --sr-green-600: #1a6a4f;
+  --sr-green-500: #2c8466;
+
+  --sr-cream-50: #fdfbf4;
+  --sr-cream-100: #faf6ea; /* primary cream */
+  --sr-cream-200: #f1ead6;
+  --sr-cream-300: #e6dcc0;
+
+  --sr-gold-700: #9c7c2e;
+  --sr-gold-600: #bf9a47;
+  --sr-gold-500: #d4af5f; /* primary gold accent */
+  --sr-gold-300: #e6cf95;
+
+  --sr-ink: #14241d;
+  --sr-muted: #5d6f66;
+  --sr-danger: #a8332b;
+  --sr-success: #2c8466;
+
+  /* Semantic surfaces */
+  --sr-bg: var(--sr-cream-100);
+  --sr-surface: #ffffff;
+  --sr-surface-alt: var(--sr-cream-50);
+  --sr-on-dark: var(--sr-cream-100);
+
+  /* Typography */
+  --sr-font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sr-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Radii & shadows */
+  --sr-radius-sm: 8px;
+  --sr-radius: 14px;
+  --sr-radius-lg: 22px;
+  --sr-shadow-sm: 0 1px 2px rgba(7, 39, 29, 0.08);
+  --sr-shadow: 0 10px 30px -12px rgba(7, 39, 29, 0.28);
+  --sr-shadow-lg: 0 24px 60px -20px rgba(7, 39, 29, 0.4);
+
+  /* Layout */
+  --sr-maxw: 1120px;
+  --sr-gap: clamp(1rem, 2vw, 1.75rem);
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--sr-font-body);
+  background-color: var(--sr-bg);
+  /* Layered gradients give a faint country-club "paper" texture without images. */
+  background-image:
+    radial-gradient(circle at 100% -10%, rgba(212, 175, 95, 0.12), transparent 45%),
+    radial-gradient(circle at 0% 0%, rgba(11, 61, 46, 0.06), transparent 40%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(11, 61, 46, 0.022) 0,
+      rgba(11, 61, 46, 0.022) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(11, 61, 46, 0.018) 0,
+      rgba(11, 61, 46, 0.018) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  background-attachment: fixed;
+  color: var(--sr-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--sr-font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.5em;
+  color: var(--sr-green-800);
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--sr-green-700);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--sr-gold-700);
+}
+
+:focus-visible {
+  outline: 3px solid var(--sr-gold-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Reusable layout helpers ---------- */
+.sr-container {
+  width: 100%;
+  max-width: var(--sr-maxw);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+}
+
+.sr-page {
+  padding-block: clamp(1.75rem, 5vw, 3.5rem);
+}
+
+.sr-eyebrow {
+  font-family: var(--sr-font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--sr-gold-700);
+  margin: 0 0 0.75rem;
+}
+
+.sr-lead {
+  font-size: clamp(1rem, 2.2vw, 1.18rem);
+  color: var(--sr-muted);
+  max-width: 60ch;
+}
+
+/* ---------- Cards / panels ---------- */
+.sr-card {
+  background: var(--sr-surface);
+  border: 1px solid var(--sr-cream-300);
+  border-radius: var(--sr-radius-lg);
+  box-shadow: var(--sr-shadow);
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* ---------- Buttons (large, mobile friendly) ---------- */
+.sr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 56px;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  font-family: var(--sr-font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease, border-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sr-btn:active {
+  transform: translateY(1px);
+}
+
+.sr-btn:disabled,
+.sr-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.sr-btn--primary {
+  background: var(--sr-green-800);
+  color: var(--sr-on-dark);
+  box-shadow: var(--sr-shadow);
+}
+
+.sr-btn--primary:hover {
+  background: var(--sr-green-700);
+  color: #fff;
+}
+
+.sr-btn--gold {
+  background: linear-gradient(135deg, var(--sr-gold-500), var(--sr-gold-600));
+  color: var(--sr-green-900);
+  box-shadow: var(--sr-shadow);
+}
+
+.sr-btn--gold:hover {
+  filter: brightness(1.04);
+  color: var(--sr-green-900);
+}
+
+.sr-btn--ghost {
+  background: transparent;
+  color: var(--sr-green-800);
+  border-color: var(--sr-green-800);
+}
+
+.sr-btn--ghost:hover {
+  background: var(--sr-green-800);
+  color: var(--sr-on-dark);
+}
+
+.sr-btn--danger {
+  background: var(--sr-danger);
+  color: #fff;
+  box-shadow: var(--sr-shadow);
+}
+
+.sr-btn--danger:hover {
+  filter: brightness(1.05);
+  color: #fff;
+}
+
+.sr-btn--block {
+  width: 100%;
+}
+
+/* ---------- Badges / pills ---------- */
+.sr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: var(--sr-cream-200);
+  color: var(--sr-green-700);
+  border: 1px solid var(--sr-cream-300);
+}
+
+/* ---------- Empty states ---------- */
+.sr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  padding-block: clamp(2rem, 6vw, 3.5rem);
+}
+
+.sr-empty__crest {
+  width: 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--sr-font-display);
+  font-weight: 700;
+  font-size: 1.95rem;
+  color: var(--sr-cream-50);
+  background: linear-gradient(150deg, var(--sr-green-600), var(--sr-green-900));
+  box-shadow: inset 0 0 0 3px var(--sr-gold-500);
+  margin-bottom: 0.5rem;
+}
+
+.sr-empty__title {
+  margin: 0;
+  font-family: var(--sr-font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--sr-green-800);
+}
+
+.sr-empty .sr-lead {
+  margin: 0 0 0.75rem;
+}
+
+.sr-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+/* ---------- Form controls ---------- */
+.sr-input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 1rem;
+  font-family: var(--sr-font-body);
+  font-size: 1.02rem;
+  color: var(--sr-ink);
+  background: var(--sr-surface);
+  border: 1.5px solid var(--sr-cream-300);
+  border-radius: var(--sr-radius);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sr-input::placeholder {
+  color: var(--sr-muted);
+}
+
+.sr-input:focus {
+  outline: none;
+  border-color: var(--sr-green-600);
+  box-shadow: 0 0 0 3px rgba(44, 132, 102, 0.18);
+}
+
+.sr-input--invalid {
+  border-color: var(--sr-danger);
+}
+
+.sr-input--invalid:focus {
+  box-shadow: 0 0 0 3px rgba(168, 51, 43, 0.18);
+}
+
+/* Visually hidden but accessible to screen readers */
+.sr-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

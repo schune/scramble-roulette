@@ -1,0 +1,212 @@
+:host {
+  display: block;
+}
+
+/* ---------- Share-style summary card ---------- */
+.share-card {
+  margin-bottom: var(--sr-gap);
+  background:
+    radial-gradient(circle at 85% -20%, rgba(212, 175, 95, 0.25), transparent 55%),
+    linear-gradient(150deg, var(--sr-green-700), var(--sr-green-900));
+  border-color: var(--sr-green-900);
+  color: var(--sr-cream-100);
+  text-align: center;
+}
+
+.share-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  text-align: left;
+}
+
+.share-card__crest {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--sr-font-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--sr-green-900);
+  background: radial-gradient(circle at 30% 25%, var(--sr-gold-300), var(--sr-gold-600));
+}
+
+.share-card__kicker {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--sr-gold-300);
+}
+
+.share-card__date {
+  margin: 0;
+  color: var(--sr-cream-200);
+  font-size: 0.95rem;
+}
+
+.share-card__score {
+  margin: 1.5rem 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.share-card__topar {
+  font-family: var(--sr-font-display);
+  font-weight: 700;
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  line-height: 1;
+  color: var(--sr-cream-50);
+}
+
+.share-card__strokes {
+  color: var(--sr-cream-200);
+  font-size: 0.95rem;
+}
+
+.share-card__players {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem 1rem;
+}
+
+.share-card__player {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  color: var(--sr-cream-100);
+}
+
+.share-card__chip {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--sr-green-900);
+  background: var(--sr-gold-300);
+}
+
+.share-card__note {
+  margin: 1.25rem 0 0;
+  font-size: 0.8rem;
+  color: rgba(250, 246, 234, 0.6);
+}
+
+/* ---------- Totals ---------- */
+.totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: var(--sr-gap);
+}
+
+.totals__label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--sr-muted);
+}
+
+.totals__val {
+  font-family: var(--sr-font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--sr-green-800);
+}
+
+.totals__val--accent {
+  color: var(--sr-gold-700);
+}
+
+/* ---------- Table ---------- */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.card-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+}
+
+.card-table__caption {
+  caption-side: top;
+  text-align: left;
+  padding-bottom: 0.75rem;
+  color: var(--sr-muted);
+  font-size: 0.9rem;
+}
+
+.card-table th,
+.card-table td {
+  padding: 0.7rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--sr-cream-300);
+}
+
+.card-table thead th {
+  background: var(--sr-green-800);
+  color: var(--sr-cream-100);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.card-table thead th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.card-table thead th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.card-table tbody th {
+  color: var(--sr-green-800);
+  font-weight: 700;
+}
+
+.card-table tbody td {
+  color: var(--sr-ink);
+}
+
+.card-table__card {
+  text-align: left;
+  color: var(--sr-muted);
+  font-size: 0.92rem;
+}
+
+.card-table [data-tone] {
+  font-weight: 700;
+}
+
+.card-table [data-tone='under'] {
+  color: var(--sr-success);
+}
+
+.card-table [data-tone='par'] {
+  color: var(--sr-green-700);
+}
+
+.card-table [data-tone='over'] {
+  color: var(--sr-danger);
+}
+
+.card-table tfoot th,
+.card-table tfoot td {
+  background: var(--sr-cream-100);
+  font-weight: 700;
+  color: var(--sr-green-800);
+  border-top: 2px solid var(--sr-gold-500);
+}
+

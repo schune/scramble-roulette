@@ -1,0 +1,115 @@
+<div class="sr-page sr-container profile">
+  <app-page-header
+    eyebrow="Member"
+    title="Profile"
+    subtitle="Your name, your colors, your record. Saved on this device for now."
+  ></app-page-header>
+
+  <div class="profile-grid">
+    <!-- Member card -->
+    <section class="sr-card member" aria-labelledby="member-heading">
+      <h2 id="member-heading" class="sr-visually-hidden">Member card</h2>
+
+      <div class="member__avatar">
+        @if (avatar(); as src) {
+          <img class="member__img" [src]="src" alt="Your avatar" />
+        } @else {
+          <span class="member__initials" aria-hidden="true">{{ initials() }}</span>
+        }
+      </div>
+
+      <div class="member__avatar-actions">
+        <label class="sr-btn sr-btn--ghost member__upload">
+          {{ avatar() ? 'Change Photo' : 'Upload Photo' }}
+          <input
+            type="file"
+            accept="image/*"
+            class="sr-visually-hidden"
+            (change)="onAvatarSelected($event)"
+          />
+        </label>
+        @if (avatar()) {
+          <button type="button" class="sr-btn sr-btn--ghost" (click)="removeAvatar()">
+            Remove
+          </button>
+        }
+      </div>
+      @if (avatarError(); as err) {
+        <p class="member__error" role="alert">{{ err }}</p>
+      }
+
+      <div class="member__name">
+        <label class="member__label" for="display-name">Display name</label>
+        <div class="member__name-row">
+          <input
+            id="display-name"
+            type="text"
+            class="sr-input"
+            maxlength="40"
+            autocomplete="off"
+            [value]="nameDraft()"
+            (input)="onNameInput($any($event.target).value)"
+            (keyup.enter)="saveName()"
+          />
+          <button
+            type="button"
+            class="sr-btn sr-btn--primary member__save"
+            [disabled]="!canSaveName()"
+            (click)="saveName()"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="sr-card" aria-labelledby="stats-heading">
+      <h2 id="stats-heading" class="section-title">Your Record</h2>
+      <div class="stat-grid">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-cell">
+            <span class="stat-cell__value">{{ stat.value }}</span>
+            <span class="stat-cell__label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  <!-- Round history -->
+  <section class="sr-card history" aria-labelledby="history-heading">
+    <div class="history__head">
+      <h2 id="history-heading" class="section-title">Clubhouse History</h2>
+      <a routerLink="/previous-rounds" class="panel__link">View all</a>
+    </div>
+    @if (recentRounds.length > 0) {
+      <ul class="history-list">
+        @for (round of recentRounds; track round.id) {
+          <li>
+            <a class="history-row" routerLink="/scorecard" [queryParams]="{ round: round.id }">
+              <span class="history-row__date">{{ formatDate(round.completedAt ?? round.createdAt) }}</span>
+              <span class="history-row__meta">{{ round.holeCount }} holes · {{ round.players.length }} players</span>
+              <span class="history-row__topar">{{ toPar(round) }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="panel__empty">No rounds played yet. Go make some questionable decisions.</p>
+    }
+  </section>
+
+  <!-- Friends / Following (future-ready placeholder) -->
+  <section class="sr-card social" aria-labelledby="social-heading">
+    <div>
+      <span class="sr-badge">Coming soon</span>
+      <h2 id="social-heading" class="section-title social__title">Friends &amp; Following</h2>
+      <p class="social__copy">
+        Follow your regular foursome, compare green jackets, and talk trash across rounds.
+        We're building it — for now, your record lives on this device.
+      </p>
+    </div>
+    <button type="button" class="sr-btn sr-btn--ghost" disabled>Find Friends</button>
+  </section>
+</div>
