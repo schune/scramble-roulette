@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { afterNextRender, ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 interface Feature {
   title: string;
@@ -14,6 +14,8 @@ interface Feature {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
+  private readonly router = inject(Router);
+
   protected readonly features: Feature[] = [
     {
       title: 'Draw the Lineup',
@@ -28,4 +30,13 @@ export class Home {
       copy: 'Relive past rounds, crown your champions, and keep the green jacket in the family.',
     },
   ];
+
+  constructor() {
+    // Mobile uses the dashboard as the app home — skip this marketing page.
+    afterNextRender(() => {
+      if (window.matchMedia('(max-width: 860px)').matches) {
+        void this.router.navigateByUrl('/dashboard', { replaceUrl: true });
+      }
+    });
+  }
 }

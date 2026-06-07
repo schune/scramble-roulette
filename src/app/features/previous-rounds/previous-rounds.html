@@ -1,4 +1,4 @@
-<div class="sr-page sr-container">
+<div class="sr-page sr-container history-page">
   <app-page-header
     eyebrow="The Archives"
     title="Previous Rounds"
@@ -7,6 +7,16 @@
     <a routerLink="/new-round" class="sr-btn sr-btn--gold">New Round</a>
   </app-page-header>
 
+  <section class="stats" aria-label="Career statistics">
+    @for (stat of stats(); track stat.label) {
+      <article class="sr-card stat">
+        <span class="stat__value">{{ stat.value }}</span>
+        <span class="stat__label">{{ stat.label }}</span>
+        <span class="stat__hint">{{ stat.hint }}</span>
+      </article>
+    }
+  </section>
+
   @if (rounds().length > 0) {
     <div class="round-list">
       @for (round of rounds(); track round.id) {
@@ -14,7 +24,13 @@
           <header class="round-card__head">
             <div>
               <p class="round-card__date">{{ formatDate(round.completedAt ?? round.createdAt) }}</p>
+              @if (round.courseName) {
+                <p class="round-card__course">{{ round.courseName }}</p>
+              }
               <p class="round-card__players">{{ playerNames(round) }}</p>
+              @if (round.endedEarly) {
+                <span class="sr-badge round-card__badge">Ended early</span>
+              }
             </div>
             <button
               type="button"
@@ -28,8 +44,8 @@
 
           <div class="round-card__stats">
             <div class="round-card__stat">
-              <span class="round-card__stat-label">Holes</span>
-              <span class="round-card__stat-val">{{ round.holeCount }}</span>
+              <span class="round-card__stat-label">Played</span>
+              <span class="round-card__stat-val">{{ holesPlayed(round) }}/{{ round.holeCount }}</span>
             </div>
             <div class="round-card__stat">
               <span class="round-card__stat-label">Total</span>
@@ -41,13 +57,38 @@
             </div>
           </div>
 
-          <details class="round-card__cards">
-            <summary>Cards drawn ({{ cardNames(round).length }})</summary>
-            <ul class="card-chips">
-              @for (name of cardNames(round); track $index) {
-                <li class="card-chip">{{ name }}</li>
+          <details class="round-card__holes">
+            <summary>Hole-by-hole ({{ holesPlayed(round) }})</summary>
+            <ol class="hole-log">
+              @for (hole of sortedHoles(round); track hole.holeNumber) {
+                <li class="hole-log__item" [attr.data-category]="hole.card.category">
+                  <div class="hole-log__head">
+                    <span class="hole-log__num">Hole {{ hole.holeNumber }}</span>
+                    <div class="hole-log__body">
+                      <div class="hole-log__title">
+                        <span class="hole-log__card">{{ hole.card.name }}</span>
+                        <span class="hole-log__cat">{{ hole.card.category }}</span>
+                      </div>
+                      <span class="hole-log__meta">
+                        {{ holeScoreSummary(hole) }}
+                        @if (hole.resultLabel) {
+                          · {{ hole.resultLabel }}
+                        }
+                      </span>
+                    </div>
+                  </div>
+                  <div class="hole-log__prompt">
+                    <p class="hole-log__text">{{ hole.card.text }}</p>
+                    @if (hole.card.flavor) {
+                      <p class="hole-log__flavor">{{ hole.card.flavor }}</p>
+                    }
+                    @if (hole.card.helpText) {
+                      <p class="hole-log__help">{{ hole.card.helpText }}</p>
+                    }
+                  </div>
+                </li>
               }
-            </ul>
+            </ol>
           </details>
 
           <a

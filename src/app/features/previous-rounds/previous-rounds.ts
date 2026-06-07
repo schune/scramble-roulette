@@ -1,8 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { ScoreService, StorageService } from '../../core/services';
-import { Round } from '../../core/models';
+import { ProfileService, ScoreService, StorageService } from '../../core/services';
+import { HoleResult, Round } from '../../core/models';
+
+interface StatCard {
+  label: string;
+  value: string;
+  hint: string;
+}
 
 @Component({
   selector: 'app-previous-rounds',
@@ -14,8 +20,23 @@ import { Round } from '../../core/models';
 export class PreviousRounds {
   private readonly storage = inject(StorageService);
   private readonly score = inject(ScoreService);
+  private readonly profile = inject(ProfileService);
 
   protected readonly rounds = signal<Round[]>(this.storage.getRoundHistory());
+  private readonly profileStats = this.profile.getStats();
+
+  protected readonly stats = computed<StatCard[]>(() => {
+    const s = this.profileStats;
+    return [
+      { label: 'Rounds Played', value: s.roundsPlayed ? `${s.roundsPlayed}` : '—', hint: 'Career total' },
+      {
+        label: 'Best Score',
+        value: s.bestScoreToPar === null ? '—' : this.score.formatToPar(s.bestScoreToPar),
+        hint: 'Relative to par',
+      },
+      { label: 'Holes Played', value: s.holesPlayed ? `${s.holesPlayed}` : '—', hint: 'All-time' },
+    ];
+  });
   /** Round pending deletion (drives the confirmation modal). */
   protected readonly pendingDelete = signal<Round | null>(null);
 
@@ -31,8 +52,25 @@ export class PreviousRounds {
     return round.players.map((player) => player.name).join(', ');
   }
 
-  protected cardNames(round: Round): string[] {
-    return round.holes.map((hole) => hole.card.name);
+  protected holesPlayed(round: Round): number {
+    return round.holes.length;
+  }
+
+  protected sortedHoles(round: Round): HoleResult[] {
+    return [...round.holes].sort((a, b) => a.holeNumber - b.holeNumber);
+  }
+
+  protected holeScoreSummary(hole: HoleResult): string {
+    if (hole.par !== undefined && hole.score !== undefined) {
+      return `Par ${hole.par} · Score ${hole.score}`;
+    }
+    if (hole.par !== undefined) {
+      return `Par ${hole.par} · Score —`;
+    }
+    if (hole.score !== undefined) {
+      return `Par — · Score ${hole.score}`;
+    }
+    return 'Score not entered';
   }
 
   protected formatDate(iso: string): string {

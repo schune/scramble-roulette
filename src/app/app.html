@@ -4,8 +4,12 @@
   <app-navbar />
 
   <main id="main-content" class="app-main">
-    <router-outlet />
+    <div class="app-main__viewport">
+      <router-outlet />
+    </div>
   </main>
+
+  <app-tab-bar />
 
   <footer class="app-footer">
     <div class="sr-container app-footer__inner">

@@ -7,12 +7,14 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { PageHeader } from '../../shared/page-header/page-header';
+import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, SoundService } from '../../core/services';
+
+type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 
 @Component({
   selector: 'app-round',
-  imports: [RouterLink, PageHeader],
+  imports: [RouterLink],
   templateUrl: './round.html',
   styleUrl: './round.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,11 +36,19 @@ export class Round {
   protected readonly editing = signal(false);
   protected readonly parInput = signal<number | null>(null);
   protected readonly scoreInput = signal<number | null>(null);
-  protected readonly confirmingUndo = signal(false);
-  /** True while the draw animation plays — blocks double-click draws. */
-  protected readonly dealing = signal(false);
+  protected readonly confirmingEnd = signal(false);
+  /** Full-screen draw cinematic phase, or null when idle. */
+  protected readonly drawCinematic = signal<DrawCinematicPhase | null>(null);
+  /** Card revealed mid-cinematic before the main UI takes over. */
+  protected readonly cinematicCard = signal<Card | null>(null);
+  /** Skips the in-page flip when the cinematic already handled the reveal. */
+  protected readonly skipCardEntrance = signal(false);
+  /** Flip finished — card stays face-up until the player dismisses. */
+  protected readonly cinematicRevealed = signal(false);
 
-  private drawTimer: ReturnType<typeof setTimeout> | null = null;
+  protected readonly sparkles = Array.from({ length: 28 }, (_, i) => i);
+
+  private cinematicTimers: ReturnType<typeof setTimeout>[] = [];
 
   protected readonly parOptions = [3, 4, 5];
 
@@ -67,35 +77,98 @@ export class Round {
 
   constructor() {
     this.syncFromHole();
-    this.destroyRef.onDestroy(() => {
-      if (this.drawTimer) {
-        clearTimeout(this.drawTimer);
-      }
-    });
+    this.destroyRef.onDestroy(() => this.clearCinematicTimers());
+  }
+
+  protected isDrawing(): boolean {
+    return this.drawCinematic() !== null;
   }
 
   /**
-   * Draw the card for the current hole with a short reveal animation.
+   * Draw the card for the current hole with a full-screen cinematic reveal.
    * Guarded against double-clicks and an exhausted deck.
    */
   protected draw(): void {
-    if (this.dealing() || !this.canDraw()) {
+    if (this.drawCinematic() || !this.canDraw()) {
       return;
     }
-    this.dealing.set(true);
+
+    if (this.prefersReducedMotion()) {
+      this.completeDraw(this.roundState.drawCard());
+      return;
+    }
+
+    this.clearCinematicTimers();
+    this.cinematicCard.set(null);
+    this.cinematicRevealed.set(false);
+    this.skipCardEntrance.set(false);
+    this.drawCinematic.set('charge');
     this.sound.play('draw');
 
-    this.drawTimer = setTimeout(() => {
+    this.scheduleCinematic(() => this.drawCinematic.set('shuffle'), 520);
+    this.scheduleCinematic(() => {
+      this.drawCinematic.set('flip');
       const card = this.roundState.drawCard();
       if (card) {
-        this.sound.play('reveal');
-        this.editing.set(true);
-        this.parInput.set(null);
-        this.scoreInput.set(null);
+        this.cinematicCard.set(card);
       }
-      this.dealing.set(false);
-      this.drawTimer = null;
-    }, 480);
+    }, 1350);
+    this.scheduleCinematic(() => {
+      this.cinematicRevealed.set(true);
+      this.sound.play('reveal');
+    }, 2100);
+  }
+
+  /** Dismiss the reveal overlay and return to the play page. */
+  protected dismissCinematic(): void {
+    if (!this.cinematicRevealed() || !this.cinematicCard()) {
+      return;
+    }
+    this.drawCinematic.set('exit');
+    this.scheduleCinematic(() => this.finishCinematic(), 500);
+  }
+
+  private finishCinematic(): void {
+    const hadCard = !!this.cinematicCard();
+    this.drawCinematic.set(null);
+    this.cinematicCard.set(null);
+    this.cinematicRevealed.set(false);
+    this.clearCinematicTimers();
+    if (hadCard) {
+      this.skipCardEntrance.set(true);
+      this.editing.set(true);
+      this.parInput.set(null);
+      this.scoreInput.set(null);
+    }
+  }
+
+  private completeDraw(card: Card | null): void {
+    if (!card) {
+      return;
+    }
+    this.sound.play('reveal');
+    this.editing.set(true);
+    this.parInput.set(null);
+    this.scoreInput.set(null);
+  }
+
+  private scheduleCinematic(fn: () => void, ms: number): void {
+    const id = setTimeout(fn, ms);
+    this.cinematicTimers.push(id);
+  }
+
+  private clearCinematicTimers(): void {
+    for (const id of this.cinematicTimers) {
+      clearTimeout(id);
+    }
+    this.cinematicTimers = [];
+  }
+
+  private prefersReducedMotion(): boolean {
+    return (
+      typeof matchMedia !== 'undefined' &&
+      matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
   }
 
   protected setPar(par: number): void {
@@ -132,6 +205,7 @@ export class Round {
 
   protected next(): void {
     this.roundState.nextHole();
+    this.skipCardEntrance.set(false);
     this.syncFromHole();
   }
 
@@ -143,23 +217,37 @@ export class Round {
     }
   }
 
-  protected requestUndo(): void {
-    this.confirmingUndo.set(true);
-  }
-
-  protected cancelUndo(): void {
-    this.confirmingUndo.set(false);
-  }
-
-  protected confirmUndo(): void {
-    this.confirmingUndo.set(false);
+  protected previousHole(): void {
     this.roundState.previousHole();
-    // Reopen the restored hole with its card + score data ready to edit.
-    if (this.currentHoleResult()) {
-      this.edit();
-    } else {
-      this.syncFromHole();
+    this.skipCardEntrance.set(false);
+    this.syncFromHole();
+  }
+
+  protected requestEnd(): void {
+    this.confirmingEnd.set(true);
+  }
+
+  protected cancelEnd(): void {
+    this.confirmingEnd.set(false);
+  }
+
+  protected saveEnd(): void {
+    this.confirmingEnd.set(false);
+    const saved = this.roundState.endRound(true);
+    if (saved) {
+      this.sound.play('roundComplete');
+      void this.router.navigate(['/scorecard'], { queryParams: { round: saved.id } });
     }
+  }
+
+  protected discardEnd(): void {
+    this.confirmingEnd.set(false);
+    this.roundState.endRound(false);
+    void this.router.navigate(['/new-round']);
+  }
+
+  protected holesPlayed(): number {
+    return this.round()?.holes.length ?? 0;
   }
 
   protected formatToPar(value: number): string {

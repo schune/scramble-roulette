@@ -1,11 +1,25 @@
 <div class="sr-page sr-container rules">
+  <button type="button" class="rules__close" (click)="close()" aria-label="Close official rules">
+    <span aria-hidden="true">×</span>
+  </button>
+
   <app-page-header
-    eyebrow="The Local Rules"
-    title="How to Play"
-    subtitle="Golf's dumbest good idea, explained. Read it once, then let the cards run the show."
-  >
-    <a routerLink="/new-round" class="sr-btn sr-btn--gold">Start a Round</a>
-  </app-page-header>
+    eyebrow="Scramble Roulette"
+    title="Official Rules"
+    subtitle="The law of the land. Read once, argue forever."
+  />
+
+  <section class="official" aria-labelledby="official-heading">
+    <h2 id="official-heading" class="rules__section-title">The five rules</h2>
+    <ol class="official-rules">
+      @for (rule of officialRules; track rule.title) {
+        <li class="sr-card official-rule">
+          <h3 class="official-rule__title">{{ rule.title }}</h3>
+          <p class="official-rule__copy">{{ rule.copy }}</p>
+        </li>
+      }
+    </ol>
+  </section>
 
   <section aria-labelledby="how-heading">
     <h2 id="how-heading" class="rules__section-title">How it works</h2>
@@ -20,18 +34,6 @@
         </li>
       }
     </ol>
-  </section>
-
-  <section class="warnings" aria-labelledby="warn-heading">
-    <h2 id="warn-heading" class="rules__section-title">House rules &amp; common sense</h2>
-    <div class="warnings__grid">
-      @for (warning of warnings; track warning.title) {
-        <article class="sr-card warning">
-          <h3 class="warning__title">{{ warning.title }}</h3>
-          <p class="warning__copy">{{ warning.copy }}</p>
-        </article>
-      }
-    </div>
   </section>
 
   <section class="sr-card disclaimer" aria-label="Disclaimer">

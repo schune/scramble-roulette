@@ -44,6 +44,14 @@
   color: var(--sr-gold-300);
 }
 
+.share-card__course {
+  margin: 0.2rem 0 0;
+  font-family: var(--sr-font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--sr-cream-50);
+}
+
 .share-card__date {
   margin: 0;
   color: var(--sr-cream-200);
@@ -171,9 +179,49 @@
   border-top-right-radius: 10px;
 }
 
-.card-table tbody th {
+/* Sage band for the hole column — classic scorecard style */
+.card-table__hole-col {
+  background: color-mix(in srgb, var(--sr-green-600) 14%, var(--sr-cream-200));
   color: var(--sr-green-800);
+}
+
+.card-table thead .card-table__hole-col {
+  background: color-mix(in srgb, var(--sr-green-500) 22%, var(--sr-cream-100));
+  color: var(--sr-green-900);
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+}
+
+.card-table tbody .card-table__hole-col {
+  font-family: var(--sr-font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.card-table tfoot .card-table__hole-col {
+  background: color-mix(in srgb, var(--sr-green-600) 18%, var(--sr-cream-200));
+}
+
+/* Light tan band for the par column */
+.card-table__par-col {
+  background: var(--sr-cream-200);
+  color: var(--sr-green-800);
+  font-weight: 600;
+}
+
+.card-table thead .card-table__par-col {
+  background: var(--sr-cream-300);
+  color: var(--sr-green-900);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+}
+
+.card-table tfoot .card-table__par-col {
+  background: var(--sr-cream-200);
 }
 
 .card-table tbody td {
@@ -182,7 +230,11 @@
 
 .card-table__card {
   text-align: left;
-  color: var(--sr-muted);
+}
+
+.card-table__card-name {
+  font-weight: 600;
+  color: var(--sr-ink);
   font-size: 0.92rem;
 }
 

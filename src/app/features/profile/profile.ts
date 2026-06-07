@@ -53,7 +53,6 @@ export class Profile {
           ? '—'
           : this.score.formatToPar(this.profileStats.averageScoreToPar),
     },
-    { label: 'Favorite Card', value: this.profileStats.favoriteCategory ?? '—' },
   ];
 
   protected onNameInput(value: string): void {

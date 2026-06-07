@@ -2,6 +2,536 @@
   display: block;
 }
 
+/* ---------- Resume active round ---------- */
+.resume {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: var(--sr-gap);
+}
+
+.resume--active {
+  position: relative;
+  background: linear-gradient(150deg, var(--sr-green-700), var(--sr-green-900));
+  border-color: var(--sr-green-900);
+  color: var(--sr-cream-100);
+}
+
+.resume__discard {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(250, 246, 234, 0.08);
+  color: color-mix(in srgb, var(--sr-cream-100) 70%, transparent);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.resume__discard svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.resume__discard:hover {
+  color: var(--sr-cream-50);
+  background: rgba(250, 246, 234, 0.16);
+}
+
+.resume__content {
+  padding-right: 2rem;
+}
+
+.resume--active .sr-badge {
+  background: rgba(250, 246, 234, 0.14);
+  color: var(--sr-gold-300);
+  border-color: rgba(250, 246, 234, 0.25);
+  margin-bottom: 0.6rem;
+}
+
+.resume__title {
+  margin: 0 0 0.25rem;
+}
+
+.resume--active .resume__title {
+  color: var(--sr-cream-50);
+}
+
+.resume__copy {
+  margin: 0;
+  color: var(--sr-muted);
+}
+
+.resume--active .resume__copy {
+  color: var(--sr-cream-200);
+}
+
+/* ---------- Rules link ---------- */
+.play-rules-note {
+  margin: -1.25rem 0 clamp(1.25rem, 3vw, 2rem);
+}
+
+.play-rules-link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sr-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.play-rules-link:hover {
+  color: var(--sr-green-700);
+}
+
+.play-rules-link--on-dark {
+  display: inline-block;
+  margin-top: 1.1rem;
+  color: color-mix(in srgb, var(--sr-gold-300) 80%, var(--sr-cream-100));
+}
+
+.play-rules-link--on-dark:hover {
+  color: var(--sr-cream-50);
+}
+
+/* ---------- Play landing ---------- */
+.play-landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(1.25rem, 5vw, 2rem) clamp(1rem, 4vw, 1.5rem);
+  border-radius: var(--sr-radius-lg);
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(212, 175, 95, 0.2), transparent 65%),
+    linear-gradient(165deg, var(--sr-green-700), var(--sr-green-900));
+  border: 1px solid var(--sr-green-900);
+  color: var(--sr-cream-100);
+  box-shadow: var(--sr-shadow-lg);
+}
+
+.play-landing__scene {
+  position: relative;
+  width: min(100%, 280px);
+  height: 140px;
+  margin-bottom: 1.25rem;
+}
+
+.play-landing__fairway {
+  position: absolute;
+  inset: auto 0 0;
+  height: 72%;
+  border-radius: 50% 50% 12px 12px / 40% 40% 12px 12px;
+  background: linear-gradient(180deg, var(--sr-green-600), var(--sr-green-800));
+  box-shadow: inset 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.play-landing__flag {
+  position: absolute;
+  left: 58%;
+  bottom: 28%;
+  width: 56px;
+  height: 72px;
+}
+
+.play-landing__flag-pole {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--sr-cream-200), var(--sr-cream-100));
+  border-radius: 2px;
+}
+
+.play-landing__flag-cloth {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 28px;
+  height: 18px;
+  background: var(--sr-danger);
+  border-radius: 2px 4px 4px 2px;
+  box-shadow: var(--sr-shadow-sm);
+}
+
+.play-landing__ball {
+  position: absolute;
+  left: 22%;
+  bottom: 18%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #fff, var(--sr-cream-200));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.play-landing__title {
+  margin: 0 0 0.45rem;
+  font-family: var(--sr-font-display);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  color: var(--sr-cream-50);
+}
+
+.play-landing__copy {
+  margin: 0 0 1.25rem;
+  max-width: 28rem;
+  color: var(--sr-cream-200);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.play-landing__cta {
+  max-width: 280px;
+}
+
+/* ---------- Tee-off cinematic ---------- */
+.play-page--tee-off .play-landing,
+.play-page--tee-off .setup-flow,
+.play-page--tee-off app-page-header,
+.play-page--tee-off .resume {
+  filter: blur(5px) saturate(0.7);
+  opacity: 0.35;
+  pointer-events: none;
+  transition: filter 0.4s ease, opacity 0.4s ease;
+}
+
+.tee-off {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.tee-off__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 80%, rgba(26, 106, 79, 0.45), transparent 55%),
+    linear-gradient(165deg, var(--sr-green-900), #03150f);
+  opacity: 0;
+  animation: tee-veil-in 0.45s ease forwards;
+}
+
+.tee-off[data-phase='reveal'] .tee-off__veil {
+  animation: tee-veil-out 0.5s ease forwards;
+}
+
+.tee-off__rays {
+  position: absolute;
+  width: 140vmax;
+  height: 140vmax;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in srgb, var(--sr-gold-500) 28%, transparent) 20deg,
+    transparent 40deg,
+    transparent 70deg,
+    color-mix(in srgb, var(--sr-gold-300) 22%, transparent) 90deg,
+    transparent 110deg
+  );
+  opacity: 0;
+  animation: tee-rays-spin 7s linear infinite, tee-rays-in 0.6s ease 0.15s forwards;
+}
+
+.tee-off__particles {
+  position: absolute;
+  inset: 0;
+}
+
+.tee-off__spark {
+  --angle: calc(var(--spark-i) * 22.5deg);
+  --delay: calc(var(--spark-i) * 0.04s);
+  position: absolute;
+  top: 62%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--sr-gold-300);
+  box-shadow: 0 0 8px var(--sr-gold-500);
+  opacity: 0;
+}
+
+.tee-off[data-phase='fairway'] .tee-off__spark,
+.tee-off[data-phase='reveal'] .tee-off__spark {
+  animation: tee-spark 0.9s ease var(--delay) infinite;
+}
+
+.tee-off__stage {
+  position: relative;
+  width: min(88vw, 320px);
+  height: 200px;
+}
+
+.tee-off__fairway {
+  position: absolute;
+  inset: auto 0 0;
+  height: 75%;
+  border-radius: 50% 50% 14px 14px / 42% 42% 14px 14px;
+  background: linear-gradient(180deg, var(--sr-green-500), var(--sr-green-800));
+  transform: scaleY(0.3);
+  transform-origin: bottom center;
+  animation: tee-fairway-rise 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) 0.1s forwards;
+}
+
+.tee-off__flag {
+  position: absolute;
+  left: 54%;
+  bottom: 22%;
+  width: 64px;
+  height: 88px;
+  opacity: 0;
+  animation: tee-flag-in 0.55s cubic-bezier(0.2, 0.9, 0.25, 1) 0.35s forwards;
+}
+
+.tee-off__flag-pole {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--sr-cream-100);
+  border-radius: 2px;
+}
+
+.tee-off__flag-cloth {
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 34px;
+  height: 22px;
+  background: var(--sr-danger);
+  border-radius: 2px 5px 5px 2px;
+  transform-origin: left center;
+  animation: tee-flag-wave 1.2s ease-in-out 0.5s infinite;
+}
+
+.tee-off__ball {
+  position: absolute;
+  left: 20%;
+  bottom: 16%;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #fff, var(--sr-cream-200));
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  animation: tee-ball-drop 0.5s cubic-bezier(0.3, 0, 0.2, 1) 0.55s forwards;
+}
+
+.tee-off[data-phase='fairway'] .tee-off__ball {
+  animation: tee-ball-drive 0.65s cubic-bezier(0.15, 0.9, 0.25, 1) forwards;
+}
+
+.tee-off__kicker {
+  position: absolute;
+  top: clamp(3.5rem, 12vh, 5rem);
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--sr-gold-300);
+  opacity: 0;
+  animation: tee-text-in 0.45s ease 0.25s forwards;
+}
+
+.tee-off__status {
+  position: absolute;
+  top: clamp(4.5rem, 14vh, 6rem);
+  margin: 0;
+  font-family: var(--sr-font-display);
+  font-size: clamp(1.15rem, 4.5vw, 1.5rem);
+  font-weight: 600;
+  color: var(--sr-cream-100);
+  opacity: 0;
+  animation: tee-text-in 0.45s ease 0.35s forwards;
+}
+
+.tee-off[data-phase='reveal'] {
+  animation: tee-overlay-out 0.55s ease forwards;
+}
+
+/* ---------- Setup reveal ---------- */
+.setup-flow__step {
+  animation: setup-step-in 0.55s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+
+.course-section.setup-flow__step {
+  animation-delay: 0.05s;
+}
+
+.setup-grid > .setup-flow__step:first-child {
+  animation-delay: 0.12s;
+}
+
+.setup-grid > .setup-flow__step:last-child {
+  animation-delay: 0.2s;
+}
+
+.start-bar.setup-flow__step {
+  animation-delay: 0.28s;
+}
+
+@keyframes tee-veil-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tee-veil-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes tee-rays-in {
+  to {
+    opacity: 0.3;
+  }
+}
+
+@keyframes tee-rays-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tee-spark {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-80px);
+  }
+}
+
+@keyframes tee-fairway-rise {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes tee-flag-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tee-flag-wave {
+  0%,
+  100% {
+    transform: skewY(0deg);
+  }
+  50% {
+    transform: skewY(-6deg);
+  }
+}
+
+@keyframes tee-ball-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(4px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tee-ball-drive {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(120px, -60px) scale(0.5);
+  }
+}
+
+@keyframes tee-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tee-overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes setup-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tee-off {
+    display: none;
+  }
+
+  .setup-flow__step {
+    animation: none;
+  }
+}
+
+.course-section {
+  margin-bottom: var(--sr-gap);
+}
+
+.course-field__label {
+  display: block;
+  font-weight: 600;
+  color: var(--sr-green-800);
+  margin-bottom: 0.5rem;
+}
+
 .setup-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -288,4 +818,46 @@
   .start-bar__btn {
     width: 100%;
   }
+}
+
+/* ---------- Discard confirmation modal ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 39, 29, 0.55);
+}
+
+.modal__panel {
+  position: relative;
+  width: min(440px, 100%);
+  text-align: center;
+}
+
+.modal__title {
+  margin: 0 0 0.6rem;
+}
+
+.modal__copy {
+  margin: 0 0 1.5rem;
+  color: var(--sr-muted);
+}
+
+.modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.modal__actions .sr-btn {
+  flex: 1 1 auto;
 }

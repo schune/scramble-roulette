@@ -22,9 +22,11 @@ export class RoundStateService {
   private readonly score = inject(ScoreService);
 
   /* ---------- Draft setup state ---------- */
+  private readonly _courseName = signal('');
   private readonly _holeCount = signal<HoleCount | null>(null);
   private readonly _draftPlayers = signal<Player[]>([]);
 
+  readonly draftCourseName = this._courseName.asReadonly();
   readonly holeCount = this._holeCount.asReadonly();
   readonly draftPlayers = this._draftPlayers.asReadonly();
   readonly canStart = computed(
@@ -92,6 +94,10 @@ export class RoundStateService {
   }
 
   /* ---------- Draft mutations ---------- */
+  setCourseName(name: string): void {
+    this._courseName.set(name.trim());
+  }
+
   setHoleCount(count: HoleCount): void {
     this._holeCount.set(count);
   }
@@ -122,6 +128,7 @@ export class RoundStateService {
   }
 
   resetDraft(): void {
+    this._courseName.set('');
     this._holeCount.set(null);
     this._draftPlayers.set([]);
   }
@@ -133,6 +140,7 @@ export class RoundStateService {
    * Returns the created round, or `null` if the draft isn't valid.
    */
   startRound(): Round | null {
+    const courseName = this._courseName().trim();
     const holeCount = this._holeCount();
     const players = this._draftPlayers();
 
@@ -149,6 +157,7 @@ export class RoundStateService {
       holes: [],
       currentHole: 1,
       packId: this.deck.defaultPackId,
+      ...(courseName ? { courseName } : {}),
     };
 
     this._activeRound.set(round);
@@ -165,11 +174,12 @@ export class RoundStateService {
       return null;
     }
 
-    const card = this.deck.draw(this.usedCardIds(), round.packId);
-    if (!card) {
+    const drawn = this.deck.draw(this.usedCardIds(), round.packId);
+    if (!drawn) {
       return null;
     }
 
+    const card = this.deck.personalize(drawn, round.players);
     const hole: HoleResult = { holeNumber: round.currentHole, card };
     this.updateRound((current) => ({ ...current, holes: [...current.holes, hole] }));
     return card;
@@ -207,20 +217,18 @@ export class RoundStateService {
   }
 
   /**
-   * Go back to the previous hole (undo). The current hole's draw (if any
-   * and unfinished beyond the previous hole) is discarded so its card
-   * returns to the deck; the previous hole stays editable.
+   * Go back to the previous hole. Hole history is preserved — once a card is
+   * drawn for a hole it stays tied to that hole, even when navigating back
+   * and forward again.
    */
   previousHole(): void {
     const round = this._activeRound();
     if (!round || round.currentHole <= 1) {
       return;
     }
-    const target = round.currentHole - 1;
     this.updateRound((current) => ({
       ...current,
-      currentHole: target,
-      holes: current.holes.filter((hole) => hole.holeNumber <= target),
+      currentHole: current.currentHole - 1,
     }));
   }
 
@@ -246,6 +254,36 @@ export class RoundStateService {
     return completed;
   }
 
+  /**
+   * End the active round early. When `save` is true, persists progress to
+   * history (including partial rounds). When false, discards without saving.
+   */
+  endRound(save: boolean): Round | null {
+    const round = this._activeRound();
+    if (!round) {
+      return null;
+    }
+
+    if (!save) {
+      this._activeRound.set(null);
+      this.resetDraft();
+      return null;
+    }
+
+    const endedEarly = !this.isRoundFullyComplete(round);
+    const completed: Round = {
+      ...round,
+      status: 'complete',
+      completedAt: new Date().toISOString(),
+      ...(endedEarly ? { endedEarly: true } : {}),
+    };
+
+    this.storage.saveCompletedRound(completed);
+    this._activeRound.set(null);
+    this.resetDraft();
+    return completed;
+  }
+
   /** Abandon the active round without saving it to history. */
   clear(): void {
     this._activeRound.set(null);
@@ -258,6 +296,13 @@ export class RoundStateService {
   /* ---------- Helpers ---------- */
   private updateRound(mutator: (round: Round) => Round): void {
     this._activeRound.update((round) => (round ? mutator(round) : round));
+  }
+
+  private isRoundFullyComplete(round: Round): boolean {
+    const scoredHoles = round.holes.filter(
+      (hole) => hole.par !== undefined && hole.score !== undefined,
+    );
+    return scoredHoles.length >= round.holeCount && round.currentHole >= round.holeCount;
   }
 
   private createId(): string {

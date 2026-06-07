@@ -51,7 +51,6 @@ export class ProfileService {
         holesPlayed: 0,
         bestScoreToPar: null,
         averageScoreToPar: null,
-        favoriteCategory: null,
       };
     }
 
@@ -64,31 +63,12 @@ export class ProfileService {
       holesPlayed,
       bestScoreToPar: Math.min(...toPars),
       averageScoreToPar: Math.round(averageRaw * 10) / 10,
-      favoriteCategory: this.favoriteCategory(history),
     };
   }
 
   /** Most recent completed rounds. */
   getRecentRounds(limit = 5): Round[] {
     return this.storage.getRoundHistory().slice(0, limit);
-  }
-
-  private favoriteCategory(history: Round[]): string | null {
-    const counts = new Map<string, number>();
-    for (const round of history) {
-      for (const hole of round.holes) {
-        counts.set(hole.card.category, (counts.get(hole.card.category) ?? 0) + 1);
-      }
-    }
-    let best: string | null = null;
-    let bestCount = 0;
-    for (const [category, count] of counts) {
-      if (count > bestCount) {
-        best = category;
-        bestCount = count;
-      }
-    }
-    return best;
   }
 
   private update(mutator: (profile: UserProfile) => UserProfile): void {

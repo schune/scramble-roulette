@@ -20,5 +20,4 @@ export interface ProfileStats {
   holesPlayed: number;
   bestScoreToPar: number | null;
   averageScoreToPar: number | null;
-  favoriteCategory: string | null;
 }

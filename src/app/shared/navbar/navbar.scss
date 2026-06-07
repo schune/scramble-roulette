@@ -1,7 +1,6 @@
 :host {
   display: block;
-  position: sticky;
-  top: 0;
+  flex: none;
   z-index: 50;
 }
 
@@ -26,10 +25,15 @@
   align-items: center;
   gap: 0.75rem;
   color: var(--sr-on-dark);
+  min-width: 0;
 }
 
 .brand:hover {
   color: var(--sr-on-dark);
+}
+
+.brand--mobile {
+  display: none;
 }
 
 .brand__mark {
@@ -51,23 +55,47 @@
   letter-spacing: 0.02em;
 }
 
-.brand__text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
 .brand__name {
   font-family: var(--sr-font-display);
   font-size: 1.35rem;
   font-weight: 600;
+  line-height: 1.1;
 }
 
-.brand__tag {
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 0.28em;
+/* ---------- Sound toggle ---------- */
+.nav__sound-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(250, 246, 234, 0.35);
+  background: transparent;
+  color: var(--sr-cream-100);
+  cursor: pointer;
+  flex: none;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav__sound-btn:hover {
+  background: rgba(250, 246, 234, 0.12);
+}
+
+.nav__sound-btn[aria-pressed='true'] {
   color: var(--sr-gold-300);
+  border-color: var(--sr-gold-500);
+}
+
+.nav__sound-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.nav__sound-btn--mobile {
+  display: none;
 }
 
 /* ---------- Links ---------- */
@@ -117,30 +145,6 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-
-.nav__icon-btn {
-  min-height: 46px;
-  padding-inline: 1rem;
-  border-radius: 999px;
-  border: 1.5px solid rgba(250, 246, 234, 0.35);
-  background: transparent;
-  color: var(--sr-cream-100);
-  font-family: var(--sr-font-body);
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.nav__icon-btn:hover {
-  background: rgba(250, 246, 234, 0.12);
-}
-
-.nav__icon-btn[aria-pressed='true'] {
-  color: var(--sr-gold-300);
-  border-color: var(--sr-gold-500);
 }
 
 /* ---------- Mobile toggle ---------- */
@@ -194,8 +198,64 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* ---------- Responsive ---------- */
+/* ---------- Mobile: compact app header ---------- */
 @media (max-width: 860px) {
+  .nav__inner {
+    min-height: 48px;
+    padding-block: 0.3rem;
+  }
+
+  .brand--desktop {
+    display: none;
+  }
+
+  .brand--mobile {
+    display: inline-flex;
+  }
+
+  .brand__mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand__mark-inner {
+    font-size: 0.9rem;
+  }
+
+  .brand__name {
+    font-size: 1rem;
+  }
+
+  .nav__toggle,
+  .nav__menu {
+    display: none;
+  }
+
+  .nav__sound-btn--mobile {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav__sound-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 861px) {
+  .nav {
+    position: sticky;
+    top: 0;
+  }
+
+  .nav__toggle {
+    display: none;
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1100px) {
   .nav__toggle {
     display: inline-flex;
   }
@@ -219,6 +279,7 @@
   }
 
   .nav__menu.is-open {
+    display: flex;
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
@@ -230,20 +291,10 @@
     gap: 0.35rem;
   }
 
-  .nav__link {
-    padding: 0.85rem 1rem;
-    font-size: 1.05rem;
-  }
-
   .nav__actions {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
-  }
-
-  .nav__icon-btn {
-    width: 100%;
-    min-height: 50px;
   }
 
   .nav__cta {

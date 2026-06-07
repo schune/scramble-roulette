@@ -33,4 +33,6 @@ export interface Round {
   name?: string;
   /** Optional course being played. */
   courseName?: string;
+  /** True when the round was ended before all holes were played. */
+  endedEarly?: boolean;
 }

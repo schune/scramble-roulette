@@ -5,13 +5,11 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    title: 'Scramble Roulette',
-    loadComponent: () => import('./features/home/home').then((m) => m.Home),
+    redirectTo: 'new-round',
   },
   {
     path: 'dashboard',
-    title: 'Dashboard · Scramble Roulette',
-    loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+    redirectTo: 'new-round',
   },
   {
     path: 'profile',
@@ -31,7 +29,7 @@ export const routes: Routes = [
   },
   {
     path: 'rules',
-    title: 'How to Play · Scramble Roulette',
+    title: 'Official Rules · Scramble Roulette',
     loadComponent: () => import('./features/rules/rules').then((m) => m.Rules),
   },
   {

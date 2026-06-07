@@ -1,33 +1,36 @@
-<section class="hero">
-  <div class="sr-container hero__inner">
-    <p class="sr-eyebrow hero__eyebrow">The National Invitational</p>
-    <h1 class="hero__title">Scramble Roulette</h1>
-    <p class="hero__lead">
-      A premium companion for the golf scramble where the cards — not your ego — decide
-      whose shot counts. Gather your foursome, place your bets, and let fate find the fairway.
-    </p>
+<!-- Legacy marketing landing — app home is /new-round -->
+<div class="home-landing">
+  <section class="hero">
+    <div class="sr-container hero__inner">
+      <p class="sr-eyebrow hero__eyebrow">The National Invitational</p>
+      <h1 class="hero__title">Scramble Roulette</h1>
+      <p class="hero__lead">
+        A premium companion for the golf scramble where the cards — not your ego — decide
+        whose shot counts. Gather your foursome, place your bets, and let fate find the fairway.
+      </p>
 
-    <div class="hero__actions">
-      <a routerLink="/new-round" class="sr-btn sr-btn--gold">Start a New Round</a>
-      <a routerLink="/dashboard" class="sr-btn sr-btn--ghost hero__ghost">View Dashboard</a>
+      <div class="hero__actions">
+        <a routerLink="/new-round" class="sr-btn sr-btn--gold">Start a New Round</a>
+        <a routerLink="/new-round" class="sr-btn sr-btn--ghost hero__ghost">Start Playing</a>
+      </div>
+
+      <div class="hero__chips">
+        <span class="sr-badge">Deep green</span>
+        <span class="sr-badge">Cream &amp; gold</span>
+        <span class="sr-badge">Built for the back nine</span>
+      </div>
     </div>
+  </section>
 
-    <div class="hero__chips">
-      <span class="sr-badge">Deep green</span>
-      <span class="sr-badge">Cream &amp; gold</span>
-      <span class="sr-badge">Built for the back nine</span>
+  <section class="sr-page sr-container features">
+    <div class="features__grid">
+      @for (feature of features; track feature.title) {
+        <article class="sr-card feature">
+          <span class="feature__pip" aria-hidden="true"></span>
+          <h2 class="feature__title">{{ feature.title }}</h2>
+          <p class="feature__copy">{{ feature.copy }}</p>
+        </article>
+      }
     </div>
-  </div>
-</section>
-
-<section class="sr-page sr-container features">
-  <div class="features__grid">
-    @for (feature of features; track feature.title) {
-      <article class="sr-card feature">
-        <span class="feature__pip" aria-hidden="true"></span>
-        <h2 class="feature__title">{{ feature.title }}</h2>
-        <p class="feature__copy">{{ feature.copy }}</p>
-      </article>
-    }
-  </div>
-</section>
+  </section>
+</div>

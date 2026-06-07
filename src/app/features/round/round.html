@@ -1,32 +1,54 @@
 @if (round(); as r) {
-  <div class="sr-page sr-container round">
-    <app-page-header eyebrow="On the Course" title="Round">
-      <a routerLink="/scorecard" class="sr-btn sr-btn--ghost">View Scorecard</a>
-    </app-page-header>
-
-    <div class="hole-bar">
-      <div class="hole-bar__hole">
-        <span class="hole-bar__label">Hole</span>
-        <span class="hole-bar__num">{{ r.currentHole }}</span>
-        <span class="hole-bar__of">of {{ r.holeCount }}</span>
-      </div>
-      <div class="hole-bar__totals">
-        <div class="hole-bar__total">
-          <span class="hole-bar__label">Total</span>
-          <span class="hole-bar__total-val">{{ totalScore() }}</span>
+  <div class="sr-page sr-container round" [class.round--cinematic]="isDrawing()">
+    <header class="round-head">
+      <div class="round-head__row">
+        <div class="round-head__hole">
+          <span class="round-head__hole-label">Hole</span>
+          <span class="round-head__hole-num">{{ r.currentHole }}</span>
+          <span class="round-head__hole-of">/ {{ r.holeCount }}</span>
         </div>
-        <div class="hole-bar__total">
-          <span class="hole-bar__label">To Par</span>
-          <span class="hole-bar__topar-val">{{ formatToPar(toPar()) }}</span>
+
+        <div class="round-head__totals" aria-label="Round totals">
+          <div class="round-head__total">
+            <span class="round-head__total-label">Total</span>
+            <span class="round-head__total-val">{{ totalScore() }}</span>
+          </div>
+          <div class="round-head__total">
+            <span class="round-head__total-label">To Par</span>
+            <span class="round-head__total-val round-head__total-val--accent">{{ formatToPar(toPar()) }}</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="round-grid">
-      <section class="play-col">
-        @if (currentCard(); as card) {
-          <!-- Drawn card -->
-          <article class="card-display" [attr.data-category]="card.category">
+      <div class="round-head__row round-head__row--meta">
+        <div class="round-head__meta">
+          @if (r.courseName) {
+            <span class="round-head__course">{{ r.courseName }}</span>
+          }
+          <ul class="round-head__team" [attr.aria-label]="r.players.length + ' players'">
+            @for (player of r.players; track player.id) {
+              <li class="round-head__avatar" [attr.title]="player.name">
+                <span aria-hidden="true">{{ initials(player.name) }}</span>
+                <span class="sr-visually-hidden">{{ player.name }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+        <nav class="round-head__links" aria-label="Round links">
+          <a routerLink="/rules" class="round-head__link">Rules</a>
+          <a routerLink="/scorecard" class="round-head__link">Scorecard</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="round-stage">
+      @if (currentCard(); as card) {
+        @if (!isDrawing()) {
+          <article
+            class="card-display"
+            [class.card-display--settled]="skipCardEntrance()"
+            [attr.data-category]="card.category"
+          >
             <header class="card-display__head">
               <span class="sr-badge card-display__cat">{{ card.category }}</span>
               <span class="card-display__pack">Standard Pack</span>
@@ -34,13 +56,46 @@
             <h2 class="card-display__name">{{ card.name }}</h2>
             <p class="card-display__text">{{ card.text }}</p>
             @if (card.flavor) {
-              <p class="card-display__flavor">"{{ card.flavor }}"</p>
+              <p class="card-display__flavor">{{ card.flavor }}</p>
+            }
+            @if (card.helpText) {
+              <p class="card-display__help">{{ card.helpText }}</p>
             }
           </article>
+        }
+      }
+      @if (!currentCard() || isDrawing()) {
+        <section class="draw-stage" aria-label="Ready to draw" [attr.aria-hidden]="isDrawing() ? true : null">
+          <div class="draw-stage__felt">
+            @if (canDraw()) {
+              <button
+                type="button"
+                class="card-back card-back--hero card-back--draw"
+                aria-label="Draw card"
+                [disabled]="isDrawing()"
+                (click)="draw()"
+              >
+                <span class="card-back__motif" aria-hidden="true">SR</span>
+              </button>
+            } @else {
+              <div class="card-back card-back--hero">
+                <span class="card-back__motif">SR</span>
+              </div>
+            }
+          </div>
+        </section>
+      }
+    </main>
 
-          <!-- Score entry / summary -->
-          @if (editing()) {
-            <section class="sr-card entry" aria-label="Enter par and score">
+    <footer class="round-dock">
+      @if (isDrawing()) {
+        <section class="round-dock__panel draw-dock draw-dock--busy" aria-hidden="true">
+          <p class="draw-dock__copy">Dealing…</p>
+        </section>
+      } @else if (currentCard()) {
+        @if (editing()) {
+          <section class="round-dock__panel entry" aria-label="Enter par and score">
+            <div class="entry__row">
               <div class="entry__group">
                 <p class="entry__label">Par</p>
                 <div class="par-options" role="group" aria-label="Par">
@@ -59,7 +114,7 @@
               </div>
 
               <div class="entry__group">
-                <label class="entry__label" for="score-input">Team Score</label>
+                <label class="entry__label" for="score-input">Score</label>
                 <div class="stepper">
                   <button
                     type="button"
@@ -88,137 +143,195 @@
                   </button>
                 </div>
               </div>
-
-              @if (resultPreview(); as preview) {
-                <p class="entry__preview" [attr.data-tone]="tone(preview.scoreToPar)">
-                  {{ preview.resultLabel }} ({{ formatToPar(preview.scoreToPar) }})
-                </p>
-              }
-
-              <button
-                type="button"
-                class="sr-btn sr-btn--primary sr-btn--block"
-                [disabled]="!canSave()"
-                (click)="saveScore()"
-              >
-                Lock It In
-              </button>
-            </section>
-          } @else if (currentHoleResult(); as hole) {
-            <section class="sr-card summary" aria-label="Hole result">
-              <div class="summary__scores">
-                <div class="summary__stat">
-                  <span class="summary__stat-label">Par</span>
-                  <span class="summary__stat-val">{{ hole.par }}</span>
-                </div>
-                <div class="summary__stat">
-                  <span class="summary__stat-label">Score</span>
-                  <span class="summary__stat-val">{{ hole.score }}</span>
-                </div>
-                @if (hole.resultLabel; as label) {
-                  <div class="summary__result" [attr.data-tone]="tone(hole.scoreToPar ?? 0)">
-                    <span class="summary__result-label">{{ label }}</span>
-                    <span class="summary__result-rel">{{ formatToPar(hole.scoreToPar ?? 0) }}</span>
-                  </div>
-                }
-              </div>
-
-              <div class="summary__actions">
-                <button type="button" class="sr-btn sr-btn--ghost" (click)="edit()">Edit</button>
-                @if (isFinalHole()) {
-                  <button
-                    type="button"
-                    class="sr-btn sr-btn--gold"
-                    [disabled]="!canAdvance()"
-                    (click)="finish()"
-                  >
-                    Finish Round
-                  </button>
-                } @else {
-                  <button
-                    type="button"
-                    class="sr-btn sr-btn--primary"
-                    [disabled]="!canAdvance()"
-                    (click)="next()"
-                  >
-                    Proceed to Next Hole
-                  </button>
-                }
-              </div>
-            </section>
-          }
-        } @else {
-          <!-- Draw the card -->
-          <section class="sr-card table-felt" aria-label="Draw a card">
-            <p class="felt__eyebrow">Hole {{ r.currentHole }} of {{ r.holeCount }}</p>
-            <div class="card-back" [class.is-dealing]="dealing()" aria-hidden="true">
-              <span class="card-back__motif">SR</span>
             </div>
-            @if (canDraw()) {
-              <h2 class="felt__title">Draw the Damage</h2>
-              <p class="felt__copy">
-                One card per hole. No repeats. Follow it, or face the consequences.
-              </p>
-              <button
-                type="button"
-                class="sr-btn sr-btn--gold"
-                [disabled]="dealing()"
-                (click)="draw()"
-              >
-                {{ dealing() ? 'Dealing…' : 'Draw Card' }}
-              </button>
-            } @else {
-              <h2 class="felt__title">The Deck's Tapped Out</h2>
-              <p class="felt__copy">
-                Every card in the Standard Pack has been dealt this round. Finish strong.
+
+            @if (resultPreview(); as preview) {
+              <p class="entry__preview" [attr.data-tone]="tone(preview.scoreToPar)">
+                {{ preview.resultLabel }} ({{ formatToPar(preview.scoreToPar) }})
               </p>
             }
+
+            <button
+              type="button"
+              class="sr-btn sr-btn--primary sr-btn--block round-dock__cta"
+              [disabled]="!canSave()"
+              (click)="saveScore()"
+            >
+              Lock It In
+            </button>
+          </section>
+        } @else if (currentHoleResult(); as hole) {
+          <section class="round-dock__panel hole-result" aria-label="Hole result">
+            <div class="hole-result__stats">
+              <div class="hole-result__stat">
+                <span class="hole-result__label">Par</span>
+                <span class="hole-result__val">{{ hole.par }}</span>
+              </div>
+              <div class="hole-result__stat">
+                <span class="hole-result__label">Score</span>
+                <span class="hole-result__val">{{ hole.score }}</span>
+              </div>
+              @if (hole.resultLabel; as label) {
+                <div class="hole-result__badge" [attr.data-tone]="tone(hole.scoreToPar ?? 0)">
+                  <span class="hole-result__badge-label">{{ label }}</span>
+                  <span class="hole-result__badge-rel">{{ formatToPar(hole.scoreToPar ?? 0) }}</span>
+                </div>
+              }
+            </div>
+
+            @if (isFinalHole()) {
+              <button
+                type="button"
+                class="sr-btn sr-btn--gold sr-btn--block round-dock__cta"
+                [disabled]="!canAdvance()"
+                (click)="finish()"
+              >
+                Finish Round
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="sr-btn sr-btn--primary sr-btn--block round-dock__cta"
+                [disabled]="!canAdvance()"
+                (click)="next()"
+              >
+                Next Hole
+              </button>
+            }
+
+            <button type="button" class="round-dock__text-btn" (click)="edit()">Edit score</button>
           </section>
         }
-
-        @if (r.currentHole > 1) {
-          <button type="button" class="undo-link" (click)="requestUndo()">
-            ← Previous Hole
-          </button>
-        }
-      </section>
-
-      <!-- Players -->
-      <aside class="sr-card players" aria-labelledby="players-heading">
-        <h2 id="players-heading" class="players__title">In the Group</h2>
-        <p class="players__count">{{ r.players.length }} players</p>
-        <ul class="players__list">
-          @for (player of r.players; track player.id) {
-            <li class="players__row">
-              <span class="players__chip" aria-hidden="true">{{ initials(player.name) }}</span>
-              <span class="players__name">{{ player.name }}</span>
-            </li>
+      } @else {
+        <section class="round-dock__panel draw-dock" aria-label="Draw a card">
+          @if (canDraw()) {
+            <p class="draw-dock__copy">One card per hole. No repeats.</p>
+            <button
+              type="button"
+              class="sr-btn sr-btn--gold sr-btn--block round-dock__cta"
+              [disabled]="isDrawing()"
+              (click)="draw()"
+            >
+              {{ isDrawing() ? 'Dealing…' : 'Draw Card' }}
+            </button>
+          } @else {
+            <p class="draw-dock__copy">Every card in the pack has been dealt this round.</p>
           }
-        </ul>
-      </aside>
-    </div>
+        </section>
+      }
+
+      @if (!isDrawing()) {
+        <nav class="round-dock__nav" aria-label="Round actions">
+          @if (r.currentHole > 1) {
+            <button type="button" class="round-dock__nav-link" (click)="previousHole()">
+              ← Previous Hole
+            </button>
+          }
+          <button type="button" class="round-dock__nav-link round-dock__nav-link--end" (click)="requestEnd()">
+            End Round
+          </button>
+        </nav>
+      }
+    </footer>
   </div>
 
-  @if (confirmingUndo()) {
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="undo-title">
-      <div class="modal__backdrop" (click)="cancelUndo()"></div>
+  @if (drawCinematic(); as phase) {
+    <div
+      class="draw-cinematic"
+      [class.draw-cinematic--hold]="cinematicRevealed()"
+      [attr.data-phase]="phase"
+      [attr.data-category]="cinematicCard()?.category"
+      [attr.role]="cinematicRevealed() ? 'dialog' : 'presentation'"
+      [attr.aria-modal]="cinematicRevealed() ? 'true' : null"
+      [attr.aria-labelledby]="cinematicRevealed() && cinematicCard() ? 'cine-card-name' : null"
+      [attr.aria-hidden]="cinematicRevealed() ? null : 'true'"
+    >
+      <div class="draw-cinematic__veil"></div>
+      <div class="draw-cinematic__vignette"></div>
+      <div class="draw-cinematic__rays" aria-hidden="true"></div>
+
+      <div class="draw-cinematic__particles" aria-hidden="true">
+        @for (i of sparkles; track i) {
+          <span class="draw-cinematic__spark" [style.--spark-i]="i"></span>
+        }
+      </div>
+
+      <p class="draw-cinematic__kicker">Hole {{ r.currentHole }}</p>
+      <p class="draw-cinematic__status">
+        @switch (phase) {
+          @case ('charge') { Shuffling the deck… }
+          @case ('shuffle') { Cutting the cards… }
+          @case ('flip') {
+            {{ cinematicRevealed() ? 'The card is dealt' : 'Your fate awaits…' }}
+          }
+          @case ('exit') { The card is dealt }
+        }
+      </p>
+
+      <div class="draw-cinematic__stage">
+        <div class="draw-cinematic__ghost draw-cinematic__ghost--left" aria-hidden="true"></div>
+        <div class="draw-cinematic__ghost draw-cinematic__ghost--right" aria-hidden="true"></div>
+
+        <div class="draw-cinematic__card" [attr.data-category]="cinematicCard()?.category">
+          <div class="draw-cinematic__face draw-cinematic__face--back">
+            <span class="draw-cinematic__crest">SR</span>
+            <span class="draw-cinematic__back-ring" aria-hidden="true"></span>
+          </div>
+
+          @if (cinematicCard(); as card) {
+            <div class="draw-cinematic__face draw-cinematic__face--front">
+              <span class="draw-cinematic__cat">{{ card.category }}</span>
+              <h2 id="cine-card-name" class="draw-cinematic__name">{{ card.name }}</h2>
+              <p class="draw-cinematic__rule">{{ card.text }}</p>
+              @if (card.flavor) {
+                <p class="draw-cinematic__flavor">{{ card.flavor }}</p>
+              }
+              @if (card.helpText) {
+                <p class="draw-cinematic__help">{{ card.helpText }}</p>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="draw-cinematic__burst" aria-hidden="true"></div>
+      </div>
+
+      @if (cinematicRevealed() && cinematicCard()) {
+        <button
+          type="button"
+          class="sr-btn sr-btn--gold draw-cinematic__cta"
+          (click)="dismissCinematic()"
+        >
+          Continue
+        </button>
+      }
+    </div>
+  }
+
+  @if (confirmingEnd()) {
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="end-title">
+      <div class="modal__backdrop" (click)="cancelEnd()"></div>
       <div class="modal__panel sr-card">
-        <h2 id="undo-title" class="modal__title">Go back a hole?</h2>
+        <h2 id="end-title" class="modal__title">End this round?</h2>
         <p class="modal__copy">
-          Scramble Roulette is meant to be played one hole at a time. Going back should only
-          be used for mistakes, not because you hate the card. Continue?
+          You've played {{ holesPlayed() }} of {{ r.holeCount }} holes.
+          Save to keep your cards and scores in clubhouse history, or discard to walk away clean.
         </p>
-        <div class="modal__actions">
-          <button type="button" class="sr-btn sr-btn--ghost" (click)="cancelUndo()">
-            Stay Here
+        <div class="modal__actions modal__actions--stack">
+          <button type="button" class="sr-btn sr-btn--primary sr-btn--block" (click)="saveEnd()">
+            Save to History
           </button>
-          <button type="button" class="sr-btn sr-btn--primary" (click)="confirmUndo()">
-            Go Back Anyway
+          <button type="button" class="sr-btn sr-btn--danger sr-btn--block" (click)="discardEnd()">
+            Discard Round
+          </button>
+          <button type="button" class="sr-btn sr-btn--ghost sr-btn--block" (click)="cancelEnd()">
+            Keep Playing
           </button>
         </div>
       </div>
     </div>
   }
+
 } @else {
   <div class="sr-page sr-container round">
     <section class="sr-card sr-empty">

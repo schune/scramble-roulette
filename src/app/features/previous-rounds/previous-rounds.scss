@@ -2,6 +2,40 @@
   display: block;
 }
 
+/* ---------- Career stats ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  margin-bottom: var(--sr-gap);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 0.75rem;
+}
+
+.stat__value {
+  font-family: var(--sr-font-display);
+  font-size: clamp(1.65rem, 6vw, 2.25rem);
+  font-weight: 700;
+  color: var(--sr-green-800);
+  line-height: 1;
+}
+
+.stat__label {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--sr-ink);
+}
+
+.stat__hint {
+  font-size: 0.72rem;
+  color: var(--sr-muted);
+}
+
 .round-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -29,10 +63,21 @@
   color: var(--sr-green-800);
 }
 
+.round-card__course {
+  margin: 0.1rem 0 0;
+  font-weight: 600;
+  color: var(--sr-green-700);
+  font-size: 0.9rem;
+}
+
 .round-card__players {
   margin: 0.15rem 0 0;
   color: var(--sr-muted);
   font-size: 0.92rem;
+}
+
+.round-card__badge {
+  margin-top: 0.45rem;
 }
 
 .round-card__remove {
@@ -77,7 +122,7 @@
   color: var(--sr-gold-700);
 }
 
-.round-card__cards summary {
+.round-card__holes summary {
   cursor: pointer;
   font-weight: 600;
   color: var(--sr-green-700);
@@ -87,23 +132,110 @@
   margin-top: auto;
 }
 
-.card-chips {
+.hole-log {
   list-style: none;
   margin: 0.85rem 0 0;
   padding: 0;
   display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.hole-log__item {
+  border-radius: var(--sr-radius-sm);
+  background: var(--sr-surface-alt);
+  border: 1px solid var(--sr-cream-300);
+  border-left: 3px solid var(--hole-accent, var(--sr-green-600));
+  overflow: hidden;
+}
+
+.hole-log__item[data-category='Helps'] {
+  --hole-accent: var(--sr-green-600);
+}
+.hole-log__item[data-category='Hurts'] {
+  --hole-accent: #c0492f;
+}
+.hole-log__item[data-category='Neutral'] {
+  --hole-accent: #2f7fb0;
+}
+
+.hole-log__head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem 0.5rem;
+}
+
+.hole-log__num {
+  font-weight: 700;
+  color: var(--sr-green-800);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.hole-log__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.hole-log__title {
+  display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.4rem;
 }
 
-.card-chip {
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  background: var(--sr-cream-200);
-  border: 1px solid var(--sr-cream-300);
-  color: var(--sr-green-800);
-  font-size: 0.8rem;
+.hole-log__card {
+  font-weight: 600;
+  color: var(--sr-ink);
+  font-size: 0.92rem;
+}
+
+.hole-log__cat::before {
+  content: '·';
+  margin-inline: 0.35rem;
+  color: var(--sr-cream-300);
+}
+
+.hole-log__cat {
+  font-size: 0.78rem;
   font-weight: 500;
+  color: var(--sr-muted);
+}
+
+.hole-log__meta {
+  color: var(--sr-muted);
+  font-size: 0.8rem;
+}
+
+.hole-log__prompt {
+  margin-inline: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-top: 1px solid var(--sr-cream-300);
+}
+
+.hole-log__text {
+  margin: 0.55rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--sr-ink);
+}
+
+.hole-log__flavor {
+  margin: 0.45rem 0 0;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--sr-muted);
+}
+
+.hole-log__help {
+  margin: 0.4rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--sr-muted) 55%, var(--sr-cream-300));
 }
 
 /* ---------- Delete confirmation modal ---------- */

@@ -2,6 +2,16 @@
   display: block;
 }
 
+/* Mobile: landing hidden — home redirects to dashboard */
+@media (max-width: 860px) {
+  .home-landing {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Desktop landing
+   ============================================================ */
 .hero {
   position: relative;
   overflow: hidden;
@@ -77,15 +87,10 @@
   border-color: rgba(250, 246, 234, 0.22);
 }
 
-/* ---------- Features ---------- */
 .features__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: var(--sr-gap);
-}
-
-.feature {
-  position: relative;
 }
 
 .feature__pip {

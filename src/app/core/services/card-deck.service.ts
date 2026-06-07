@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Card, CardPack } from '../models';
+import { Card, CardPack, Player } from '../models';
+
+/** Substituted with a randomly chosen teammate when the card is drawn. */
+export const CARD_PLAYER_PLACEHOLDER = '{{player}}';
+
+/** Shown beneath cards where a teammate was picked at random. */
+export const RANDOM_PLAYER_HELP_TEXT = 'This player was chosen at random.';
 import { STANDARD_PACK, STANDARD_PACK_ID } from '../data/standard-pack';
 
 /**
@@ -59,6 +65,22 @@ export class CardDeckService {
     }
     const index = this.randomInt(remaining.length);
     return remaining[index];
+  }
+
+  /**
+   * Replace `{{player}}` in a card's text with a randomly chosen teammate.
+   * The resolved card is stored on the hole so history stays consistent.
+   */
+  personalize(card: Card, players: readonly Player[]): Card {
+    if (!card.text.includes(CARD_PLAYER_PLACEHOLDER) || players.length === 0) {
+      return card;
+    }
+    const player = players[this.randomInt(players.length)];
+    return {
+      ...card,
+      text: card.text.replaceAll(CARD_PLAYER_PLACEHOLDER, player.name),
+      helpText: RANDOM_PLAYER_HELP_TEXT,
+    };
   }
 
   /** Crypto-backed when available, falling back to Math.random. */

@@ -4,7 +4,7 @@
  */
 
 /** Thematic grouping for a card. Purely cosmetic — all cards are equal rarity. */
-export type CardCategory = 'Punishment' | 'Drinking' | 'Strategy' | 'Team Chaos' | 'Random';
+export type CardCategory = 'Helps' | 'Hurts' | 'Neutral';
 
 /**
  * A single party card.
@@ -18,6 +18,8 @@ export interface Card {
   text: string;
   /** Optional flavor line shown beneath the instruction. */
   flavor?: string;
+  /** Optional muted help line, e.g. when a teammate was chosen at random. */
+  helpText?: string;
   /** Id of the pack this card belongs to. */
   packId: string;
 }

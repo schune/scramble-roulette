@@ -2,9 +2,70 @@
   display: block;
 }
 
+.rules {
+  position: relative;
+}
+
+.rules__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--sr-muted);
+  font-size: 1.65rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.rules__close:hover {
+  color: var(--sr-green-800);
+  background: var(--sr-cream-200);
+}
+
 .rules__section-title {
   font-size: clamp(1.5rem, 4vw, 2rem);
   margin: 0 0 1rem;
+}
+
+/* ---------- Official rules ---------- */
+.official {
+  margin-bottom: clamp(2rem, 5vw, 3rem);
+}
+
+.official-rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.official-rule {
+  border-top: 4px solid var(--sr-green-700);
+}
+
+.official-rule__title {
+  font-family: var(--sr-font-display);
+  font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+  margin: 0 0 0.5rem;
+  color: var(--sr-green-800);
+}
+
+.official-rule__copy {
+  margin: 0;
+  color: var(--sr-ink);
+  line-height: 1.55;
 }
 
 /* ---------- Steps ---------- */
@@ -42,31 +103,6 @@
 }
 
 .step__copy {
-  margin: 0;
-  color: var(--sr-muted);
-}
-
-/* ---------- Warnings ---------- */
-.warnings {
-  margin-bottom: var(--sr-gap);
-}
-
-.warnings__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--sr-gap);
-}
-
-.warning {
-  border-left: 4px solid var(--sr-gold-500);
-}
-
-.warning__title {
-  font-size: 1.2rem;
-  margin: 0 0 0.35rem;
-}
-
-.warning__copy {
   margin: 0;
   color: var(--sr-muted);
 }

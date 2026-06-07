@@ -39,6 +39,12 @@ export class Scorecard {
     return this.roundState.activeRound() ?? this.storage.getRoundHistory()[0] ?? null;
   });
 
+  protected readonly subtitle = computed(
+    () =>
+      this.round()?.courseName ??
+      'Every hole, every stroke, and the card that caused the chaos.',
+  );
+
   protected readonly isComplete = computed(() => this.round()?.status === 'complete');
   protected readonly holes = computed(() => this.round()?.holes ?? []);
   protected readonly players = computed(() => this.round()?.players ?? []);
