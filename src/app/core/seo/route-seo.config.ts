@@ -1,4 +1,5 @@
 import { DEFAULT_DESCRIPTION, DEFAULT_KEYWORDS, DEFAULT_TITLE, RouteSeo, SITE_NAME, SITE_URL } from './site-seo.constants';
+import { RULES_FAQ_SCHEMA } from './rules-faq.schema';
 
 const brand = SITE_NAME;
 
@@ -42,6 +43,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
     keywords:
       'scramble golf rules, golf scramble rules, scramble roulette rules, how to play scramble golf, golf card game rules',
     path: '/rules',
+    structuredData: RULES_FAQ_SCHEMA,
   },
   profile: {
     title: `Golf Profile & Stats — ${brand}`,

@@ -35,9 +35,14 @@ export class Scorecard {
       if (fromHistory) {
         return fromHistory;
       }
+      return null;
     }
     return this.roundState.activeRound() ?? this.storage.getRoundHistory()[0] ?? null;
   });
+
+  protected readonly missingRequestedRound = computed(
+    () => !!this.requestedId() && !this.round(),
+  );
 
   protected readonly subtitle = computed(
     () =>

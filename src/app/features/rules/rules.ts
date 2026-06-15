@@ -1,7 +1,6 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { SeoService } from '../../core/services/seo.service';
 import { PageHeader } from '../../shared/page-header/page-header';
 
 interface Rule {
@@ -16,25 +15,9 @@ interface Rule {
   styleUrl: './rules.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Rules implements OnInit {
+export class Rules {
   private readonly location = inject(Location);
   private readonly router = inject(Router);
-  private readonly seo = inject(SeoService);
-
-  ngOnInit(): void {
-    this.seo.applyRouteStructuredData({
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: this.officialRules.map((rule) => ({
-        '@type': 'Question',
-        name: rule.title,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: rule.copy,
-        },
-      })),
-    });
-  }
 
   protected close(): void {
     if (typeof history !== 'undefined' && history.length > 1) {

@@ -23,10 +23,10 @@ export class PreviousRounds {
   private readonly profile = inject(ProfileService);
 
   protected readonly rounds = signal<Round[]>(this.storage.getRoundHistory());
-  private readonly profileStats = this.profile.getStats();
 
   protected readonly stats = computed<StatCard[]>(() => {
-    const s = this.profileStats;
+    this.rounds();
+    const s = this.profile.getStats();
     return [
       { label: 'Rounds Played', value: s.roundsPlayed ? `${s.roundsPlayed}` : '—', hint: 'Career total' },
       {

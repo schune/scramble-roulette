@@ -161,7 +161,10 @@
   }
 
   .round-stage {
-    justify-content: center;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding-block: 0.35rem;
   }
 

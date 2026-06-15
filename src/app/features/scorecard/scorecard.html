@@ -12,7 +12,17 @@
     }
   </app-page-header>
 
-  @if (round(); as r) {
+  @if (missingRequestedRound()) {
+    <section class="sr-card sr-empty">
+      <div class="sr-empty__crest" aria-hidden="true">SR</div>
+      <p class="sr-empty__title">Round not found</p>
+      <p class="sr-lead">That scorecard may have been deleted or the link is out of date.</p>
+      <div class="sr-empty__actions">
+        <a routerLink="/previous-rounds" class="sr-btn sr-btn--primary">Previous Rounds</a>
+        <a routerLink="/new-round" class="sr-btn sr-btn--ghost">Play</a>
+      </div>
+    </section>
+  } @else if (round(); as r) {
     @if (isComplete()) {
       <!-- Share-style summary card -->
       <section class="sr-card share-card" aria-label="Round summary">
