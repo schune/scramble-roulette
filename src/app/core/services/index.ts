@@ -5,3 +5,4 @@ export * from './score.service';
 export * from './profile.service';
 export * from './sound.service';
 export * from './social.service';
+export * from './seo.service';

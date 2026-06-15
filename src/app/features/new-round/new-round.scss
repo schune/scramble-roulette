@@ -119,74 +119,133 @@
   padding: clamp(1.25rem, 5vw, 2rem) clamp(1rem, 4vw, 1.5rem);
   border-radius: var(--sr-radius-lg);
   background:
-    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(212, 175, 95, 0.2), transparent 65%),
+    radial-gradient(ellipse 85% 55% at 50% 18%, rgba(212, 175, 95, 0.22), transparent 62%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(212, 175, 95, 0.14), transparent 65%),
     linear-gradient(165deg, var(--sr-green-700), var(--sr-green-900));
-  border: 1px solid var(--sr-green-900);
+  border: 1px solid color-mix(in srgb, var(--sr-gold-500) 28%, var(--sr-green-900));
   color: var(--sr-cream-100);
   box-shadow: var(--sr-shadow-lg);
+  overflow: hidden;
 }
 
-.play-landing__scene {
+.play-landing__hero {
   position: relative;
-  width: min(100%, 280px);
-  height: 140px;
-  margin-bottom: 1.25rem;
+  width: min(100%, 360px);
+  margin: -0.25rem 0 0.5rem;
 }
 
-.play-landing__fairway {
+.play-landing__hero::after {
+  content: '';
   position: absolute;
-  inset: auto 0 0;
-  height: 72%;
-  border-radius: 50% 50% 12px 12px / 40% 40% 12px 12px;
-  background: linear-gradient(180deg, var(--sr-green-600), var(--sr-green-800));
-  box-shadow: inset 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.play-landing__flag {
-  position: absolute;
-  left: 58%;
-  bottom: 28%;
-  width: 56px;
-  height: 72px;
-}
-
-.play-landing__flag-pole {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 3px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--sr-cream-200), var(--sr-cream-100));
-  border-radius: 2px;
-}
-
-.play-landing__flag-cloth {
-  position: absolute;
-  left: 4px;
-  top: 4px;
-  width: 28px;
-  height: 18px;
-  background: var(--sr-danger);
-  border-radius: 2px 4px 4px 2px;
-  box-shadow: var(--sr-shadow-sm);
-}
-
-.play-landing__ball {
-  position: absolute;
-  left: 22%;
-  bottom: 18%;
-  width: 22px;
-  height: 22px;
+  inset: 10% 8% 18%;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 25%, #fff, var(--sr-cream-200));
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  background: radial-gradient(circle, rgba(212, 175, 95, 0.18), transparent 70%);
+  pointer-events: none;
+  animation: play-hero-glow 4.5s ease-in-out infinite;
+}
+
+.play-landing__art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.play-landing__card--back-left {
+  transform-origin: 114px 108px;
+  animation: play-card-left 5s ease-in-out infinite;
+}
+
+.play-landing__card--back-right {
+  transform-origin: 246px 108px;
+  animation: play-card-right 5s ease-in-out infinite;
+}
+
+.play-landing__card--hero {
+  transform-origin: 180px 114px;
+  animation: play-card-hero 4.5s ease-in-out infinite;
+}
+
+.play-landing__ball-accent {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.28));
+  animation: play-ball-float 4.5s ease-in-out infinite;
+}
+
+@keyframes play-hero-glow {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes play-card-hero {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-0.6deg);
+  }
+}
+
+@keyframes play-card-left {
+  0%,
+  100% {
+    transform: rotate(-14deg) translateY(2px);
+  }
+  50% {
+    transform: rotate(-12deg) translateY(-2px);
+  }
+}
+
+@keyframes play-card-right {
+  0%,
+  100% {
+    transform: rotate(14deg) translateY(2px);
+  }
+  50% {
+    transform: rotate(12deg) translateY(-2px);
+  }
+}
+
+@keyframes play-ball-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-landing__hero::after,
+  .play-landing__card--back-left,
+  .play-landing__card--back-right,
+  .play-landing__card--hero,
+  .play-landing__ball-accent {
+    animation: none;
+  }
 }
 
 .play-landing__title {
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.25rem;
   font-family: var(--sr-font-display);
-  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-size: clamp(1.75rem, 5.5vw, 2.35rem);
   color: var(--sr-cream-50);
+}
+
+.play-landing__tagline {
+  margin: 0 0 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sr-gold-300);
 }
 
 .play-landing__copy {
@@ -199,6 +258,38 @@
 
 .play-landing__cta {
   max-width: 280px;
+}
+
+.play-seo {
+  margin-top: var(--sr-gap);
+}
+
+.play-seo__title {
+  margin: 0 0 0.75rem;
+  font-family: var(--sr-font-display);
+  font-size: 1.35rem;
+  color: var(--sr-green-900);
+}
+
+.play-seo__copy {
+  margin: 0 0 0.85rem;
+  color: var(--sr-ink-muted);
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
+.play-seo__copy:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.play-seo__links {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.play-seo__links a {
+  color: var(--sr-green-700);
 }
 
 /* ---------- Tee-off cinematic ---------- */

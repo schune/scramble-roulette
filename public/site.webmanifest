@@ -1,0 +1,19 @@
+{
+  "name": "Scramble Roulette — Golf Scramble Card Game",
+  "short_name": "Scramble Roulette",
+  "description": "A free golf scramble game with card-driven rules for every hole.",
+  "start_url": "/new-round",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0B3D2E",
+  "theme_color": "#0B3D2E",
+  "lang": "en-US",
+  "categories": ["games", "sports"],
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

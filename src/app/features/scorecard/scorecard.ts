@@ -42,7 +42,7 @@ export class Scorecard {
   protected readonly subtitle = computed(
     () =>
       this.round()?.courseName ??
-      'Every hole, every stroke, and the card that caused the chaos.',
+      'Every golf scramble hole — score, par, to par, and the card that changed the round.',
   );
 
   protected readonly isComplete = computed(() => this.round()?.status === 'complete');

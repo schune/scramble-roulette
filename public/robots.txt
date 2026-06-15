@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /round
+Disallow: /scorecard
+
+Sitemap: https://scrambleroulette.com/sitemap.xml

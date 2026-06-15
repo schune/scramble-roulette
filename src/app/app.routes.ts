@@ -13,33 +13,33 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    title: 'Profile · Scramble Roulette',
+    title: 'Golf Profile & Stats · Scramble Roulette',
     loadComponent: () => import('./features/profile/profile').then((m) => m.Profile),
   },
   {
     path: 'new-round',
-    title: 'New Round · Scramble Roulette',
+    title: 'Scramble Roulette — Free Golf Scramble Card Game',
     loadComponent: () => import('./features/new-round/new-round').then((m) => m.NewRound),
   },
   {
     path: 'round',
-    title: 'Round · Scramble Roulette',
+    title: 'Live Golf Scramble Round · Scramble Roulette',
     canActivate: [activeRoundGuard],
     loadComponent: () => import('./features/round/round').then((m) => m.Round),
   },
   {
     path: 'rules',
-    title: 'Official Rules · Scramble Roulette',
+    title: 'Official Golf Scramble Rules · Scramble Roulette',
     loadComponent: () => import('./features/rules/rules').then((m) => m.Rules),
   },
   {
     path: 'scorecard',
-    title: 'Scorecard · Scramble Roulette',
+    title: 'Golf Scramble Scorecard · Scramble Roulette',
     loadComponent: () => import('./features/scorecard/scorecard').then((m) => m.Scorecard),
   },
   {
     path: 'previous-rounds',
-    title: 'Previous Rounds · Scramble Roulette',
+    title: 'Golf Scramble Round History · Scramble Roulette',
     loadComponent: () =>
       import('./features/previous-rounds/previous-rounds').then((m) => m.PreviousRounds),
   },

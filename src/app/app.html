@@ -12,9 +12,29 @@
   <app-tab-bar />
 
   <footer class="app-footer">
-    <div class="sr-container app-footer__inner">
-      <span>Scramble Roulette</span>
-      <span class="app-footer__note">A loving parody. Not affiliated with any actual golf club.</span>
+    <div class="sr-container app-footer__stack">
+      <div class="app-footer__brand">
+        <strong class="app-footer__name">Scramble Roulette</strong>
+        <p class="app-footer__pitch">
+          The free golf scramble card game for your foursome. Draw a card before every tee shot,
+          follow scramble format golf rules hole by hole, and track your scorecard — all from one phone
+          on the course.
+        </p>
+      </div>
+
+      <nav class="app-footer__nav" aria-label="Site sections">
+        <a routerLink="/new-round">Play a Golf Scramble</a>
+        <a routerLink="/rules">Scramble Rules</a>
+        <a routerLink="/previous-rounds">Round History</a>
+        <a routerLink="/profile">Profile</a>
+      </nav>
+
+      <div class="app-footer__meta">
+        <span class="app-footer__note">
+          Built for scramble golf outings with friends.
+        </span>
+        <span class="app-footer__domain">scrambleroulette.com</span>
+      </div>
     </div>
   </footer>
 </div>

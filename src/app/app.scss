@@ -52,11 +52,49 @@
   background: var(--sr-green-900);
   color: var(--sr-cream-200);
   border-top: 3px solid var(--sr-gold-500);
-  padding-block: 1.5rem;
+  padding-block: 2rem;
   flex: none;
 }
 
-.app-footer__inner {
+.app-footer__stack {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.app-footer__name {
+  display: block;
+  font-family: var(--sr-font-display);
+  font-size: 1.15rem;
+  color: var(--sr-cream-50);
+  margin-bottom: 0.35rem;
+}
+
+.app-footer__pitch {
+  margin: 0;
+  max-width: 42rem;
+  line-height: 1.55;
+  color: var(--sr-cream-200);
+  font-size: 0.9rem;
+}
+
+.app-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+
+.app-footer__nav a {
+  color: var(--sr-gold-300);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.app-footer__nav a:hover {
+  color: var(--sr-gold-500);
+}
+
+.app-footer__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -67,6 +105,12 @@
 
 .app-footer__note {
   color: var(--sr-gold-300);
+}
+
+.app-footer__domain {
+  color: var(--sr-cream-200);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 /* ---------- Mobile app shell ---------- */
