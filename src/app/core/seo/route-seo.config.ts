@@ -5,19 +5,19 @@ const brand = SITE_NAME;
 
 /** SEO metadata keyed by route path segment (without leading slash). */
 export const ROUTE_SEO: Record<string, RouteSeo> = {
-  'new-round': {
+  '': {
     title: `${brand} — Free Golf Scramble Card Game`,
     description:
       'Start a golf scramble round in seconds. Add your foursome, draw a card before every tee shot, ' +
       'and let Scramble Roulette decide the rules for each hole of your scramble format golf outing.',
     keywords:
       'scramble golf game, golf scramble, scramble roulette, golf card game, scramble format golf, golf foursome, free golf game',
-    path: '/new-round',
+    path: '/',
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
       name: brand,
-      url: `${SITE_URL}/new-round`,
+      url: SITE_URL,
       applicationCategory: 'GameApplication',
       operatingSystem: 'Web',
       browserRequirements: 'Requires JavaScript',
@@ -82,8 +82,12 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
 
 export function seoForPath(urlPath: string): RouteSeo {
   const normalized = urlPath.split('?')[0];
-  const segment = normalized.replace(/^\//, '') || 'new-round';
-  const canonicalPath = segment === '' ? '/new-round' : `/${segment}`;
+  const segment = normalized.replace(/^\//, '');
+  const canonicalPath = segment === '' ? '/' : `/${segment}`;
+
+  if (segment === 'new-round' || segment === 'dashboard') {
+    return ROUTE_SEO[''];
+  }
 
   return (
     ROUTE_SEO[segment] ?? {

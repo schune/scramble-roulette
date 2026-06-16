@@ -2,7 +2,7 @@
   <div class="nav__inner sr-container">
     <a
       class="brand brand--mobile"
-      routerLink="/new-round"
+      routerLink="/"
       (click)="closeMenu()"
       aria-label="Scramble Roulette play"
     >
@@ -42,6 +42,7 @@
             <a
               [routerLink]="link.path"
               routerLinkActive="is-active"
+              [routerLinkActiveOptions]="{ exact: link.path === '/' }"
               class="nav__link"
               (click)="closeMenu()"
             >
@@ -75,7 +76,7 @@
             </svg>
           }
         </button>
-        <a routerLink="/new-round" class="sr-btn sr-btn--gold nav__cta" (click)="closeMenu()">
+        <a routerLink="/" class="sr-btn sr-btn--gold nav__cta" (click)="closeMenu()">
           New Round
         </a>
       </div>

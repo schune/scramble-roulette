@@ -21,7 +21,7 @@ export class Navbar {
   protected readonly muted = this.sound.muted;
 
   protected readonly links: NavLink[] = [
-    { label: 'Play', path: '/new-round' },
+    { label: 'Play', path: '/' },
     { label: 'History', path: '/previous-rounds' },
     { label: 'Official Rules', path: '/rules' },
     { label: 'Profile', path: '/profile' },

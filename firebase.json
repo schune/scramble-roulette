@@ -22,6 +22,18 @@
         ]
       }
     ],
+    "redirects": [
+      {
+        "source": "/new-round",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/dashboard",
+        "destination": "/",
+        "type": 301
+      }
+    ],
     "rewrites": [
       {
         "source": "**",

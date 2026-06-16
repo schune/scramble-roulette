@@ -21,7 +21,7 @@ interface TabItem {
 export class TabBar {
   protected readonly tabs: TabItem[] = [
     { label: 'History', path: '/previous-rounds', icon: '☰' },
-    { label: 'Play', path: '/new-round', icon: '⛳', primary: true },
+    { label: 'Play', path: '/', icon: '⛳', primary: true },
     { label: 'Profile', path: '/profile', icon: '◎' },
   ];
 }

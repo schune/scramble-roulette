@@ -24,7 +24,7 @@ export class Rules {
       this.location.back();
       return;
     }
-    void this.router.navigate(['/new-round']);
+    void this.router.navigate(['/']);
   }
 
   protected readonly officialRules: Rule[] = [

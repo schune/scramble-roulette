@@ -243,7 +243,7 @@ export class Round {
   protected discardEnd(): void {
     this.confirmingEnd.set(false);
     this.roundState.endRound(false);
-    void this.router.navigate(['/new-round']);
+    void this.router.navigate(['/']);
   }
 
   protected holesPlayed(): number {

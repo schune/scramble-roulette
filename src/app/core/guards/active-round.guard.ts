@@ -14,5 +14,5 @@ export const activeRoundGuard: CanActivateFn = () => {
   if (roundState.hasActiveRound()) {
     return true;
   }
-  return router.createUrlTree(['/new-round']);
+  return router.createUrlTree(['/']);
 };

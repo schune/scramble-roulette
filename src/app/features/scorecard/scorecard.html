@@ -5,8 +5,8 @@
     [subtitle]="subtitle()"
   >
     @if (isComplete()) {
-      <a routerLink="/new-round" class="sr-btn sr-btn--gold">Play Again</a>
-      <a routerLink="/new-round" class="sr-btn sr-btn--ghost">Back to Play</a>
+      <a routerLink="/" class="sr-btn sr-btn--gold">Play Again</a>
+      <a routerLink="/" class="sr-btn sr-btn--ghost">Back to Play</a>
     } @else if (round()) {
       <a routerLink="/round" class="sr-btn sr-btn--ghost">Back to Round</a>
     }
@@ -19,7 +19,7 @@
       <p class="sr-lead">That scorecard may have been deleted or the link is out of date.</p>
       <div class="sr-empty__actions">
         <a routerLink="/previous-rounds" class="sr-btn sr-btn--primary">Previous Rounds</a>
-        <a routerLink="/new-round" class="sr-btn sr-btn--ghost">Play</a>
+        <a routerLink="/" class="sr-btn sr-btn--ghost">Play</a>
       </div>
     </section>
   } @else if (round(); as r) {
@@ -146,7 +146,7 @@
       <p class="sr-empty__title">No Active Round</p>
       <p class="sr-lead">Start a round to begin filling out your scorecard.</p>
       <div class="sr-empty__actions">
-        <a routerLink="/new-round" class="sr-btn sr-btn--primary">New Round</a>
+        <a routerLink="/" class="sr-btn sr-btn--primary">New Round</a>
         <a routerLink="/previous-rounds" class="sr-btn sr-btn--ghost">Previous Rounds</a>
       </div>
     </section>

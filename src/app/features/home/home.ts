@@ -35,7 +35,7 @@ export class Home {
     // Mobile uses the dashboard as the app home — skip this marketing page.
     afterNextRender(() => {
       if (window.matchMedia('(max-width: 860px)').matches) {
-        void this.router.navigateByUrl('/dashboard', { replaceUrl: true });
+        void this.router.navigateByUrl('/', { replaceUrl: true });
       }
     });
   }

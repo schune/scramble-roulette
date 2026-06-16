@@ -28,7 +28,7 @@ export class SeoService {
     description: DEFAULT_DESCRIPTION,
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${SITE_URL}/new-round`,
+      target: SITE_URL,
       'query-input': 'required name=search_term_string',
     },
   };
@@ -38,7 +38,7 @@ export class SeoService {
       title: DEFAULT_TITLE,
       description: DEFAULT_DESCRIPTION,
       keywords: DEFAULT_KEYWORDS,
-      path: '/new-round',
+      path: '/',
     });
     this.setStructuredData([this.siteStructuredData]);
   }

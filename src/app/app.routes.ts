@@ -5,21 +5,23 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'new-round',
+    title: 'Scramble Roulette — Free Golf Scramble Card Game',
+    loadComponent: () => import('./features/new-round/new-round').then((m) => m.NewRound),
+  },
+  {
+    path: 'new-round',
+    redirectTo: '',
+    pathMatch: 'full',
   },
   {
     path: 'dashboard',
-    redirectTo: 'new-round',
+    redirectTo: '',
+    pathMatch: 'full',
   },
   {
     path: 'profile',
     title: 'Golf Profile & Stats · Scramble Roulette',
     loadComponent: () => import('./features/profile/profile').then((m) => m.Profile),
-  },
-  {
-    path: 'new-round',
-    title: 'Scramble Roulette — Free Golf Scramble Card Game',
-    loadComponent: () => import('./features/new-round/new-round').then((m) => m.NewRound),
   },
   {
     path: 'round',
