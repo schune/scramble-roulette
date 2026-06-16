@@ -7,6 +7,7 @@
     <a routerLink="/" class="sr-btn sr-btn--gold">New Round</a>
   </app-page-header>
 
+  <div class="history__body sr-stagger-in">
   <section class="stats" aria-label="Career statistics">
     @for (stat of stats(); track stat.label) {
       <article class="sr-card stat">
@@ -109,18 +110,19 @@
       <a routerLink="/" class="sr-btn sr-btn--primary">Play Your First Round</a>
     </section>
   }
+  </div>
 </div>
 
 @if (pendingDelete(); as target) {
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
     <div class="modal__backdrop" (click)="cancelDelete()"></div>
-    <div class="modal__panel sr-card">
+    <div class="modal__panel sr-card modal__panel--center">
       <h2 id="delete-title" class="modal__title">Delete this round?</h2>
       <p class="modal__copy">
         {{ formatDate(target.completedAt ?? target.createdAt) }} · {{ playerNames(target) }}.
         This removes it from your clubhouse history for good. No take-backs.
       </p>
-      <div class="modal__actions">
+      <div class="modal__actions modal__actions--center">
         <button type="button" class="sr-btn sr-btn--ghost" (click)="cancelDelete()">Keep It</button>
         <button type="button" class="sr-btn sr-btn--danger" (click)="confirmDelete()">Delete</button>
       </div>

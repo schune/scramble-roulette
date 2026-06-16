@@ -53,6 +53,8 @@
   background: var(--sr-surface);
   border: 1px solid var(--sr-cream-300);
   box-shadow: var(--sr-shadow-lg);
+  transform-origin: top right;
+  animation: sr-menu-in 0.22s ease both;
 }
 
 .profile-menu__item {
@@ -133,11 +135,11 @@
 }
 
 .deck-list__item[data-category='Hurts'] {
-  --sr-accent: #c0492f;
+  --sr-accent: var(--sr-hurt);
 }
 
 .deck-list__item[data-category='Neutral'] {
-  --sr-accent: #2f7fb0;
+  --sr-accent: var(--sr-neutral);
 }
 
 .deck-list__head {

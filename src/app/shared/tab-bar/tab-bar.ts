@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 interface TabItem {
   label: string;
   path: string;
-  icon: string;
+  icon: 'history' | 'play' | 'profile';
   primary?: boolean;
 }
 
@@ -20,8 +20,8 @@ interface TabItem {
 })
 export class TabBar {
   protected readonly tabs: TabItem[] = [
-    { label: 'History', path: '/previous-rounds', icon: '☰' },
-    { label: 'Play', path: '/', icon: '⛳', primary: true },
-    { label: 'Profile', path: '/profile', icon: '◎' },
+    { label: 'History', path: '/previous-rounds', icon: 'history' },
+    { label: 'Play', path: '/', icon: 'play', primary: true },
+    { label: 'Profile', path: '/profile', icon: 'profile' },
   ];
 }

@@ -17,7 +17,7 @@
     min-height: calc(56px + env(safe-area-inset-bottom, 0px));
     padding: 0.35rem 0.5rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
     background: var(--sr-green-900);
-    border-top: 2px solid var(--sr-gold-500);
+    border-top: 3px solid var(--sr-gold-500);
     box-shadow: 0 -4px 20px rgba(7, 39, 29, 0.35);
   }
 
@@ -65,12 +65,26 @@
   }
 
   .tab-bar__icon {
-    font-size: 1.15rem;
+    display: grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
     line-height: 1;
+    transition: transform 0.15s ease;
+  }
+
+  .tab-bar__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .tab-bar__item.is-active .tab-bar__icon {
+    transform: scale(1.08);
   }
 
   .tab-bar__item--primary .tab-bar__icon {
-    font-size: 1.3rem;
+    width: 1.45rem;
+    height: 1.45rem;
   }
 
   .tab-bar__label {

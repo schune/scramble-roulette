@@ -1,14 +1,15 @@
 <div class="sr-page sr-container rules">
-  <button type="button" class="rules__close" (click)="close()" aria-label="Close official rules">
-    <span aria-hidden="true">×</span>
-  </button>
-
   <app-page-header
     eyebrow="Scramble Roulette"
     title="Official Golf Scramble Rules"
     subtitle="The law of the land for this scramble golf card game. Read once, argue forever."
-  />
+  >
+    <button type="button" class="sr-btn sr-btn--ghost rules__close" (click)="close()" aria-label="Close official rules">
+      Close
+    </button>
+  </app-page-header>
 
+  <div class="rules__body sr-stagger-in">
   <p class="rules__intro">
     Scramble Roulette adds a deck of cards to standard scramble format golf. These rules govern
     every golf scramble round — when to draw, how team cards work, and what happens when the
@@ -49,4 +50,5 @@
       beer cart attendant, and never drink and drive.
     </p>
   </section>
+  </div>
 </div>

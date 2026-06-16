@@ -251,10 +251,10 @@
   --sr-accent: var(--sr-green-600);
 }
 .card-display[data-category='Hurts'] {
-  --sr-accent: #c0492f;
+  --sr-accent: var(--sr-hurt);
 }
 .card-display[data-category='Neutral'] {
-  --sr-accent: #2f7fb0;
+  --sr-accent: var(--sr-neutral);
 }
 
 .card-display__cat {
@@ -387,8 +387,16 @@
   inset: 12%;
   border-radius: 50%;
   border: 2px solid color-mix(in srgb, var(--sr-gold-500) 55%, transparent);
-  animation: cine-ring-pulse 1.2s ease-in-out infinite;
   pointer-events: none;
+}
+
+.card-back--draw:not(:disabled) .card-back__ring {
+  animation: cine-ring-pulse 1.2s ease-in-out infinite;
+}
+
+.card-back--draw:not(:disabled):hover .card-back__ring,
+.card-back--draw:not(:disabled):focus-visible .card-back__ring {
+  animation-duration: 0.9s;
 }
 
 /* ---------- Cinematic draw overlay ---------- */
@@ -420,10 +428,10 @@
   --cine-accent: var(--sr-green-600);
 }
 .draw-cinematic[data-category='Hurts'] {
-  --cine-accent: #c0492f;
+  --cine-accent: var(--sr-hurt);
 }
 .draw-cinematic[data-category='Neutral'] {
-  --cine-accent: #2f7fb0;
+  --cine-accent: var(--sr-neutral);
 }
 
 .draw-cinematic__veil {
@@ -605,10 +613,10 @@
   --cine-accent: var(--sr-green-600);
 }
 .draw-cinematic__card[data-category='Hurts'] {
-  --cine-accent: #c0492f;
+  --cine-accent: var(--sr-hurt);
 }
 .draw-cinematic__card[data-category='Neutral'] {
-  --cine-accent: #2f7fb0;
+  --cine-accent: var(--sr-neutral);
 }
 
 .draw-cinematic__face {
@@ -947,13 +955,29 @@
   .draw-cinematic {
     display: none;
   }
+
+  .card-display,
+  .card-display::after {
+    animation: none;
+  }
+
+  .card-back__ring {
+    animation: none;
+  }
+
+  .round--cinematic .round-head,
+  .round--cinematic .round-stage,
+  .round--cinematic .round-dock {
+    filter: none;
+    opacity: 1;
+  }
 }
 
 /* ---------- Play dock ---------- */
 .round-dock__panel {
   padding: 0.9rem 1rem;
   border-radius: var(--sr-radius-lg);
-  background: #fff;
+  background: var(--sr-surface);
   border: none;
   box-shadow:
     var(--sr-shadow),
@@ -1008,6 +1032,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.round-dock__panel.entry {
+  animation: sr-rise-in 0.45s cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }
 
 .entry__row {
@@ -1104,6 +1132,10 @@
 }
 
 /* ---------- Hole result ---------- */
+.round-dock__panel.hole-result {
+  animation: sr-rise-in 0.45s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+
 .hole-result__stats {
   display: flex;
   align-items: center;
@@ -1172,49 +1204,6 @@
   font-size: 0.9rem;
 }
 
-/* ---------- Modals ---------- */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-items: center;
-  padding: 1.25rem;
-}
-
-.modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(7, 39, 29, 0.55);
-}
-
-.modal__panel {
-  position: relative;
-  z-index: 1;
-  max-width: 460px;
-  width: 100%;
-}
-
-.modal__title {
-  margin: 0 0 0.5rem;
-}
-
-.modal__copy {
-  color: var(--sr-muted);
-  margin: 0 0 1.25rem;
-}
-
-.modal__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: flex-end;
-}
-
-.modal__actions--stack {
-  flex-direction: column;
-  align-items: stretch;
-}
 
 /* ---------- Desktop ---------- */
 @media (min-width: 861px) {

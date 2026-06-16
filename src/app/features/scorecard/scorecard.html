@@ -23,6 +23,7 @@
       </div>
     </section>
   } @else if (round(); as r) {
+    <div class="scorecard__body sr-stagger-in">
     @if (isComplete()) {
       <!-- Share-style summary card -->
       <section class="sr-card share-card" aria-label="Round summary">
@@ -140,6 +141,7 @@
         <a routerLink="/round" class="sr-btn sr-btn--primary">Go to Round</a>
       </section>
     }
+    </div>
   } @else {
     <section class="sr-card sr-empty">
       <div class="sr-empty__crest" aria-hidden="true">SR</div>

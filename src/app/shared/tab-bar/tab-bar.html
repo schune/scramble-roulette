@@ -7,7 +7,27 @@
       routerLinkActive="is-active"
       [routerLinkActiveOptions]="{ exact: tab.path === '/' }"
     >
-      <span class="tab-bar__icon" aria-hidden="true">{{ tab.icon }}</span>
+      <span class="tab-bar__icon" aria-hidden="true">
+        @switch (tab.icon) {
+          @case ('history') {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 6h16M4 12h16M4 18h10" />
+            </svg>
+          }
+          @case ('play') {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 21V4" />
+              <path d="M5 4h12l-3.5 4L17 12H5" />
+            </svg>
+          }
+          @case ('profile') {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="8" r="3.5" />
+              <path d="M5 20c0-3.5 3.1-6 7-6s7 2.5 7 6" />
+            </svg>
+          }
+        }
+      </span>
       <span class="tab-bar__label">{{ tab.label }}</span>
     </a>
   }

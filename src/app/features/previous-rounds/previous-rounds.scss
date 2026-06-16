@@ -153,10 +153,10 @@
   --hole-accent: var(--sr-green-600);
 }
 .hole-log__item[data-category='Hurts'] {
-  --hole-accent: #c0492f;
+  --hole-accent: var(--sr-hurt);
 }
 .hole-log__item[data-category='Neutral'] {
-  --hole-accent: #2f7fb0;
+  --hole-accent: var(--sr-neutral);
 }
 
 .hole-log__head {
@@ -238,45 +238,13 @@
   color: color-mix(in srgb, var(--sr-muted) 55%, var(--sr-cream-300));
 }
 
-/* ---------- Delete confirmation modal ---------- */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: grid;
-  place-items: center;
-  padding: 1.25rem;
-}
+@media (max-width: 520px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
 
-.modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(7, 39, 29, 0.55);
-}
-
-.modal__panel {
-  position: relative;
-  width: min(440px, 100%);
-  text-align: center;
-}
-
-.modal__title {
-  margin: 0 0 0.6rem;
-}
-
-.modal__copy {
-  margin: 0 0 1.5rem;
-  color: var(--sr-muted);
-}
-
-.modal__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-}
-
-.modal__actions .sr-btn {
-  flex: 1 1 auto;
+  .stat {
+    padding: 1rem 0.85rem;
+  }
 }
 
