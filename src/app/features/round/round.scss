@@ -534,6 +534,7 @@
   width: clamp(200px, 58vw, 280px);
   height: clamp(280px, 81vw, 392px);
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   opacity: 0;
   transform: scale(0.35) rotateY(0deg) rotateZ(-8deg);
 }
@@ -572,13 +573,14 @@
   position: absolute;
   inset: 0;
   border-radius: 18px;
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  overflow: hidden;
 }
 
 .draw-cinematic__face--back {
   display: grid;
   place-items: center;
+  transform: rotateY(0deg) translateZ(1px);
   background: linear-gradient(150deg, var(--sr-cream-50), var(--sr-cream-200));
   border: 7px solid var(--sr-cream-50);
   box-shadow:
@@ -586,12 +588,16 @@
     inset 0 0 0 2px var(--sr-gold-500);
 }
 
+.draw-cinematic--hold .draw-cinematic__face--back,
+.draw-cinematic[data-phase='exit'] .draw-cinematic__face--back {
+  visibility: hidden;
+}
+
 .draw-cinematic__crest {
   font-family: var(--sr-font-display);
   font-weight: 700;
   font-size: clamp(3rem, 14vw, 4.5rem);
   color: var(--sr-green-800);
-  z-index: 1;
 }
 
 .draw-cinematic__back-ring {
@@ -615,7 +621,7 @@
   box-shadow:
     0 30px 80px rgba(0, 0, 0, 0.5),
     0 0 60px color-mix(in srgb, var(--cine-accent, var(--sr-gold-500)) 45%, transparent);
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(1px);
 }
 
 .draw-cinematic__cat {

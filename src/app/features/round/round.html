@@ -273,10 +273,12 @@
         <div class="draw-cinematic__ghost draw-cinematic__ghost--right" aria-hidden="true"></div>
 
         <div class="draw-cinematic__card" [attr.data-category]="cinematicCard()?.category">
-          <div class="draw-cinematic__face draw-cinematic__face--back">
-            <span class="draw-cinematic__crest">SR</span>
-            <span class="draw-cinematic__back-ring" aria-hidden="true"></span>
-          </div>
+          @if (!cinematicRevealed()) {
+            <div class="draw-cinematic__face draw-cinematic__face--back">
+              <span class="draw-cinematic__crest">SR</span>
+              <span class="draw-cinematic__back-ring" aria-hidden="true"></span>
+            </div>
+          }
 
           @if (cinematicCard(); as card) {
             <div class="draw-cinematic__face draw-cinematic__face--front">
