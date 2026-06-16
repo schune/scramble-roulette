@@ -37,16 +37,16 @@ export class Rules {
       copy: 'Unless a card specifically references a single player, the card applies to the entire team.',
     },
     {
-      title: 'Rule #3: Designated Driver Exemption',
-      copy: 'The designated driver may be exempt from drinking challenges. Another player must drink in his place. The designated driver chooses the substitute.',
+      title: 'Rule #3: Delayed Consumption',
+      copy: 'If a drinking challenge cannot be immediately completed (ranger nearby, clubhouse proximity, etc.), it shall be completed at the first available opportunity.',
     },
     {
       title: 'Rule #4: Mulligan Commitment',
       copy: 'If a player elects to use a mulligan, the original shot is immediately void. The mulligan becomes the only playable ball.',
     },
     {
-      title: 'Rule #5: Delayed Consumption',
-      copy: 'If a drinking challenge cannot be immediately completed (ranger nearby, clubhouse proximity, etc.), it shall be completed at the first available opportunity.',
+      title: 'Rule #5: Designated Driver Exemption',
+      copy: 'The designated driver may be exempt from drinking challenges. Another player must drink in his place. The designated driver chooses the substitute.',
     },
   ];
 

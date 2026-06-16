@@ -21,10 +21,10 @@ export const RULES_FAQ_SCHEMA = {
     },
     {
       '@type': 'Question',
-      name: 'Rule #3: Designated Driver Exemption',
+      name: 'Rule #3: Delayed Consumption',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The designated driver may be exempt from drinking challenges. Another player must drink in his place. The designated driver chooses the substitute.',
+        text: 'If a drinking challenge cannot be immediately completed (ranger nearby, clubhouse proximity, etc.), it shall be completed at the first available opportunity.',
       },
     },
     {
@@ -37,10 +37,10 @@ export const RULES_FAQ_SCHEMA = {
     },
     {
       '@type': 'Question',
-      name: 'Rule #5: Delayed Consumption',
+      name: 'Rule #5: Designated Driver Exemption',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'If a drinking challenge cannot be immediately completed (ranger nearby, clubhouse proximity, etc.), it shall be completed at the first available opportunity.',
+        text: 'The designated driver may be exempt from drinking challenges. Another player must drink in his place. The designated driver chooses the substitute.',
       },
     },
   ],
