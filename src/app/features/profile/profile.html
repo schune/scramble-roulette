@@ -1,9 +1,66 @@
 <div class="sr-page sr-container profile">
-  <app-page-header
-    eyebrow="Member"
-    title="Profile"
-    subtitle="Your golf scramble stats and clubhouse record. Saved on this device for now."
-  ></app-page-header>
+  <div class="profile__head">
+    <app-page-header
+      eyebrow="Member"
+      title="Profile"
+      subtitle="Your golf scramble stats and clubhouse record. Saved on this device for now."
+    ></app-page-header>
+
+    <div class="profile-menu">
+      <button
+        type="button"
+        class="profile-menu__trigger"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="profile-menu-panel"
+        aria-label="Profile menu"
+        (click)="toggleMenu()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="5" r="1.75" />
+          <circle cx="12" cy="12" r="1.75" />
+          <circle cx="12" cy="19" r="1.75" />
+        </svg>
+      </button>
+
+      @if (menuOpen()) {
+        <div id="profile-menu-panel" class="profile-menu__panel" role="menu">
+          <button
+            type="button"
+            class="profile-menu__item"
+            role="menuitem"
+            [attr.aria-expanded]="deckExpanded()"
+            (click)="toggleDeck()"
+          >
+            <span>View Deck</span>
+            <span class="profile-menu__chevron" [class.is-open]="deckExpanded()" aria-hidden="true">›</span>
+          </button>
+
+          @if (deckExpanded()) {
+            <div class="profile-menu__deck" role="region" aria-label="Standard deck">
+              <p class="profile-menu__deck-meta">
+                Standard Pack · {{ deckCards.length }} cards
+              </p>
+              <ol class="deck-list">
+                @for (card of deckCards; track card.id; let i = $index) {
+                  <li class="deck-list__item" [attr.data-category]="card.category">
+                    <div class="deck-list__head">
+                      <span class="deck-list__num">{{ i + 1 }}</span>
+                      <span class="deck-list__name">{{ card.name }}</span>
+                      <span class="deck-list__cat">{{ card.category }}</span>
+                    </div>
+                    <p class="deck-list__text">{{ card.text }}</p>
+                    @if (card.flavor) {
+                      <p class="deck-list__flavor">{{ card.flavor }}</p>
+                    }
+                  </li>
+                }
+              </ol>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
 
   <div class="profile-grid">
     <!-- Member card -->

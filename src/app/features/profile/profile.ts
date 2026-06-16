@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { Card } from '../../core/models';
+import { CardDeckService } from '../../core/services/card-deck.service';
 import { ProfileService, ScoreService, SocialService } from '../../core/services';
 import { Round } from '../../core/models';
 
@@ -20,6 +22,12 @@ export class Profile {
   private readonly profile = inject(ProfileService);
   private readonly score = inject(ScoreService);
   private readonly social = inject(SocialService);
+  private readonly deck = inject(CardDeckService);
+  private readonly host = inject(ElementRef<HTMLElement>);
+
+  protected readonly menuOpen = signal(false);
+  protected readonly deckExpanded = signal(false);
+  protected readonly deckCards: readonly Card[] = this.deck.getPack().cards;
 
   protected readonly initials = this.profile.initials;
   protected readonly avatar = this.profile.avatar;
@@ -107,5 +115,35 @@ export class Profile {
       day: 'numeric',
       year: 'numeric',
     });
+  }
+
+  protected toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+    if (!this.menuOpen()) {
+      this.deckExpanded.set(false);
+    }
+  }
+
+  protected toggleDeck(): void {
+    this.deckExpanded.update((open) => !open);
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: MouseEvent): void {
+    if (!this.menuOpen()) {
+      return;
+    }
+    const target = event.target as Node | null;
+    if (target && this.host.nativeElement.contains(target)) {
+      return;
+    }
+    this.menuOpen.set(false);
+    this.deckExpanded.set(false);
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    this.menuOpen.set(false);
+    this.deckExpanded.set(false);
   }
 }
