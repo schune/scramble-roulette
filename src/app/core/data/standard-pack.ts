@@ -24,7 +24,7 @@ const cards: Card[] = [
   },
   {
     id: 'standard-03',
-    name: 'Beer Cart Mulligan',
+    name: 'Sandbagger\'s Mulligan',
     category: 'Helps',
     text: 'The highest handicap player receives one mulligan on this hole.',
     packId: STANDARD_PACK_ID,
@@ -48,7 +48,7 @@ const cards: Card[] = [
     id: 'standard-06',
     name: 'Team Building Exercise',
     category: 'Hurts',
-    text: 'Every player must contribute one shot before the ball can be holed.',
+    text: 'Every player must contribute at least one shot before the ball can be holed. If you hole out early, add one stroke to the score for each teammate who never got a swing.',
     packId: STANDARD_PACK_ID,
   },
   {
@@ -69,7 +69,7 @@ const cards: Card[] = [
     id: 'standard-09',
     name: 'Cancel Me if You Can',
     category: 'Neutral',
-    text: 'Say a slur before teeing off. No repeats, we both know you have a lot to choose from.',
+    text: 'Say a slur before every shot. No repeats, we both know you have a lot to choose from.',
     packId: STANDARD_PACK_ID,
   },
   {
@@ -127,7 +127,7 @@ const cards: Card[] = [
     id: 'standard-17',
     name: 'Emergency Supplies',
     category: 'Neutral',
-    text: 'Every player must retrieve the emergency beer from his bag and shotgun it before anyone tees off.',
+    text: 'Every player must retrieve the emergency beer from their bag and shotgun it before anyone tees off.',
     packId: STANDARD_PACK_ID,
   },
   {
