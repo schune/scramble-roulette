@@ -185,12 +185,24 @@
   padding: clamp(1.25rem, 4vw, 2rem);
   background: linear-gradient(150deg, var(--sr-cream-50), #fff);
   border: none;
+  overflow: hidden;
   box-shadow:
     var(--sr-shadow-lg),
-    inset 0 0 0 1px var(--sr-cream-300),
-    inset 0 6px 0 0 var(--sr-accent, var(--sr-gold-500));
+    inset 0 0 0 1px var(--sr-cream-300);
   transform-origin: center;
   animation: card-flip-in 0.55s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+
+.card-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4.25rem;
+  background: var(--sr-accent, var(--sr-gold-500));
+  border-radius: calc(var(--sr-radius-lg) - 1px) calc(var(--sr-radius-lg) - 1px) 0 0;
+  pointer-events: none;
 }
 
 .card-display--settled {
@@ -246,12 +258,14 @@
 }
 
 .card-display__cat {
-  background: var(--sr-accent, var(--sr-green-800));
+  background: rgba(255, 255, 255, 0.22);
   color: #fff;
-  border-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.38);
 }
 
 .card-display__head {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -263,8 +277,16 @@
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: var(--sr-gold-700);
+  color: rgba(255, 255, 255, 0.88);
   font-weight: 600;
+}
+
+.card-display__name,
+.card-display__text,
+.card-display__flavor,
+.card-display__help {
+  position: relative;
+  z-index: 1;
 }
 
 .card-display__name {
@@ -633,26 +655,41 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
-  padding: 1.5rem 1.25rem;
+  padding: 1.1rem 1.25rem 1.75rem;
+  overflow: hidden;
   background: linear-gradient(155deg, #fff, var(--sr-cream-50));
   border: none;
   box-shadow:
     0 30px 80px rgba(0, 0, 0, 0.5),
     0 0 60px color-mix(in srgb, var(--cine-accent, var(--sr-gold-500)) 45%, transparent),
-    inset 0 0 0 7px var(--sr-cream-50),
-    inset 0 8px 0 0 var(--cine-accent, var(--sr-gold-500));
+    inset 0 0 0 7px var(--sr-cream-50);
   transform: rotateY(180deg) translateZ(1px);
+}
+
+.draw-cinematic__face--front::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  right: 7px;
+  height: 3.5rem;
+  background: var(--cine-accent, var(--sr-gold-500));
+  border-radius: 11px 11px 0 0;
+  pointer-events: none;
 }
 
 .draw-cinematic__cat {
   display: inline-block;
+  position: relative;
+  z-index: 1;
   margin-bottom: 0.65rem;
   padding: 0.3rem 0.75rem;
   border-radius: 999px;
-  background: var(--cine-accent, var(--sr-green-800));
+  background: rgba(255, 255, 255, 0.22);
   color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.38);
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -660,7 +697,9 @@
 }
 
 .draw-cinematic__name {
-  margin: 0 0 0.65rem;
+  position: relative;
+  z-index: 1;
+  margin: 1.35rem 0 0.65rem;
   font-family: var(--sr-font-display);
   font-size: clamp(1.5rem, 6.5vw, 2.1rem);
   font-weight: 700;
@@ -669,6 +708,8 @@
 }
 
 .draw-cinematic__rule {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-size: clamp(0.92rem, 3.8vw, 1.05rem);
   line-height: 1.45;
@@ -676,6 +717,8 @@
 }
 
 .draw-cinematic__flavor {
+  position: relative;
+  z-index: 1;
   margin: 0.65rem 0 0;
   font-style: italic;
   font-size: 0.88rem;
@@ -683,6 +726,8 @@
 }
 
 .draw-cinematic__help {
+  position: relative;
+  z-index: 1;
   margin: 0.5rem 0 0;
   font-size: 0.78rem;
   line-height: 1.35;
