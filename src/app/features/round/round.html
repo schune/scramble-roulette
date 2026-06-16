@@ -147,12 +147,6 @@
               </div>
             </div>
 
-            @if (resultPreview(); as preview) {
-              <p class="entry__preview" [attr.data-tone]="tone(preview.scoreToPar)">
-                {{ preview.resultLabel }} ({{ formatToPar(preview.scoreToPar) }})
-              </p>
-            }
-
             <button
               type="button"
               class="sr-btn sr-btn--primary sr-btn--block round-dock__cta"

@@ -56,15 +56,6 @@ export class Round {
     () => this.parInput() !== null && (this.scoreInput() ?? 0) >= 1,
   );
 
-  protected readonly resultPreview = computed(() => {
-    const par = this.parInput();
-    const score = this.scoreInput();
-    if (par === null || score === null || score < 1) {
-      return null;
-    }
-    return this.score.computeHole(par, score);
-  });
-
   protected readonly totalScore = computed(() => {
     const round = this.round();
     return round ? this.score.totalScore(round) : 0;
