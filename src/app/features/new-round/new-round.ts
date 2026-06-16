@@ -1,9 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
+  ElementRef,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -27,6 +30,9 @@ function nonBlank(control: AbstractControl): ValidationErrors | null {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewRound {
+  /** Standard scramble foursome — stop refocusing the name field once reached. */
+  private static readonly MAX_TEAM_SIZE = 4;
+
   private readonly roundState = inject(RoundStateService);
   private readonly profile = inject(ProfileService);
   private readonly sound = inject(SoundService);
@@ -41,6 +47,11 @@ export class NewRound {
   protected readonly holeCount = this.roundState.holeCount;
   protected readonly players = this.roundState.draftPlayers;
   protected readonly canStart = this.roundState.canStart;
+  protected readonly teamIsFull = computed(
+    () => this.players().length >= NewRound.MAX_TEAM_SIZE,
+  );
+
+  private readonly playerNameInput = viewChild<ElementRef<HTMLInputElement>>('playerNameInput');
 
   protected readonly playPhase = signal<PlayPhase>('landing');
   protected readonly teeOffPhase = signal<TeeOffPhase | null>(null);
@@ -103,6 +114,11 @@ export class NewRound {
     }
     this.roundState.addPlayer(this.nameControl.value);
     this.nameControl.reset('');
+    this.nameControl.markAsUntouched();
+
+    if (!this.teamIsFull()) {
+      this.focusPlayerNameInput();
+    }
   }
 
   protected startEdit(id: string, name: string): void {
@@ -172,5 +188,9 @@ export class NewRound {
       typeof matchMedia !== 'undefined' &&
       matchMedia('(prefers-reduced-motion: reduce)').matches
     );
+  }
+
+  private focusPlayerNameInput(): void {
+    queueMicrotask(() => this.playerNameInput()?.nativeElement.focus());
   }
 }
