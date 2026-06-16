@@ -172,11 +172,16 @@ export class Round {
   }
 
   protected setPar(par: number): void {
+    const prevPar = this.parInput();
+    const score = this.scoreInput();
     this.parInput.set(par);
+    if (score === null || score === prevPar) {
+      this.scoreInput.set(par);
+    }
   }
 
   protected adjustScore(delta: number): void {
-    const next = (this.scoreInput() ?? 0) + delta;
+    const next = (this.scoreInput() ?? this.parInput() ?? 0) + delta;
     this.scoreInput.set(Math.max(1, next));
   }
 
