@@ -415,7 +415,9 @@
 @if (teeOffPhase(); as phase) {
   <div class="tee-off" [attr.data-phase]="phase" role="presentation" aria-hidden="true">
     <div class="tee-off__veil"></div>
+    <div class="tee-off__vignette"></div>
     <div class="tee-off__rays"></div>
+    <div class="tee-off__orb" aria-hidden="true"></div>
 
     <div class="tee-off__particles">
       @for (i of sparkles; track i) {
@@ -424,19 +426,24 @@
     </div>
 
     <div class="tee-off__stage">
-      <div class="tee-off__fairway"></div>
-      <div class="tee-off__flag">
-        <span class="tee-off__flag-pole"></span>
-        <span class="tee-off__flag-cloth"></span>
+      <div class="tee-off__ghost tee-off__ghost--left" aria-hidden="true"></div>
+      <div class="tee-off__ghost tee-off__ghost--right" aria-hidden="true"></div>
+
+      <div class="tee-off__card">
+        <div class="tee-off__card-face">
+          <span class="tee-off__crest">SR</span>
+          <span class="tee-off__ring" aria-hidden="true"></span>
+        </div>
       </div>
-      <div class="tee-off__ball"></div>
+
+      <div class="tee-off__burst" aria-hidden="true"></div>
     </div>
 
     <p class="tee-off__kicker">First Tee</p>
     <p class="tee-off__status">
       @switch (phase) {
-        @case ('charge') { Lacing up the spikes… }
-        @case ('fairway') { Walking to the tee box… }
+        @case ('charge') { Shuffling the deck… }
+        @case ('fairway') { Your round is loading… }
         @case ('reveal') { Let's build your round }
       }
     </p>

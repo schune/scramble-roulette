@@ -297,10 +297,10 @@
 .play-page--tee-off .setup-flow,
 .play-page--tee-off app-page-header,
 .play-page--tee-off .resume {
-  filter: blur(5px) saturate(0.7);
-  opacity: 0.35;
+  filter: blur(8px) saturate(0.55);
+  opacity: 0.2;
   pointer-events: none;
-  transition: filter 0.4s ease, opacity 0.4s ease;
+  transition: filter 0.5s ease, opacity 0.5s ease;
 }
 
 .tee-off {
@@ -317,145 +317,225 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 100% 70% at 50% 80%, rgba(26, 106, 79, 0.45), transparent 55%),
-    linear-gradient(165deg, var(--sr-green-900), #03150f);
+    radial-gradient(ellipse 120% 80% at 50% 38%, rgba(17, 80, 60, 0.55), transparent 58%),
+    linear-gradient(165deg, var(--sr-green-900) 0%, #041a12 52%, var(--sr-green-900) 100%);
   opacity: 0;
-  animation: tee-veil-in 0.45s ease forwards;
+  animation: tee-veil-in 0.55s ease forwards;
 }
 
 .tee-off[data-phase='reveal'] .tee-off__veil {
-  animation: tee-veil-out 0.5s ease forwards;
+  animation: tee-veil-out 0.55s ease forwards;
+}
+
+.tee-off__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 32%, rgba(0, 0, 0, 0.68) 100%);
+  opacity: 0;
+  animation: tee-fade-in 0.65s ease 0.12s forwards;
 }
 
 .tee-off__rays {
   position: absolute;
-  width: 140vmax;
-  height: 140vmax;
+  width: 160vmax;
+  height: 160vmax;
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    color-mix(in srgb, var(--sr-gold-500) 28%, transparent) 20deg,
-    transparent 40deg,
-    transparent 70deg,
-    color-mix(in srgb, var(--sr-gold-300) 22%, transparent) 90deg,
-    transparent 110deg
+    color-mix(in srgb, var(--sr-gold-500) 34%, transparent) 16deg,
+    transparent 34deg,
+    transparent 58deg,
+    color-mix(in srgb, var(--sr-gold-300) 26%, transparent) 76deg,
+    transparent 94deg,
+    transparent 118deg,
+    color-mix(in srgb, var(--sr-gold-500) 28%, transparent) 136deg,
+    transparent 154deg
   );
   opacity: 0;
-  animation: tee-rays-spin 7s linear infinite, tee-rays-in 0.6s ease 0.15s forwards;
+  animation: tee-rays-spin 8s linear infinite, tee-rays-in 0.75s ease 0.18s forwards;
+}
+
+.tee-off[data-phase='reveal'] .tee-off__rays {
+  animation: tee-rays-spin 5s linear infinite, tee-rays-burst 0.55s ease forwards;
+}
+
+.tee-off__orb {
+  position: absolute;
+  width: min(72vw, 420px);
+  height: min(72vw, 420px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 95, 0.28), transparent 68%);
+  filter: blur(8px);
+  opacity: 0;
+  animation: tee-orb-in 0.8s ease 0.1s forwards;
+}
+
+.tee-off[data-phase='fairway'] .tee-off__orb,
+.tee-off[data-phase='reveal'] .tee-off__orb {
+  animation: tee-orb-pulse 1.4s ease-in-out infinite;
 }
 
 .tee-off__particles {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
 
 .tee-off__spark {
-  --angle: calc(var(--spark-i) * 22.5deg);
-  --delay: calc(var(--spark-i) * 0.04s);
+  --angle: calc(var(--spark-i) * 12.857deg);
+  --delay: calc(var(--spark-i) * 0.035s);
   position: absolute;
-  top: 62%;
+  top: 50%;
   left: 50%;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--sr-gold-300);
-  box-shadow: 0 0 8px var(--sr-gold-500);
+  box-shadow: 0 0 10px var(--sr-gold-500);
   opacity: 0;
+  transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0) scale(0);
 }
 
 .tee-off[data-phase='fairway'] .tee-off__spark,
 .tee-off[data-phase='reveal'] .tee-off__spark {
-  animation: tee-spark 0.9s ease var(--delay) infinite;
+  animation: tee-spark-fly 1.05s ease var(--delay) infinite;
 }
 
 .tee-off__stage {
   position: relative;
-  width: min(88vw, 320px);
-  height: 200px;
+  width: clamp(210px, 62vw, 290px);
+  height: clamp(290px, 86vw, 400px);
 }
 
-.tee-off__fairway {
+.tee-off__ghost {
   position: absolute;
-  inset: auto 0 0;
-  height: 75%;
-  border-radius: 50% 50% 14px 14px / 42% 42% 14px 14px;
-  background: linear-gradient(180deg, var(--sr-green-500), var(--sr-green-800));
-  transform: scaleY(0.3);
-  transform-origin: bottom center;
-  animation: tee-fairway-rise 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) 0.1s forwards;
-}
-
-.tee-off__flag {
-  position: absolute;
-  left: 54%;
-  bottom: 22%;
-  width: 64px;
-  height: 88px;
+  top: 12%;
+  width: 72%;
+  height: 76%;
+  border-radius: 16px;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--sr-cream-100) 70%, transparent), transparent);
+  border: 2px solid color-mix(in srgb, var(--sr-gold-500) 35%, transparent);
   opacity: 0;
-  animation: tee-flag-in 0.55s cubic-bezier(0.2, 0.9, 0.25, 1) 0.35s forwards;
 }
 
-.tee-off__flag-pole {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 4px;
+.tee-off__ghost--left {
+  left: -10%;
+  transform: rotate(-14deg);
+}
+
+.tee-off__ghost--right {
+  right: -10%;
+  transform: rotate(14deg);
+}
+
+.tee-off[data-phase='fairway'] .tee-off__ghost--left {
+  animation: tee-ghost-left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.tee-off[data-phase='fairway'] .tee-off__ghost--right {
+  animation: tee-ghost-right 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.tee-off[data-phase='reveal'] .tee-off__ghost {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.tee-off__card {
+  position: relative;
+  width: 100%;
   height: 100%;
-  background: var(--sr-cream-100);
-  border-radius: 2px;
-}
-
-.tee-off__flag-cloth {
-  position: absolute;
-  left: 5px;
-  top: 2px;
-  width: 34px;
-  height: 22px;
-  background: var(--sr-danger);
-  border-radius: 2px 5px 5px 2px;
-  transform-origin: left center;
-  animation: tee-flag-wave 1.2s ease-in-out 0.5s infinite;
-}
-
-.tee-off__ball {
-  position: absolute;
-  left: 20%;
-  bottom: 16%;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 25%, #fff, var(--sr-cream-200));
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  transform-style: preserve-3d;
   opacity: 0;
-  animation: tee-ball-drop 0.5s cubic-bezier(0.3, 0, 0.2, 1) 0.55s forwards;
+  transform: scale(0.32) rotateZ(-10deg);
 }
 
-.tee-off[data-phase='fairway'] .tee-off__ball {
-  animation: tee-ball-drive 0.65s cubic-bezier(0.15, 0.9, 0.25, 1) forwards;
+.tee-off[data-phase='charge'] .tee-off__card {
+  animation: tee-card-enter 0.58s cubic-bezier(0.15, 0.9, 0.25, 1) forwards;
+}
+
+.tee-off[data-phase='fairway'] .tee-off__card {
+  opacity: 1;
+  animation: tee-card-shuffle 0.44s ease-in-out infinite;
+}
+
+.tee-off[data-phase='reveal'] .tee-off__card {
+  opacity: 1;
+  animation: tee-card-settle 0.55s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+
+.tee-off__card-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: linear-gradient(150deg, var(--sr-cream-50), var(--sr-cream-200));
+  border: 7px solid var(--sr-cream-50);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.48),
+    inset 0 0 0 2px var(--sr-gold-500);
+}
+
+.tee-off__crest {
+  font-family: var(--sr-font-display);
+  font-weight: 700;
+  font-size: clamp(3rem, 14vw, 4.4rem);
+  color: var(--sr-green-800);
+  z-index: 1;
+}
+
+.tee-off__ring {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--sr-gold-500) 55%, transparent);
+  animation: tee-ring-pulse 1.15s ease-in-out infinite;
+}
+
+.tee-off__burst {
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 95, 0.45), transparent 70%);
+  opacity: 0;
+  transform: scale(0.4);
+}
+
+.tee-off[data-phase='reveal'] .tee-off__burst {
+  animation: tee-burst 0.65s ease forwards;
 }
 
 .tee-off__kicker {
   position: absolute;
-  top: clamp(3.5rem, 12vh, 5rem);
+  top: clamp(3.5rem, 12vh, 5.5rem);
   margin: 0;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.28em;
   color: var(--sr-gold-300);
   opacity: 0;
-  animation: tee-text-in 0.45s ease 0.25s forwards;
+  animation: tee-text-in 0.45s ease 0.22s forwards;
 }
 
 .tee-off__status {
   position: absolute;
-  top: clamp(4.5rem, 14vh, 6rem);
+  top: clamp(4.5rem, 14vh, 6.25rem);
   margin: 0;
+  padding-inline: 1.25rem;
+  max-width: 20rem;
+  text-align: center;
   font-family: var(--sr-font-display);
-  font-size: clamp(1.15rem, 4.5vw, 1.5rem);
+  font-size: clamp(1.2rem, 4.8vw, 1.65rem);
   font-weight: 600;
-  color: var(--sr-cream-100);
+  line-height: 1.25;
+  color: var(--sr-cream-50);
   opacity: 0;
-  animation: tee-text-in 0.45s ease 0.35s forwards;
+  animation: tee-text-in 0.45s ease 0.32s forwards;
+}
+
+.tee-off[data-phase='reveal'] .tee-off__status {
+  animation: tee-text-swap 0.35s ease forwards;
 }
 
 .tee-off[data-phase='reveal'] {
@@ -483,6 +563,12 @@
   animation-delay: 0.28s;
 }
 
+@keyframes tee-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes tee-veil-in {
   to {
     opacity: 1;
@@ -497,7 +583,14 @@
 
 @keyframes tee-rays-in {
   to {
-    opacity: 0.3;
+    opacity: 0.34;
+  }
+}
+
+@keyframes tee-rays-burst {
+  to {
+    opacity: 0.55;
+    transform: scale(1.08);
   }
 }
 
@@ -507,81 +600,123 @@
   }
 }
 
-@keyframes tee-spark {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0);
-  }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-80px);
-  }
-}
-
-@keyframes tee-fairway-rise {
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes tee-flag-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.85);
-  }
+@keyframes tee-orb-in {
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
-@keyframes tee-flag-wave {
+@keyframes tee-orb-pulse {
   0%,
   100% {
-    transform: skewY(0deg);
+    opacity: 0.75;
+    transform: scale(0.96);
   }
   50% {
-    transform: skewY(-6deg);
+    opacity: 1;
+    transform: scale(1.04);
   }
 }
 
-@keyframes tee-ball-drop {
+@keyframes tee-spark-fly {
   0% {
     opacity: 0;
-    transform: translateY(-40px) scale(0.6);
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0) scale(0);
   }
-  70% {
+  25% {
     opacity: 1;
-    transform: translateY(4px) scale(1.05);
   }
   100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-110px) scale(1);
   }
 }
 
-@keyframes tee-ball-drive {
-  0% {
+@keyframes tee-ghost-left {
+  to {
+    opacity: 0.45;
+    transform: rotate(-18deg) translateX(-6px);
+  }
+}
+
+@keyframes tee-ghost-right {
+  to {
+    opacity: 0.45;
+    transform: rotate(18deg) translateX(6px);
+  }
+}
+
+@keyframes tee-card-enter {
+  to {
     opacity: 1;
-    transform: translate(0, 0) scale(1);
+    transform: scale(1) rotateZ(0deg);
+  }
+}
+
+@keyframes tee-card-shuffle {
+  0%,
+  100% {
+    transform: translateX(0) rotateZ(0deg) scale(1);
+  }
+  25% {
+    transform: translateX(-7px) rotateZ(-2deg) scale(1.01);
+  }
+  75% {
+    transform: translateX(7px) rotateZ(2deg) scale(1.01);
+  }
+}
+
+@keyframes tee-card-settle {
+  to {
+    transform: translateX(0) rotateZ(0deg) scale(1.02);
+  }
+}
+
+@keyframes tee-ring-pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.65;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes tee-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  40% {
+    opacity: 0.85;
   }
   100% {
     opacity: 0;
-    transform: translate(120px, -60px) scale(0.5);
+    transform: scale(1.35);
   }
 }
 
 @keyframes tee-text-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes tee-text-swap {
+  from {
+    opacity: 0.7;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 

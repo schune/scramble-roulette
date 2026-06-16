@@ -40,7 +40,7 @@ export class NewRound {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly holeOptions: HoleCount[] = [9, 18];
-  protected readonly sparkles = Array.from({ length: 16 }, (_, i) => i);
+  protected readonly sparkles = Array.from({ length: 28 }, (_, i) => i);
 
   protected readonly displayName = this.profile.displayName;
   protected readonly activeRound = this.roundState.activeRound;
@@ -90,13 +90,13 @@ export class NewRound {
     this.teeOffPhase.set('charge');
     this.sound.play('draw');
 
-    this.scheduleTeeOff(() => this.teeOffPhase.set('fairway'), 480);
-    this.scheduleTeeOff(() => this.teeOffPhase.set('reveal'), 1200);
+    this.scheduleTeeOff(() => this.teeOffPhase.set('fairway'), 520);
+    this.scheduleTeeOff(() => this.teeOffPhase.set('reveal'), 1350);
     this.scheduleTeeOff(() => {
       this.teeOffPhase.set(null);
       this.playPhase.set('setup');
       this.sound.play('reveal');
-    }, 1950);
+    }, 2150);
   }
 
   protected onCourseNameInput(value: string): void {
