@@ -260,6 +260,43 @@
   max-width: 280px;
 }
 
+@media (max-width: 860px) {
+  .play-landing {
+    padding: 0.85rem 1rem 1.1rem;
+  }
+
+  .play-landing__hero {
+    width: min(100%, 280px);
+    margin: 0 0 0.15rem;
+  }
+
+  .play-landing__title {
+    font-size: clamp(1.45rem, 6vw, 1.75rem);
+    margin-bottom: 0.15rem;
+  }
+
+  .play-landing__tagline {
+    margin-bottom: 0.45rem;
+    font-size: 0.72rem;
+  }
+
+  .play-landing__copy {
+    margin-bottom: 0.85rem;
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .play-landing__cta {
+    max-width: none;
+    width: 100%;
+  }
+
+  .play-rules-link--on-dark {
+    margin-top: 0.75rem;
+    font-size: 0.72rem;
+  }
+}
+
 .play-seo {
   margin-top: var(--sr-gap);
 }
@@ -295,7 +332,6 @@
 /* ---------- Tee-off cinematic ---------- */
 .play-page--tee-off .play-landing,
 .play-page--tee-off .setup-flow,
-.play-page--tee-off app-page-header,
 .play-page--tee-off .resume {
   filter: blur(8px) saturate(0.55);
   opacity: 0.2;

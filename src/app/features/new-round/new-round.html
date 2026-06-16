@@ -11,17 +11,10 @@
     <p class="play-rules-note">
       <a routerLink="/rules" class="play-rules-link">Official rules</a>
     </p>
-  } @else {
-    <app-page-header
-      eyebrow="Play"
-      [title]="'Welcome, ' + displayName()"
-      subtitle="Round 'em up. Draw the cards. See how low your team can go."
-    />
-    @if (activeRound()) {
-      <p class="play-rules-note">
-        <a routerLink="/rules" class="play-rules-link">Official rules</a>
-      </p>
-    }
+  } @else if (activeRound()) {
+    <p class="play-rules-note">
+      <a routerLink="/rules" class="play-rules-link">Official rules</a>
+    </p>
   }
 
   @if (activeRound(); as active) {
