@@ -28,6 +28,7 @@ export class Profile {
   protected readonly menuOpen = signal(false);
   protected readonly deckExpanded = signal(false);
   protected readonly deckCards: readonly Card[] = this.deck.getPack().cards;
+  protected readonly packName = this.deck.getPack().name;
 
   protected readonly initials = this.profile.initials;
   protected readonly avatar = this.profile.avatar;

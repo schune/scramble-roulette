@@ -141,6 +141,6 @@ const cards: Card[] = [
 
 export const STANDARD_PACK: CardPack = {
   id: STANDARD_PACK_ID,
-  name: 'Standard',
+  name: "Luke's Bachelor Pack",
   cards,
 };

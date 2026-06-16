@@ -36,9 +36,9 @@
           </button>
 
           @if (deckExpanded()) {
-            <div class="profile-menu__deck" role="region" aria-label="Standard deck">
+            <div class="profile-menu__deck" role="region" [attr.aria-label]="packName">
               <p class="profile-menu__deck-meta">
-                Standard Pack · {{ deckCards.length }} cards
+                {{ packName }} · {{ deckCards.length }} cards
               </p>
               <ol class="deck-list">
                 @for (card of deckCards; track card.id; let i = $index) {

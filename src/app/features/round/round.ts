@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Card } from '../../core/models';
-import { RoundStateService, ScoreService, SoundService } from '../../core/services';
+import { RoundStateService, ScoreService, SoundService, CardDeckService } from '../../core/services';
 
 type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 
@@ -23,8 +23,11 @@ export class Round {
   private readonly roundState = inject(RoundStateService);
   private readonly score = inject(ScoreService);
   private readonly sound = inject(SoundService);
+  private readonly deck = inject(CardDeckService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+
+  protected readonly packName = this.deck.getPack().name;
 
   protected readonly round = this.roundState.activeRound;
   protected readonly currentCard = this.roundState.currentCard;
