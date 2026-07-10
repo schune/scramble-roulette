@@ -3,7 +3,11 @@
     <app-page-header
       eyebrow="Member"
       title="Profile"
-      subtitle="Your golf scramble stats and clubhouse record. Saved on this device for now."
+      [subtitle]="
+        isSignedIn()
+          ? 'Your golf scramble stats and clubhouse record, synced to your account.'
+          : 'Your golf scramble stats and clubhouse record, saved on this device.'
+      "
     ></app-page-header>
 
     <div class="profile-menu">
@@ -62,6 +66,57 @@
     </div>
   </div>
 
+  @if (!isResolving()) {
+    @if (isSignedIn()) {
+      <section class="sr-card account account--member" aria-label="Account">
+        <div class="account__status">
+          <svg class="account__check" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+          </svg>
+          <span class="account__line">
+            <span class="account__label">Signed in with Google</span>
+            @if (email(); as e) {
+              <span class="account__email">{{ e }}</span>
+            }
+          </span>
+        </div>
+        <button type="button" class="sr-btn sr-btn--ghost account__signout" (click)="signOut()">
+          Sign out
+        </button>
+      </section>
+    } @else {
+      <section class="sr-card account account--guest" aria-labelledby="account-heading">
+        <div class="account__pitch">
+          <span class="sr-badge">Guest</span>
+          <h2 id="account-heading" class="section-title account__title">
+            Save your rounds to the cloud
+          </h2>
+          <p class="account__copy">
+            Sign in with Google to sync your profile and round history across every device.
+            Your current guest rounds come with you.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="account__signin"
+          [disabled]="signingIn()"
+          (click)="signIn()"
+        >
+          <svg class="account__google" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+          </svg>
+          {{ signingIn() ? 'Signing in…' : 'Sign in with Google' }}
+        </button>
+      </section>
+    }
+    @if (authError(); as err) {
+      <p class="account__error" role="alert">{{ err }}</p>
+    }
+  }
+
   <div class="profile-grid sr-stagger-in">
     <!-- Member card -->
     <section class="sr-card member" aria-labelledby="member-heading">
@@ -75,24 +130,28 @@
         }
       </div>
 
-      <div class="member__avatar-actions">
-        <label class="sr-btn sr-btn--ghost member__upload">
-          {{ avatar() ? 'Change Photo' : 'Upload Photo' }}
-          <input
-            type="file"
-            accept="image/*"
-            class="sr-visually-hidden"
-            (change)="onAvatarSelected($event)"
-          />
-        </label>
-        @if (avatar()) {
-          <button type="button" class="sr-btn sr-btn--ghost" (click)="removeAvatar()">
-            Remove
-          </button>
+      @if (!isSignedIn()) {
+        <div class="member__avatar-actions">
+          <label class="sr-btn sr-btn--ghost member__upload">
+            {{ avatar() ? 'Change Photo' : 'Upload Photo' }}
+            <input
+              type="file"
+              accept="image/*"
+              class="sr-visually-hidden"
+              (change)="onAvatarSelected($event)"
+            />
+          </label>
+          @if (avatar()) {
+            <button type="button" class="sr-btn sr-btn--ghost" (click)="removeAvatar()">
+              Remove
+            </button>
+          }
+        </div>
+        @if (avatarError(); as err) {
+          <p class="member__error" role="alert">{{ err }}</p>
         }
-      </div>
-      @if (avatarError(); as err) {
-        <p class="member__error" role="alert">{{ err }}</p>
+      } @else {
+        <p class="member__avatar-note">Photo from your Google account.</p>
       }
 
       <div class="member__name">
@@ -124,7 +183,7 @@
     <section class="sr-card" aria-labelledby="stats-heading">
       <h2 id="stats-heading" class="section-title">Your Record</h2>
       <div class="stat-grid">
-        @for (stat of stats; track stat.label) {
+        @for (stat of stats(); track stat.label) {
           <div class="stat-cell">
             <span class="stat-cell__value">{{ stat.value }}</span>
             <span class="stat-cell__label">{{ stat.label }}</span>
@@ -140,9 +199,9 @@
       <h2 id="history-heading" class="section-title">Clubhouse History</h2>
       <a routerLink="/previous-rounds" class="panel__link">View all</a>
     </div>
-    @if (recentRounds.length > 0) {
+    @if (recentRounds().length > 0) {
       <ul class="history-list">
-        @for (round of recentRounds; track round.id) {
+        @for (round of recentRounds(); track round.id) {
           <li>
             <a class="history-row" routerLink="/scorecard" [queryParams]="{ round: round.id }">
               <span class="history-row__date">{{ formatDate(round.completedAt ?? round.createdAt) }}</span>
@@ -164,7 +223,7 @@
       <h2 id="social-heading" class="section-title social__title">Friends &amp; Following</h2>
       <p class="social__copy">
         Follow your regular foursome, compare green jackets, and talk trash across rounds.
-        We're building it — for now, your record lives on this device.
+        We're building it — check back soon.
       </p>
     </div>
     <button type="button" class="sr-btn sr-btn--ghost" disabled>Find Friends</button>

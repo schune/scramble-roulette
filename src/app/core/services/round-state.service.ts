@@ -3,6 +3,7 @@ import { Card, HoleCount, HoleResult, Player, Round } from '../models';
 import { StorageService } from './storage.service';
 import { CardDeckService } from './card-deck.service';
 import { ScoreService } from './score.service';
+import { RoundHistoryService } from './round-history.service';
 
 /**
  * Orchestrates round setup, the per-hole play loop, and round completion.
@@ -11,15 +12,15 @@ import { ScoreService } from './score.service';
  * promotes the draft into a live {@link Round}. During play, a card is drawn
  * per hole (no repeats), par/score are recorded, and the team advances. The
  * active round is persisted via {@link StorageService} so a reload mid-round
- * is safe; completed rounds are written to local history.
- *
- * Cloud sync (Firestore) can be layered on later behind this same surface.
+ * is safe; completed rounds are handed to {@link RoundHistoryService}, which
+ * stores them locally for guests or in Firestore for signed-in users.
  */
 @Injectable({ providedIn: 'root' })
 export class RoundStateService {
   private readonly storage = inject(StorageService);
   private readonly deck = inject(CardDeckService);
   private readonly score = inject(ScoreService);
+  private readonly roundHistory = inject(RoundHistoryService);
 
   /* ---------- Draft setup state ---------- */
   private readonly _courseName = signal('');
@@ -248,7 +249,7 @@ export class RoundStateService {
       completedAt: new Date().toISOString(),
     };
 
-    this.storage.saveCompletedRound(completed);
+    this.roundHistory.add(completed);
     this._activeRound.set(null);
     this.resetDraft();
     return completed;
@@ -278,7 +279,7 @@ export class RoundStateService {
       ...(endedEarly ? { endedEarly: true } : {}),
     };
 
-    this.storage.saveCompletedRound(completed);
+    this.roundHistory.add(completed);
     this._activeRound.set(null);
     this.resetDraft();
     return completed;

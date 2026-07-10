@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { RoundStateService, ScoreService, StorageService } from '../../core/services';
+import { RoundHistoryService, RoundStateService, ScoreService } from '../../core/services';
 
 @Component({
   selector: 'app-scorecard',
@@ -15,7 +15,7 @@ import { RoundStateService, ScoreService, StorageService } from '../../core/serv
 export class Scorecard {
   private readonly roundState = inject(RoundStateService);
   private readonly score = inject(ScoreService);
-  private readonly storage = inject(StorageService);
+  private readonly roundHistory = inject(RoundHistoryService);
   private readonly route = inject(ActivatedRoute);
 
   /** Optional ?round=<id> selects a specific completed round from history. */
@@ -31,13 +31,13 @@ export class Scorecard {
   protected readonly round = computed(() => {
     const id = this.requestedId();
     if (id) {
-      const fromHistory = this.storage.getRoundHistory().find((r) => r.id === id);
+      const fromHistory = this.roundHistory.history().find((r) => r.id === id);
       if (fromHistory) {
         return fromHistory;
       }
       return null;
     }
-    return this.roundState.activeRound() ?? this.storage.getRoundHistory()[0] ?? null;
+    return this.roundState.activeRound() ?? this.roundHistory.history()[0] ?? null;
   });
 
   protected readonly missingRequestedRound = computed(

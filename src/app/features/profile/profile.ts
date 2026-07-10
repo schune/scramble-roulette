@@ -1,10 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { Card } from '../../core/models';
+import { Card, Round } from '../../core/models';
 import { CardDeckService } from '../../core/services/card-deck.service';
-import { ProfileService, ScoreService, SocialService } from '../../core/services';
-import { Round } from '../../core/models';
+import {
+  AuthService,
+  ProfileService,
+  ScoreService,
+  SocialService,
+  describeSignInError,
+} from '../../core/services';
 
 interface StatCard {
   label: string;
@@ -17,12 +30,17 @@ interface StatCard {
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:click)': 'onDocumentClick($event)',
+    '(document:keydown.escape)': 'onEscape()',
+  },
 })
 export class Profile {
   private readonly profile = inject(ProfileService);
   private readonly score = inject(ScoreService);
   private readonly social = inject(SocialService);
   private readonly deck = inject(CardDeckService);
+  private readonly auth = inject(AuthService);
   private readonly host = inject(ElementRef<HTMLElement>);
 
   protected readonly menuOpen = signal(false);
@@ -32,7 +50,15 @@ export class Profile {
 
   protected readonly initials = this.profile.initials;
   protected readonly avatar = this.profile.avatar;
+  protected readonly displayName = this.profile.displayName;
   protected readonly socialEnabled = this.social.enabled;
+
+  /* ---------- Account ---------- */
+  protected readonly isResolving = this.auth.isResolving;
+  protected readonly isSignedIn = this.auth.isSignedIn;
+  protected readonly email = this.auth.email;
+  protected readonly signingIn = signal(false);
+  protected readonly authError = signal<string | null>(null);
 
   protected readonly nameDraft = signal(this.profile.displayName());
   protected readonly avatarError = signal<string | null>(null);
@@ -42,27 +68,53 @@ export class Profile {
     return draft.length > 0 && draft !== this.profile.displayName();
   });
 
-  private readonly profileStats = this.profile.getStats();
-  protected readonly recentRounds = this.profile.getRecentRounds(5);
+  protected readonly stats = computed<StatCard[]>(() => {
+    const s = this.profile.stats();
+    return [
+      { label: 'Rounds Played', value: `${s.roundsPlayed || '—'}` },
+      { label: 'Holes Played', value: `${s.holesPlayed || '—'}` },
+      {
+        label: 'Best To Par',
+        value: s.bestScoreToPar === null ? '—' : this.score.formatToPar(s.bestScoreToPar),
+      },
+      {
+        label: 'Avg To Par',
+        value:
+          s.averageScoreToPar === null ? '—' : this.score.formatToPar(s.averageScoreToPar),
+      },
+    ];
+  });
 
-  protected readonly stats: StatCard[] = [
-    { label: 'Rounds Played', value: `${this.profileStats.roundsPlayed || '—'}` },
-    { label: 'Holes Played', value: `${this.profileStats.holesPlayed || '—'}` },
-    {
-      label: 'Best To Par',
-      value:
-        this.profileStats.bestScoreToPar === null
-          ? '—'
-          : this.score.formatToPar(this.profileStats.bestScoreToPar),
-    },
-    {
-      label: 'Avg To Par',
-      value:
-        this.profileStats.averageScoreToPar === null
-          ? '—'
-          : this.score.formatToPar(this.profileStats.averageScoreToPar),
-    },
-  ];
+  protected readonly recentRounds = this.profile.recentRounds;
+
+  constructor() {
+    // Keep the editable name field in sync with the active profile (e.g. the
+    // Google name after sign-in, or the guest name after signing out).
+    effect(() => {
+      this.nameDraft.set(this.profile.displayName());
+    });
+  }
+
+  /* ---------- Account actions ---------- */
+
+  async signIn(): Promise<void> {
+    if (this.signingIn()) {
+      return;
+    }
+    this.authError.set(null);
+    this.signingIn.set(true);
+    const result = await this.auth.signInWithGoogle();
+    this.signingIn.set(false);
+    if (!result.ok && result.reason !== 'popup-closed') {
+      this.authError.set(describeSignInError(result.reason));
+    }
+  }
+
+  async signOut(): Promise<void> {
+    await this.auth.signOut();
+  }
+
+  /* ---------- Name & avatar ---------- */
 
   protected onNameInput(value: string): void {
     this.nameDraft.set(value);
@@ -118,6 +170,8 @@ export class Profile {
     });
   }
 
+  /* ---------- Overflow menu ---------- */
+
   protected toggleMenu(): void {
     this.menuOpen.update((open) => !open);
     if (!this.menuOpen()) {
@@ -129,7 +183,6 @@ export class Profile {
     this.deckExpanded.update((open) => !open);
   }
 
-  @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: MouseEvent): void {
     if (!this.menuOpen()) {
       return;
@@ -142,7 +195,6 @@ export class Profile {
     this.deckExpanded.set(false);
   }
 
-  @HostListener('document:keydown.escape')
   protected onEscape(): void {
     this.menuOpen.set(false);
     this.deckExpanded.set(false);

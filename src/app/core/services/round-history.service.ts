@@ -1,0 +1,143 @@
+import { Injectable, effect, inject, signal } from '@angular/core';
+import { Round } from '../models';
+import { StorageService } from './storage.service';
+import { FirestoreService } from './firestore.service';
+import { AuthService } from './auth.service';
+
+/**
+ * Single source of truth for completed rounds, exposed as a reactive signal.
+ *
+ * The backing store follows the auth state:
+ *  - **Guest** (signed out): rounds live in `localStorage` via
+ *    {@link StorageService}.
+ *  - **Signed in**: rounds live in Firestore under `users/{uid}/rounds`, kept
+ *    live through an `onSnapshot` subscription (with offline persistence).
+ *
+ * On sign-in, any guest rounds not already in the cloud are migrated up
+ * (idempotent, keyed by `Round.id`) so nothing is lost. Guest `localStorage`
+ * is never overwritten with cloud data, so signing out on a shared device
+ * reverts cleanly to the local guest history without leaking account rounds.
+ */
+@Injectable({ providedIn: 'root' })
+export class RoundHistoryService {
+  private readonly storage = inject(StorageService);
+  private readonly firestore = inject(FirestoreService);
+  private readonly auth = inject(AuthService);
+
+  private readonly _history = signal<Round[]>([]);
+  /** Completed rounds, newest first. */
+  readonly history = this._history.asReadonly();
+
+  /** uid of the account currently backing the store, or null for guest. */
+  private currentUid: string | null = null;
+  /** Tears down the active Firestore subscription (null when guest). */
+  private cloudUnsub: (() => void) | null = null;
+
+  constructor() {
+    // Seed with the guest history so the app has data before auth resolves.
+    this._history.set(this.storage.getRoundHistory());
+
+    effect(() => {
+      const user = this.auth.user();
+      if (user === undefined) {
+        return; // initial auth state not resolved yet — keep the guest seed
+      }
+
+      const uid = user?.uid ?? null;
+      if (uid === this.currentUid) {
+        return; // no transition
+      }
+
+      this.currentUid = uid;
+      this.detachCloud();
+
+      if (uid) {
+        void this.attachCloud(uid);
+      } else {
+        // Signed out → revert to the guest's local history.
+        this._history.set(this.storage.getRoundHistory());
+      }
+    });
+  }
+
+  /** Persist a completed round to the active store (cloud or local). */
+  add(round: Round): void {
+    const uid = this.currentUid;
+    if (uid) {
+      this._history.update((list) => this.upsert(list, round)); // optimistic
+      void this.firestore.saveRound(uid, round).catch(() => {
+        /* onSnapshot reconciles; persistence retries when back online */
+      });
+    } else {
+      this.storage.saveCompletedRound(round);
+      this._history.set(this.storage.getRoundHistory());
+    }
+  }
+
+  /** Remove a round from the active store. */
+  remove(id: string): void {
+    const uid = this.currentUid;
+    this._history.update((list) => list.filter((r) => r.id !== id)); // optimistic
+    if (uid) {
+      void this.firestore.deleteRound(uid, id).catch(() => {});
+    } else {
+      this.storage.removeRoundFromHistory(id);
+    }
+  }
+
+  /** Clear all rounds from the active store. */
+  clear(): void {
+    const uid = this.currentUid;
+    const ids = this._history().map((r) => r.id);
+    this._history.set([]);
+    if (uid) {
+      void this.firestore.deleteManyRounds(uid, ids).catch(() => {});
+    } else {
+      this.storage.clearRoundHistory();
+    }
+  }
+
+  /* ---------- Cloud wiring ---------- */
+
+  private async attachCloud(uid: string): Promise<void> {
+    try {
+      // Migrate guest rounds the cloud doesn't have yet (idempotent by id).
+      const cloud = await this.firestore.getRounds(uid);
+      if (this.currentUid !== uid) {
+        return; // auth changed again while awaiting
+      }
+      const guest = this.storage.getRoundHistory();
+      const missing = guest.filter((g) => !cloud.some((c) => c.id === g.id));
+      if (missing.length > 0) {
+        await this.firestore.saveManyRounds(uid, missing);
+      }
+    } catch {
+      // Offline / transient: the live listener below still serves cached data.
+    }
+
+    if (this.currentUid !== uid) {
+      return;
+    }
+
+    this.cloudUnsub = this.firestore.listenRounds(uid, (rounds) => {
+      if (this.currentUid === uid) {
+        this._history.set(rounds);
+      }
+    });
+  }
+
+  private detachCloud(): void {
+    this.cloudUnsub?.();
+    this.cloudUnsub = null;
+  }
+
+  /** Replace any round sharing this id, then re-sort newest first. */
+  private upsert(list: Round[], round: Round): Round[] {
+    const next = [round, ...list.filter((r) => r.id !== round.id)];
+    return next.sort(
+      (a, b) =>
+        new Date(b.completedAt ?? b.createdAt).getTime() -
+        new Date(a.completedAt ?? a.createdAt).getTime(),
+    );
+  }
+}

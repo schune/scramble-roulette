@@ -40,5 +40,31 @@
         "destination": "/index.html"
       }
     ]
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Scramble Roulette",
+        "supportEmail": "alexkopen@gmail.com",
+        "authorizedRedirectUris": [
+          "http://localhost",
+          "https://scramble-roulette.web.app",
+          "https://scramble-roulette.firebaseapp.com",
+          "https://scrambleroulette.com",
+          "https://www.scrambleroulette.com"
+        ]
+      }
+    },
+    "authorizedDomains": [
+      "localhost",
+      "scramble-roulette.web.app",
+      "scramble-roulette.firebaseapp.com",
+      "scrambleroulette.com",
+      "www.scrambleroulette.com"
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }

@@ -147,6 +147,180 @@
   gap: 0.75rem;
 }
 
+/* ---------- Account (sign in / avatar menu) ---------- */
+.nav__account {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav__signin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 46px;
+  padding-inline: 1.1rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--sr-cream-50, #fff);
+  color: #1f2430;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(7, 39, 29, 0.35);
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.nav__signin:hover {
+  background: #fff;
+}
+
+.nav__signin:active {
+  transform: translateY(1px);
+}
+
+.nav__signin:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.nav__google {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.nav__avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(250, 246, 234, 0.5);
+  background: radial-gradient(circle at 30% 25%, var(--sr-gold-300), var(--sr-gold-600));
+  color: var(--sr-green-900);
+  cursor: pointer;
+  overflow: hidden;
+  flex: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav__avatar-btn:hover,
+.nav__avatar-btn[aria-expanded='true'] {
+  border-color: var(--sr-gold-400, var(--sr-gold-500));
+  box-shadow: 0 0 0 3px rgba(250, 246, 234, 0.18);
+}
+
+.nav__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nav__avatar-initials {
+  font-family: var(--sr-font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--sr-green-900);
+  letter-spacing: 0.02em;
+}
+
+.nav__account-menu {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  z-index: 60;
+  min-width: 14rem;
+  padding: 0.4rem;
+  border-radius: var(--sr-radius);
+  background: var(--sr-surface);
+  border: 1px solid var(--sr-cream-300);
+  box-shadow: var(--sr-shadow-lg);
+  color: var(--sr-ink);
+  animation: sr-menu-in 0.18s ease both;
+}
+
+.nav__account-id {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0.75rem 0.65rem;
+  border-bottom: 1px solid var(--sr-cream-300);
+  margin-bottom: 0.35rem;
+}
+
+.nav__account-name {
+  font-weight: 700;
+  color: var(--sr-green-800);
+}
+
+.nav__account-email {
+  font-size: 0.82rem;
+  color: var(--sr-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav__account-item {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: none;
+  border-radius: var(--sr-radius-sm);
+  background: transparent;
+  color: var(--sr-ink);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.nav__account-item:hover {
+  background: var(--sr-surface-alt);
+  color: var(--sr-ink);
+}
+
+.nav__account-item--signout {
+  color: var(--sr-danger);
+}
+
+.nav__account-item--signout:hover {
+  color: var(--sr-danger);
+}
+
+.nav__auth-error {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  z-index: 60;
+  margin: 0;
+  max-width: 16rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--sr-radius-sm);
+  background: var(--sr-surface);
+  border: 1px solid var(--sr-danger);
+  color: var(--sr-danger);
+  font-size: 0.85rem;
+  box-shadow: var(--sr-shadow-lg);
+}
+
+/* Focus visibility for keyboard users (WCAG). */
+.nav__signin:focus-visible,
+.nav__avatar-btn:focus-visible,
+.nav__account-item:focus-visible {
+  outline: 3px solid var(--sr-gold-300);
+  outline-offset: 2px;
+}
+
+.nav__avatar-btn--mobile {
+  display: none;
+}
+
 /* ---------- Mobile toggle ---------- */
 .nav__toggle {
   display: none;
@@ -232,6 +406,12 @@
   }
 
   .nav__sound-btn--mobile {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav__avatar-btn--mobile {
     display: inline-flex;
     width: 40px;
     height: 40px;

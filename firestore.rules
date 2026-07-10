@@ -1,0 +1,18 @@
+rules_version = '2';
+
+// Scramble Roulette — per-user private data.
+// Every document lives under users/{uid}; only the owner (a signed-in user
+// whose auth uid matches the path) may read or write it. Nothing else is
+// reachable, so a leaked config or another user's token can't touch this data.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // Completed rounds, one doc per round (keyed by Round.id).
+      match /rounds/{roundId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { ProfileService, ScoreService, StorageService } from '../../core/services';
+import { ProfileService, RoundHistoryService, ScoreService } from '../../core/services';
 import { HoleResult, Round } from '../../core/models';
 
 interface StatCard {
@@ -18,15 +18,15 @@ interface StatCard {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreviousRounds {
-  private readonly storage = inject(StorageService);
+  private readonly roundHistory = inject(RoundHistoryService);
   private readonly score = inject(ScoreService);
   private readonly profile = inject(ProfileService);
 
-  protected readonly rounds = signal<Round[]>(this.storage.getRoundHistory());
+  /** Completed rounds (local for guests, cloud when signed in), newest first. */
+  protected readonly rounds = this.roundHistory.history;
 
   protected readonly stats = computed<StatCard[]>(() => {
-    this.rounds();
-    const s = this.profile.getStats();
+    const s = this.profile.stats();
     return [
       { label: 'Rounds Played', value: s.roundsPlayed ? `${s.roundsPlayed}` : '—', hint: 'Career total' },
       {
@@ -96,8 +96,7 @@ export class PreviousRounds {
     if (!round) {
       return;
     }
-    this.storage.removeRoundFromHistory(round.id);
-    this.rounds.set(this.storage.getRoundHistory());
+    this.roundHistory.remove(round.id);
     this.pendingDelete.set(null);
   }
 }
