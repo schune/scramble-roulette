@@ -127,6 +127,17 @@ export class FirestoreService {
     return snap.docs.map((d) => d.data() as PublicProfile);
   }
 
+  /** Recently active signed-in players for follow suggestions. */
+  async listRecentPublicProfiles(max = 15): Promise<PublicProfile[]> {
+    const q = query(
+      this.publicProfilesColRef(),
+      orderBy('updatedAt', 'desc'),
+      limit(max),
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as PublicProfile);
+  }
+
   /* ---------- Following ---------- */
 
   async getFollowing(uid: string): Promise<FollowingEdge[]> {

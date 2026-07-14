@@ -222,7 +222,6 @@
           <span class="setup-section__step">1</span> Course Name
         </h2>
 
-        <label class="course-field__label" for="course-name">Course name (optional)</label>
         <input
           id="course-name"
           type="text"
@@ -230,6 +229,7 @@
           placeholder="e.g. Augusta National (not really)"
           autocomplete="off"
           maxlength="60"
+          aria-labelledby="course-heading"
           [formControl]="courseNameControl"
           (input)="onCourseNameInput($any($event.target).value)"
         />
@@ -275,7 +275,7 @@
                 id="player-name"
                 type="text"
                 class="sr-input"
-                placeholder="e.g. Bobby Jones"
+                placeholder="e.g. Paula Schumacher"
                 autocomplete="off"
                 maxlength="40"
                 [class.sr-input--invalid]="nameControl.touched && nameControl.invalid"

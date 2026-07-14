@@ -53,6 +53,51 @@
           } @else if (showEmptySearch()) {
             <p class="friends-search__status">No players found — try a different name.</p>
           }
+
+          @if (!hasSearchTerm()) {
+            @if (loadingSuggested()) {
+              <p class="friends-suggested__status">Loading suggestions…</p>
+            } @else if (suggestedPlayers().length > 0) {
+              <div class="friends-suggested" aria-labelledby="suggested-heading">
+                <h3 id="suggested-heading" class="friends-suggested__title">Suggested players</h3>
+                <ul class="player-list">
+                  @for (profile of suggestedPlayers(); track profile.id) {
+                    <li class="player-row">
+                      <div class="player-row__identity">
+                        @if (profile.photoURL) {
+                          <img
+                            class="player-row__avatar"
+                            [src]="profile.photoURL"
+                            alt=""
+                            referrerpolicy="no-referrer"
+                          />
+                        } @else {
+                          <span class="player-row__initials" aria-hidden="true">{{ initials(profile.displayName) }}</span>
+                        }
+                        <div>
+                          <span class="player-row__name">{{ profile.displayName }}</span>
+                          <span class="player-row__meta">
+                            {{ profile.roundsPlayed }} rounds · Best {{ formatToPar(profile.bestScoreToPar) }}
+                            @if (profile.isLive) {
+                              · <span class="player-row__live">Live now</span>
+                            }
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="sr-btn sr-btn--primary"
+                        [disabled]="isBusy(profile.id)"
+                        (click)="toggleFollow(profile)"
+                      >
+                        Follow
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          }
         </section>
 
         @if (searchResults().length > 0) {

@@ -33,6 +33,8 @@ export class Friends {
   protected readonly following = this.social.following;
   protected readonly searchResults = this.social.searchResults;
   protected readonly searching = this.social.searching;
+  protected readonly suggestedPlayers = this.social.suggestedPlayers;
+  protected readonly loadingSuggested = this.social.loadingSuggested;
   protected readonly followingLiveRounds = this.social.followingLiveRounds;
 
   protected readonly searchTerm = signal('');

@@ -91,6 +91,27 @@
   color: var(--sr-green-600);
 }
 
+.friends-suggested {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--sr-cream-300);
+}
+
+.friends-suggested__title {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sr-green-600);
+}
+
+.friends-suggested__status {
+  margin: 1rem 0 0;
+  font-size: 0.88rem;
+  color: var(--sr-green-600);
+}
+
 /* ---------- Player list ---------- */
 .player-list {
   list-style: none;

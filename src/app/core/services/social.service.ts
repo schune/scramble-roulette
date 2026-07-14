@@ -27,12 +27,22 @@ export class SocialService {
   private readonly _searchResults = signal<PublicProfile[]>([]);
   private readonly _searching = signal(false);
   private readonly _followingLive = signal<FollowingLiveRound[]>([]);
+  private readonly _suggestedPool = signal<PublicProfile[]>([]);
+  private readonly _loadingSuggested = signal(false);
 
   readonly following = this._following.asReadonly();
   readonly searchResults = this._searchResults.asReadonly();
   readonly searching = this._searching.asReadonly();
   readonly followingLiveRounds = this._followingLive.asReadonly();
+  readonly loadingSuggested = this._loadingSuggested.asReadonly();
   readonly followingCount = computed(() => this._following().length);
+  readonly suggestedPlayers = computed(() => {
+    const uid = this.auth.uid();
+    const followingIds = new Set(this._following().map((edge) => edge.followeeId));
+    return this._suggestedPool()
+      .filter((profile) => profile.id !== uid && !followingIds.has(profile.id))
+      .slice(0, 3);
+  });
 
   private currentUid: string | null = null;
   private followingUnsub: Unsubscribe | null = null;
@@ -49,6 +59,7 @@ export class SocialService {
       this.detach();
       if (uid) {
         this.attachFollowing(uid);
+        void this.loadSuggestedPlayers();
       }
     });
 
@@ -83,6 +94,23 @@ export class SocialService {
 
   clearSearch(): void {
     this._searchResults.set([]);
+  }
+
+  async loadSuggestedPlayers(): Promise<void> {
+    if (!this.auth.isSignedIn()) {
+      this._suggestedPool.set([]);
+      return;
+    }
+
+    this._loadingSuggested.set(true);
+    try {
+      const profiles = await this.firestore.listRecentPublicProfiles();
+      this._suggestedPool.set(profiles);
+    } catch {
+      this._suggestedPool.set([]);
+    } finally {
+      this._loadingSuggested.set(false);
+    }
   }
 
   async follow(followee: PublicProfile): Promise<void> {
@@ -120,6 +148,8 @@ export class SocialService {
     this.followingUnsub = null;
     this._following.set([]);
     this._searchResults.set([]);
+    this._suggestedPool.set([]);
+    this._loadingSuggested.set(false);
     this.clearLiveListeners();
     this._followingLive.set([]);
   }
