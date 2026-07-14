@@ -76,9 +76,9 @@
             </svg>
           }
         </button>
-        <a routerLink="/" class="sr-btn sr-btn--gold nav__cta" (click)="closeMenu()">
+        <button type="button" class="sr-btn sr-btn--gold nav__cta" (click)="goNewRound()">
           New Round
-        </a>
+        </button>
 
         @if (!isResolving()) {
           <div class="nav__account">
@@ -162,6 +162,14 @@
         }
       </div>
     </div>
+
+    <button
+      type="button"
+      class="sr-btn sr-btn--gold nav__cta-mobile"
+      (click)="goNewRound()"
+    >
+      New Round
+    </button>
 
     <button
       type="button"

@@ -139,6 +139,18 @@
   min-height: 46px;
   padding-inline: 1.4rem;
   font-size: 0.98rem;
+  border: none;
+  cursor: pointer;
+}
+
+.nav__cta-mobile {
+  display: none;
+  min-height: 34px;
+  padding-inline: 0.75rem;
+  font-size: 0.78rem;
+  border: none;
+  cursor: pointer;
+  flex: none;
 }
 
 .nav__actions {
@@ -403,6 +415,11 @@
   .nav__toggle,
   .nav__menu {
     display: none;
+  }
+
+  .nav__cta-mobile {
+    display: inline-flex;
+    align-items: center;
   }
 
   .nav__sound-btn--mobile {

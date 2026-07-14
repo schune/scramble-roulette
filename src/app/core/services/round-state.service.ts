@@ -78,6 +78,10 @@ export class RoundStateService {
     return !!round && round.currentHole >= round.holeCount;
   });
 
+  /** Bumped when nav or other chrome requests the play landing screen. */
+  private readonly _playLandingReset = signal(0);
+  readonly playLandingReset = this._playLandingReset.asReadonly();
+
   constructor() {
     const saved = this.storage.getActiveRound();
     if (saved) {
@@ -132,6 +136,12 @@ export class RoundStateService {
     this._courseName.set('');
     this._holeCount.set(null);
     this._draftPlayers.set([]);
+  }
+
+  /** Reset setup draft and return the play page to its Tee It Up landing. */
+  requestPlayLanding(): void {
+    this.resetDraft();
+    this._playLandingReset.update((n) => n + 1);
   }
 
   /* ---------- Round lifecycle ---------- */

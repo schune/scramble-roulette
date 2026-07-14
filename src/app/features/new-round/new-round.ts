@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   signal,
@@ -73,6 +74,20 @@ export class NewRound {
   private teeOffTimers: ReturnType<typeof setTimeout>[] = [];
 
   constructor() {
+    effect(() => {
+      if (this.roundState.playLandingReset() === 0) {
+        return;
+      }
+      this.playPhase.set('landing');
+      this.teeOffPhase.set(null);
+      this.clearTeeOffTimers();
+      this.confirmingDiscard.set(false);
+      this.editingId.set(null);
+      this.courseNameControl.setValue('');
+      this.nameControl.reset('');
+      this.nameControl.markAsUntouched();
+    });
+
     this.destroyRef.onDestroy(() => this.clearTeeOffTimers());
   }
 

@@ -1,6 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService, ProfileService, SoundService, describeSignInError } from '../../core/services';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  AuthService,
+  ProfileService,
+  RoundStateService,
+  SoundService,
+  describeSignInError,
+} from '../../core/services';
 
 interface NavLink {
   label: string;
@@ -22,6 +28,8 @@ export class Navbar {
   private readonly sound = inject(SoundService);
   private readonly auth = inject(AuthService);
   private readonly profile = inject(ProfileService);
+  private readonly roundState = inject(RoundStateService);
+  private readonly router = inject(Router);
 
   protected readonly menuOpen = signal(false);
   protected readonly muted = this.sound.muted;
@@ -51,6 +59,14 @@ export class Navbar {
 
   protected closeMenu(): void {
     this.menuOpen.set(false);
+  }
+
+  /** Go to play landing — works even when already on `/` or mid-setup. */
+  protected goNewRound(): void {
+    this.closeMenu();
+    this.closeAccountMenu();
+    this.roundState.requestPlayLanding();
+    void this.router.navigate(['/']);
   }
 
   protected toggleMute(): void {
