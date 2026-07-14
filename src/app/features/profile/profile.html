@@ -216,16 +216,29 @@
     }
   </section>
 
-  <!-- Friends / Following (future-ready placeholder) -->
+  <!-- Friends & Following -->
   <section class="sr-card social" aria-labelledby="social-heading">
     <div>
-      <span class="sr-badge">Coming soon</span>
+      @if (isSignedIn()) {
+        <span class="sr-badge">{{ followingCount() }} following</span>
+      } @else {
+        <span class="sr-badge">Sign in</span>
+      }
       <h2 id="social-heading" class="section-title social__title">Friends &amp; Following</h2>
       <p class="social__copy">
-        Follow your regular foursome, compare green jackets, and talk trash across rounds.
-        We're building it — check back soon.
+        @if (isSignedIn()) {
+          Search for players, follow your foursome, and see their live scores while you're on the course.
+        } @else {
+          Sign in to find friends and track live scores from other groups on the course.
+        }
       </p>
     </div>
-    <button type="button" class="sr-btn sr-btn--ghost" disabled>Find Friends</button>
+    @if (isSignedIn()) {
+      <a routerLink="/friends" class="sr-btn sr-btn--ghost social__cta">Find Friends</a>
+    } @else {
+      <button type="button" class="sr-btn sr-btn--ghost social__cta" (click)="signIn()">
+        Sign in to follow
+      </button>
+    }
   </section>
 </div>

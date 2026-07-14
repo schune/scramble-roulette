@@ -1,17 +1,51 @@
 rules_version = '2';
 
-// Scramble Roulette — per-user private data.
-// Every document lives under users/{uid}; only the owner (a signed-in user
-// whose auth uid matches the path) may read or write it. Nothing else is
-// reachable, so a leaked config or another user's token can't touch this data.
+// Scramble Roulette — per-user private data plus public profiles, follows, and
+// live round scoreboards readable by followers.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    function isSignedIn() {
+      return request.auth != null;
+    }
 
-      // Completed rounds, one doc per round (keyed by Round.id).
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isFollowerOf(uid) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(uid)/followers/$(request.auth.uid));
+    }
+
+    // Searchable public profile slice (no private email, etc.).
+    match /publicProfiles/{uid} {
+      allow read: if isSignedIn();
+      allow create, update: if isOwner(uid);
+      allow delete: if isOwner(uid);
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
       match /rounds/{roundId} {
-        allow read, write: if request.auth != null && request.auth.uid == uid;
+        allow read, write: if isOwner(uid);
+      }
+
+      // Who this user follows (private to the owner).
+      match /following/{followeeId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // Who follows this user — followers may create/delete their own edge.
+      match /followers/{followerId} {
+        allow read: if isOwner(uid) || (isSignedIn() && request.auth.uid == followerId);
+        allow create, delete: if isSignedIn() && request.auth.uid == followerId;
+      }
+
+      // Live scoreboard for an in-progress round.
+      match /liveRound/{docId} {
+        allow read: if isOwner(uid) || isFollowerOf(uid);
+        allow write: if isOwner(uid);
       }
     }
   }

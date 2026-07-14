@@ -41,6 +41,39 @@
       </div>
     </header>
 
+    @if (showFollowingPanel()) {
+      <section class="following-panel" aria-label="Friends playing live">
+        <div class="following-panel__head">
+          <span class="following-panel__label">Following live</span>
+          <a routerLink="/friends" class="following-panel__link">Manage</a>
+        </div>
+        <ul class="following-panel__list">
+          @for (live of followingLiveRounds(); track live.userId) {
+            <li class="following-panel__card">
+              <span class="following-panel__name">{{ live.displayName }}</span>
+              @if (live.snapshot.courseName) {
+                <span class="following-panel__course">{{ live.snapshot.courseName }}</span>
+              }
+              <dl class="following-panel__stats">
+                <div>
+                  <dt>Hole</dt>
+                  <dd>{{ live.snapshot.currentHole }}/{{ live.snapshot.holeCount }}</dd>
+                </div>
+                <div>
+                  <dt>Total</dt>
+                  <dd>{{ live.snapshot.totalScore }}</dd>
+                </div>
+                <div>
+                  <dt>To Par</dt>
+                  <dd>{{ formatToPar(live.snapshot.toPar) }}</dd>
+                </div>
+              </dl>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
     <main class="round-stage">
       @if (currentCard(); as card) {
         @if (!isDrawing()) {

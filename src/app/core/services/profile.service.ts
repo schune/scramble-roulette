@@ -1,5 +1,5 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
-import { ProfileStats, Round, UserProfile } from '../models';
+import { ProfileStats, PublicProfile, Round, UserProfile } from '../models';
 import { StorageService } from './storage.service';
 import { ScoreService } from './score.service';
 import { AuthService } from './auth.service';
@@ -78,6 +78,39 @@ export class ProfileService {
         this._cloudProfile.set(null); // back to guest
       }
     });
+
+    effect(() => {
+      if (!this.currentUid) {
+        return;
+      }
+      this.profile();
+      this.stats();
+      this.syncPublicProfile();
+    });
+  }
+
+  /** Upsert the searchable public profile (signed-in users only). */
+  syncPublicProfile(options?: { isLive?: boolean }): void {
+    const uid = this.currentUid;
+    if (!uid) {
+      return;
+    }
+
+    const p = this.profile();
+    const s = this.stats();
+    const photoURL = p.photoURL ?? this.auth.photoURL() ?? undefined;
+    const doc: PublicProfile = {
+      id: uid,
+      displayName: p.displayName,
+      displayNameLower: p.displayName.trim().toLowerCase(),
+      roundsPlayed: s.roundsPlayed,
+      bestScoreToPar: s.bestScoreToPar,
+      updatedAt: new Date().toISOString(),
+      ...(photoURL ? { photoURL } : {}),
+      ...(options?.isLive !== undefined ? { isLive: options.isLive } : {}),
+    };
+
+    void this.firestore.savePublicProfile(doc).catch(() => {});
   }
 
   /** Update the display name (ignores blank input). Writes to the active store. */
@@ -95,6 +128,7 @@ export class ProfileService {
       };
       this._cloudProfile.set(updated);
       void this.firestore.saveProfile(uid, updated).catch(() => {});
+      this.syncPublicProfile();
     } else {
       this.updateLocal((profile) => ({ ...profile, displayName: trimmed }));
     }

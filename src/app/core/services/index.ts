@@ -8,4 +8,5 @@ export * from './auth.service';
 export * from './firestore.service';
 export * from './sound.service';
 export * from './social.service';
+export * from './live-round-sync.service';
 export * from './seo.service';

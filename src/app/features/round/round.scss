@@ -26,6 +26,109 @@
   border-top: 1px solid color-mix(in srgb, var(--sr-cream-100) 18%, transparent);
 }
 
+/* ---------- Following live panel ---------- */
+.following-panel {
+  flex: none;
+  margin-bottom: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--sr-radius);
+  background: color-mix(in srgb, var(--sr-green-700) 88%, var(--sr-cream-50));
+  border: 1px solid var(--sr-green-800);
+}
+
+.following-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.following-panel__label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--sr-gold-300);
+  font-weight: 600;
+}
+
+.following-panel__link {
+  font-size: 0.72rem;
+  color: var(--sr-cream-200);
+  text-decoration: none;
+}
+
+.following-panel__link:hover {
+  color: var(--sr-cream-50);
+  text-decoration: underline;
+}
+
+.following-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.following-panel__card {
+  flex: none;
+  min-width: 9.5rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--sr-radius-sm);
+  background: var(--sr-green-800);
+  color: var(--sr-cream-100);
+  border: 1px solid var(--sr-green-900);
+}
+
+.following-panel__name {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.following-panel__course {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.68rem;
+  color: var(--sr-cream-200);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 9rem;
+}
+
+.following-panel__stats {
+  display: flex;
+  gap: 0.55rem;
+  margin: 0.35rem 0 0;
+}
+
+.following-panel__stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.following-panel__stats dt {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sr-gold-300);
+}
+
+.following-panel__stats dd {
+  margin: 0;
+  font-family: var(--sr-font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .round-head__hole {
   display: flex;
   align-items: baseline;

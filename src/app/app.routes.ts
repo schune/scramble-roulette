@@ -24,6 +24,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/profile/profile').then((m) => m.Profile),
   },
   {
+    path: 'friends',
+    title: 'Find Golf Friends · Scramble Roulette',
+    loadComponent: () => import('./features/friends/friends').then((m) => m.Friends),
+  },
+  {
     path: 'round',
     title: 'Live Golf Scramble Round · Scramble Roulette',
     canActivate: [activeRoundGuard],

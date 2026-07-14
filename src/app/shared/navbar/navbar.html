@@ -113,6 +113,14 @@
                     }
                   </div>
                   <a
+                    routerLink="/friends"
+                    role="menuitem"
+                    class="nav__account-item"
+                    (click)="closeAccountMenu(); closeMenu()"
+                  >
+                    Friends
+                  </a>
+                  <a
                     routerLink="/profile"
                     role="menuitem"
                     class="nav__account-item"

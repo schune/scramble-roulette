@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Card } from '../../core/models';
-import { RoundStateService, ScoreService, SoundService, CardDeckService } from '../../core/services';
+import { RoundStateService, ScoreService, SocialService, SoundService, CardDeckService } from '../../core/services';
 
 type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 
@@ -22,6 +22,7 @@ type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 export class Round {
   private readonly roundState = inject(RoundStateService);
   private readonly score = inject(ScoreService);
+  private readonly social = inject(SocialService);
   private readonly sound = inject(SoundService);
   private readonly deck = inject(CardDeckService);
   private readonly router = inject(Router);
@@ -35,6 +36,8 @@ export class Round {
   protected readonly canDraw = this.roundState.canDraw;
   protected readonly canAdvance = this.roundState.canAdvance;
   protected readonly isFinalHole = this.roundState.isFinalHole;
+  protected readonly followingLiveRounds = this.social.followingLiveRounds;
+  protected readonly showFollowingPanel = computed(() => this.social.enabled() && this.followingLiveRounds().length > 0);
 
   protected readonly editing = signal(false);
   protected readonly parInput = signal<number | null>(null);

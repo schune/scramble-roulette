@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { seoForPath } from './core/seo/route-seo.config';
-import { SeoService } from './core/services/seo.service';
+import { LiveRoundSyncService, SeoService, SocialService } from './core/services';
 import { Navbar } from './shared/navbar/navbar';
 import { TabBar } from './shared/tab-bar/tab-bar';
 
@@ -16,6 +16,9 @@ import { TabBar } from './shared/tab-bar/tab-bar';
 export class App implements OnInit {
   private readonly router = inject(Router);
   private readonly seo = inject(SeoService);
+  /** Bootstrap social + live-round sync listeners for the session. */
+  private readonly _social = inject(SocialService);
+  private readonly _liveSync = inject(LiveRoundSyncService);
 
   ngOnInit(): void {
     this.seo.initialize();

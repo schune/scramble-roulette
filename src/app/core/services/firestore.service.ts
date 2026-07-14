@@ -9,22 +9,37 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
+  orderBy,
+  query,
   setDoc,
+  where,
   writeBatch,
 } from 'firebase/firestore';
 import { FIRESTORE } from '../firebase/firebase.providers';
-import { Round, UserProfile } from '../models';
+import {
+  FollowerEdge,
+  FollowingEdge,
+  LiveRoundSnapshot,
+  PublicProfile,
+  Round,
+  UserProfile,
+} from '../models';
+
+/** Doc id for the singleton live-round broadcast. */
+export const LIVE_ROUND_DOC_ID = 'current';
 
 /**
- * The single place the app touches Cloud Firestore. Keeping every
- * `firebase/firestore` import here means the persistence backend can be
- * changed without rippling through domain services.
+ * The single place the app touches Cloud Firestore.
  *
- * Layout (see `firestore.rules`, owner-only):
- *   users/{uid}                  → profile document
- *   users/{uid}/rounds/{roundId} → one completed round per doc, keyed by the
- *                                  existing Round.id so uploads are idempotent.
+ * Layout:
+ *   publicProfiles/{uid}              → searchable public profile
+ *   users/{uid}                     → private profile
+ *   users/{uid}/rounds/{roundId}    → completed rounds
+ *   users/{uid}/following/{id}      → outbound follow edges
+ *   users/{uid}/followers/{id}      → inbound follow edges
+ *   users/{uid}/liveRound/current   → in-progress scoreboard for followers
  */
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
@@ -32,6 +47,10 @@ export class FirestoreService {
 
   private userDocRef(uid: string): DocumentReference<DocumentData> {
     return doc(this.db, 'users', uid);
+  }
+
+  private publicProfileDocRef(uid: string): DocumentReference<DocumentData> {
+    return doc(this.db, 'publicProfiles', uid);
   }
 
   private roundsColRef(uid: string): CollectionReference<DocumentData> {
@@ -42,6 +61,26 @@ export class FirestoreService {
     return doc(this.db, 'users', uid, 'rounds', roundId);
   }
 
+  private followingColRef(uid: string): CollectionReference<DocumentData> {
+    return collection(this.db, 'users', uid, 'following');
+  }
+
+  private followingDocRef(uid: string, followeeId: string): DocumentReference<DocumentData> {
+    return doc(this.db, 'users', uid, 'following', followeeId);
+  }
+
+  private followersDocRef(uid: string, followerId: string): DocumentReference<DocumentData> {
+    return doc(this.db, 'users', uid, 'followers', followerId);
+  }
+
+  private liveRoundDocRef(uid: string): DocumentReference<DocumentData> {
+    return doc(this.db, 'users', uid, 'liveRound', LIVE_ROUND_DOC_ID);
+  }
+
+  private publicProfilesColRef(): CollectionReference<DocumentData> {
+    return collection(this.db, 'publicProfiles');
+  }
+
   /* ---------- Profile ---------- */
 
   async getProfile(uid: string): Promise<UserProfile | null> {
@@ -49,16 +88,105 @@ export class FirestoreService {
     return snap.exists() ? (snap.data() as UserProfile) : null;
   }
 
-  /** Merge-write the profile. Never persists the base64 `avatarDataUrl`
-   * (signed-in users use their Google `photoURL`; base64 would bloat the doc). */
   async saveProfile(uid: string, profile: UserProfile): Promise<void> {
-    const { avatarDataUrl: _drop, ...doc } = profile;
-    await setDoc(this.userDocRef(uid), doc, { merge: true });
+    const { avatarDataUrl: _drop, ...docData } = profile;
+    await setDoc(this.userDocRef(uid), docData, { merge: true });
   }
 
   listenProfile(uid: string, next: (profile: UserProfile | null) => void): Unsubscribe {
     return onSnapshot(this.userDocRef(uid), (snap) =>
       next(snap.exists() ? (snap.data() as UserProfile) : null),
+    );
+  }
+
+  /* ---------- Public profiles ---------- */
+
+  async getPublicProfile(uid: string): Promise<PublicProfile | null> {
+    const snap = await getDoc(this.publicProfileDocRef(uid));
+    return snap.exists() ? (snap.data() as PublicProfile) : null;
+  }
+
+  async savePublicProfile(profile: PublicProfile): Promise<void> {
+    await setDoc(this.publicProfileDocRef(profile.id), profile, { merge: true });
+  }
+
+  async searchPublicProfiles(term: string, max = 20): Promise<PublicProfile[]> {
+    const trimmed = term.trim().toLowerCase();
+    if (!trimmed) {
+      return [];
+    }
+    const end = trimmed + '\uf8ff';
+    const q = query(
+      this.publicProfilesColRef(),
+      where('displayNameLower', '>=', trimmed),
+      where('displayNameLower', '<=', end),
+      orderBy('displayNameLower'),
+      limit(max),
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as PublicProfile);
+  }
+
+  /* ---------- Following ---------- */
+
+  async getFollowing(uid: string): Promise<FollowingEdge[]> {
+    const snap = await getDocs(this.followingColRef(uid));
+    return snap.docs.map((d) => d.data() as FollowingEdge);
+  }
+
+  listenFollowing(uid: string, next: (edges: FollowingEdge[]) => void): Unsubscribe {
+    return onSnapshot(this.followingColRef(uid), (snap) =>
+      next(snap.docs.map((d) => d.data() as FollowingEdge)),
+    );
+  }
+
+  async follow(
+    followerId: string,
+    followee: PublicProfile,
+    followerProfile: Pick<PublicProfile, 'displayName' | 'photoURL'>,
+  ): Promise<void> {
+    if (followerId === followee.id) {
+      return;
+    }
+    const now = new Date().toISOString();
+    const batch = writeBatch(this.db);
+    const following: FollowingEdge = {
+      followeeId: followee.id,
+      displayName: followee.displayName,
+      ...(followee.photoURL ? { photoURL: followee.photoURL } : {}),
+      createdAt: now,
+    };
+    const follower: FollowerEdge = {
+      followerId,
+      displayName: followerProfile.displayName,
+      ...(followerProfile.photoURL ? { photoURL: followerProfile.photoURL } : {}),
+      createdAt: now,
+    };
+    batch.set(this.followingDocRef(followerId, followee.id), following);
+    batch.set(this.followersDocRef(followee.id, followerId), follower);
+    await batch.commit();
+  }
+
+  async unfollow(followerId: string, followeeId: string): Promise<void> {
+    const batch = writeBatch(this.db);
+    batch.delete(this.followingDocRef(followerId, followeeId));
+    batch.delete(this.followersDocRef(followeeId, followerId));
+    await batch.commit();
+  }
+
+  /* ---------- Live round ---------- */
+
+  async saveLiveRound(uid: string, snapshot: LiveRoundSnapshot): Promise<void> {
+    await setDoc(this.liveRoundDocRef(uid), snapshot);
+  }
+
+  async clearLiveRound(uid: string): Promise<void> {
+    await deleteDoc(this.liveRoundDocRef(uid));
+  }
+
+  listenLiveRound(uid: string, next: (snapshot: LiveRoundSnapshot | null) => void): Unsubscribe {
+    return onSnapshot(this.liveRoundDocRef(uid), (snap) =>
+      next(snap.exists() ? (snap.data() as LiveRoundSnapshot) : null),
     );
   }
 
@@ -73,7 +201,6 @@ export class FirestoreService {
     await setDoc(this.roundDocRef(uid, round.id), round);
   }
 
-  /** Upload many rounds in one atomic batch (used for guest-data migration). */
   async saveManyRounds(uid: string, rounds: Round[]): Promise<void> {
     if (rounds.length === 0) {
       return;
@@ -89,7 +216,6 @@ export class FirestoreService {
     await deleteDoc(this.roundDocRef(uid, roundId));
   }
 
-  /** Delete many rounds by id in one atomic batch. */
   async deleteManyRounds(uid: string, roundIds: string[]): Promise<void> {
     if (roundIds.length === 0) {
       return;
@@ -106,8 +232,6 @@ export class FirestoreService {
       next(this.sortNewestFirst(snap.docs.map((d) => d.data() as Round))),
     );
   }
-
-  /* ---------- Helpers ---------- */
 
   private sortNewestFirst(rounds: Round[]): Round[] {
     return [...rounds].sort(

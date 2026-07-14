@@ -1,35 +1,182 @@
-import { Injectable } from '@angular/core';
-import { Follow, PublicProfile } from '../models';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Unsubscribe } from 'firebase/firestore';
+import {
+  FollowingEdge,
+  FollowingLiveRound,
+  LiveRoundSnapshot,
+  PublicProfile,
+} from '../models';
+import { AuthService } from './auth.service';
+import { FirestoreService } from './firestore.service';
+import { ProfileService } from './profile.service';
 
 /**
- * Placeholder for future social/following features.
+ * Browse, search, follow users, and listen to followed players' live rounds.
  *
- * Intentionally NOT backed by any network/backend yet. The method shapes
- * mirror what a future Firebase/Firestore implementation will provide, so
- * the UI can be wired against this surface today and swapped later.
+ * Requires sign-in — guests see empty state and sign-in prompts in the UI.
  */
 @Injectable({ providedIn: 'root' })
 export class SocialService {
-  /** Feature flag for "coming soon" UI. */
-  readonly enabled = false;
+  private readonly auth = inject(AuthService);
+  private readonly firestore = inject(FirestoreService);
+  private readonly profile = inject(ProfileService);
 
-  /** Profiles the user follows (empty until a backend exists). */
-  getFollowing(): PublicProfile[] {
-    return [];
+  readonly enabled = computed(() => this.auth.isSignedIn());
+
+  private readonly _following = signal<FollowingEdge[]>([]);
+  private readonly _searchResults = signal<PublicProfile[]>([]);
+  private readonly _searching = signal(false);
+  private readonly _followingLive = signal<FollowingLiveRound[]>([]);
+
+  readonly following = this._following.asReadonly();
+  readonly searchResults = this._searchResults.asReadonly();
+  readonly searching = this._searching.asReadonly();
+  readonly followingLiveRounds = this._followingLive.asReadonly();
+  readonly followingCount = computed(() => this._following().length);
+
+  private currentUid: string | null = null;
+  private followingUnsub: Unsubscribe | null = null;
+  private readonly liveUnsubs = new Map<string, Unsubscribe>();
+  private readonly liveSnapshots = new Map<string, LiveRoundSnapshot>();
+
+  constructor() {
+    effect(() => {
+      const uid = this.auth.uid();
+      if (uid === this.currentUid) {
+        return;
+      }
+      this.currentUid = uid;
+      this.detach();
+      if (uid) {
+        this.attachFollowing(uid);
+      }
+    });
+
+    effect(() => {
+      const edges = this._following();
+      this.syncLiveListeners(edges);
+    });
   }
 
-  /** Suggested profiles to follow (empty until a backend exists). */
-  getSuggested(): PublicProfile[] {
-    return [];
+  isFollowing(followeeId: string): boolean {
+    return this._following().some((edge) => edge.followeeId === followeeId);
   }
 
-  /** Follow a profile. No-op placeholder. */
-  follow(_followeeId: string): Follow | null {
-    return null;
+  async search(term: string): Promise<void> {
+    const trimmed = term.trim();
+    if (!trimmed || !this.auth.isSignedIn()) {
+      this._searchResults.set([]);
+      return;
+    }
+
+    this._searching.set(true);
+    try {
+      const results = await this.firestore.searchPublicProfiles(trimmed);
+      const uid = this.auth.uid();
+      this._searchResults.set(uid ? results.filter((p) => p.id !== uid) : results);
+    } catch {
+      this._searchResults.set([]);
+    } finally {
+      this._searching.set(false);
+    }
   }
 
-  /** Unfollow a profile. No-op placeholder. */
-  unfollow(_followeeId: string): void {
-    // Implemented once a backend is available.
+  clearSearch(): void {
+    this._searchResults.set([]);
+  }
+
+  async follow(followee: PublicProfile): Promise<void> {
+    const uid = this.auth.uid();
+    if (!uid || followee.id === uid || this.isFollowing(followee.id)) {
+      return;
+    }
+
+    const followerProfile = {
+      displayName: this.profile.displayName(),
+      photoURL: this.profile.avatar() ?? undefined,
+    };
+    await this.firestore.follow(uid, followee, followerProfile);
+  }
+
+  async unfollow(followeeId: string): Promise<void> {
+    const uid = this.auth.uid();
+    if (!uid) {
+      return;
+    }
+    await this.firestore.unfollow(uid, followeeId);
+  }
+
+  private attachFollowing(uid: string): void {
+    this.followingUnsub = this.firestore.listenFollowing(uid, (edges) => {
+      if (this.currentUid !== uid) {
+        return;
+      }
+      this._following.set(edges);
+    });
+  }
+
+  private detach(): void {
+    this.followingUnsub?.();
+    this.followingUnsub = null;
+    this._following.set([]);
+    this._searchResults.set([]);
+    this.clearLiveListeners();
+    this._followingLive.set([]);
+  }
+
+  private syncLiveListeners(edges: FollowingEdge[]): void {
+    const wanted = new Set(edges.map((e) => e.followeeId));
+
+    for (const [followeeId, unsub] of this.liveUnsubs) {
+      if (!wanted.has(followeeId)) {
+        unsub();
+        this.liveUnsubs.delete(followeeId);
+        this.liveSnapshots.delete(followeeId);
+      }
+    }
+
+    for (const edge of edges) {
+      if (this.liveUnsubs.has(edge.followeeId)) {
+        continue;
+      }
+      const unsub = this.firestore.listenLiveRound(edge.followeeId, (snapshot) => {
+        if (snapshot) {
+          this.liveSnapshots.set(edge.followeeId, snapshot);
+        } else {
+          this.liveSnapshots.delete(edge.followeeId);
+        }
+        this.rebuildLiveList();
+      });
+      this.liveUnsubs.set(edge.followeeId, unsub);
+    }
+
+    this.rebuildLiveList();
+  }
+
+  private clearLiveListeners(): void {
+    for (const unsub of this.liveUnsubs.values()) {
+      unsub();
+    }
+    this.liveUnsubs.clear();
+    this.liveSnapshots.clear();
+  }
+
+  private rebuildLiveList(): void {
+    const edges = this._following();
+    const live: FollowingLiveRound[] = [];
+    for (const edge of edges) {
+      const snapshot = this.liveSnapshots.get(edge.followeeId);
+      if (!snapshot) {
+        continue;
+      }
+      live.push({
+        userId: edge.followeeId,
+        displayName: edge.displayName,
+        ...(edge.photoURL ? { photoURL: edge.photoURL } : {}),
+        snapshot,
+      });
+    }
+    live.sort((a, b) => a.displayName.localeCompare(b.displayName));
+    this._followingLive.set(live);
   }
 }

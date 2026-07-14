@@ -52,6 +52,7 @@ export class Profile {
   protected readonly avatar = this.profile.avatar;
   protected readonly displayName = this.profile.displayName;
   protected readonly socialEnabled = this.social.enabled;
+  protected readonly followingCount = this.social.followingCount;
 
   /* ---------- Account ---------- */
   protected readonly isResolving = this.auth.isResolving;
