@@ -47,5 +47,9 @@ export class Rules {
       title: 'Enter par and score',
       copy: 'Lock in the hole par and your team score before moving on. We compute your result and running total.',
     },
+    {
+      title: 'Monitor live scores on the Feed',
+      copy: 'Sign in and open the Feed tab to follow every group\'s live scores during rounds and posted scorecards when they finish. Your round shows up there automatically while you play.',
+    },
   ];
 }
