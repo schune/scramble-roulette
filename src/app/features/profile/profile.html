@@ -117,40 +117,6 @@
     }
   }
 
-  <!-- Clubhouse Feed -->
-  <section class="sr-card social" aria-labelledby="social-heading">
-    <div>
-      @if (isSignedIn()) {
-        <span class="sr-badge">{{ liveFeedCount() }} live now</span>
-      } @else {
-        <span class="sr-badge">Sign in</span>
-      }
-      <h2 id="social-heading" class="section-title social__title">Clubhouse Feed</h2>
-      <p class="social__copy">
-        @if (isSignedIn()) {
-          See every group's live scores and posted scorecards on the Feed tab — including yours while
-          you're mid-round.
-        } @else {
-          Sign in to view live rounds and posted scorecards from groups across Scramble Roulette.
-        }
-      </p>
-    </div>
-    @if (isSignedIn()) {
-      <a routerLink="/feed" class="sr-btn sr-btn--ghost social__cta">Open Feed</a>
-    } @else {
-      <button type="button" class="sr-btn sr-btn--ghost social__cta" (click)="signIn()">
-        Sign in to view feed
-      </button>
-    }
-
-    @if (isSignedIn() && liveFeedCount() > 0) {
-      <p class="social-live-summary">
-        {{ liveFeedCount() }} {{ liveFeedCount() === 1 ? 'group is' : 'groups are' }} on the course
-        right now.
-      </p>
-    }
-  </section>
-
   <div class="profile-grid sr-stagger-in">
     <!-- Member card -->
     <section class="sr-card member" aria-labelledby="member-heading">

@@ -13,7 +13,6 @@ import { Card, Round } from '../../core/models';
 import { CardDeckService } from '../../core/services/card-deck.service';
 import {
   AuthService,
-  FeedService,
   ProfileService,
   ScoreService,
   describeSignInError,
@@ -38,7 +37,6 @@ interface StatCard {
 export class Profile {
   private readonly profile = inject(ProfileService);
   private readonly score = inject(ScoreService);
-  private readonly feed = inject(FeedService);
   private readonly deck = inject(CardDeckService);
   private readonly auth = inject(AuthService);
   private readonly host = inject(ElementRef<HTMLElement>);
@@ -51,7 +49,6 @@ export class Profile {
   protected readonly initials = this.profile.initials;
   protected readonly avatar = this.profile.avatar;
   protected readonly displayName = this.profile.displayName;
-  protected readonly liveFeedCount = this.feed.liveCount;
 
   /* ---------- Account ---------- */
   protected readonly isResolving = this.auth.isResolving;
@@ -168,10 +165,6 @@ export class Profile {
       day: 'numeric',
       year: 'numeric',
     });
-  }
-
-  protected formatLiveToPar(value: number): string {
-    return this.score.formatToPar(value);
   }
 
   /* ---------- Overflow menu ---------- */
