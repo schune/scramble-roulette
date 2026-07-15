@@ -41,7 +41,14 @@ export class Round {
   protected readonly canAdvance = this.roundState.canAdvance;
   protected readonly isFinalHole = this.roundState.isFinalHole;
   protected readonly followingLiveRounds = this.social.followingLiveRounds;
+  protected readonly followingCount = this.social.followingCount;
   protected readonly showFollowingPanel = computed(() => this.social.enabled() && this.followingLiveRounds().length > 0);
+  protected readonly showFollowingHint = computed(
+    () => this.social.enabled() && this.followingCount() > 0 && !this.showFollowingPanel(),
+  );
+  protected readonly showFriendsPrompt = computed(
+    () => this.social.enabled() && this.followingCount() === 0,
+  );
 
   protected readonly editing = signal(false);
   protected readonly parInput = signal<number | null>(null);

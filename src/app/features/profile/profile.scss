@@ -409,6 +409,34 @@
   flex: none;
 }
 
+.social-live {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0.75rem 0 0;
+  border-top: 1px solid rgba(250, 246, 234, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex-basis: 100%;
+}
+
+.social-live__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.88rem;
+}
+
+.social-live__name {
+  font-weight: 600;
+}
+
+.social-live__meta {
+  color: var(--sr-cream-200);
+}
+
 /* ---------- Account ---------- */
 .account {
   display: flex;

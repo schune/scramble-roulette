@@ -116,6 +116,10 @@ export class NewRound {
     }, 2150);
   }
 
+  protected backToLanding(): void {
+    this.roundState.requestPlayLanding();
+  }
+
   protected onCourseNameInput(value: string): void {
     this.roundState.setCourseName(value);
   }

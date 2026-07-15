@@ -579,6 +579,13 @@
 }
 
 /* ---------- Setup reveal ---------- */
+.setup-back {
+  align-self: flex-start;
+  margin-bottom: 0.35rem;
+  padding-inline: 0.65rem;
+  font-size: 0.88rem;
+}
+
 .setup-flow__step {
   animation: setup-step-in 0.55s cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }

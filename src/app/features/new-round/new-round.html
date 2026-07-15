@@ -216,6 +216,10 @@
 
   @if (playPhase() === 'setup') {
     <div class="setup-flow">
+      <button type="button" class="setup-back sr-btn sr-btn--ghost" (click)="backToLanding()">
+        ← Back to home
+      </button>
+
       <!-- Step 1: course -->
       <section class="sr-card setup-section course-section setup-flow__step" aria-labelledby="course-heading">
         <h2 id="course-heading" class="setup-section__title">

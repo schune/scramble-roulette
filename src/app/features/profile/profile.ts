@@ -53,6 +53,7 @@ export class Profile {
   protected readonly displayName = this.profile.displayName;
   protected readonly socialEnabled = this.social.enabled;
   protected readonly followingCount = this.social.followingCount;
+  protected readonly followingLiveRounds = this.social.followingLiveRounds;
 
   /* ---------- Account ---------- */
   protected readonly isResolving = this.auth.isResolving;
@@ -169,6 +170,10 @@ export class Profile {
       day: 'numeric',
       year: 'numeric',
     });
+  }
+
+  protected formatLiveToPar(value: number): string {
+    return this.score.formatToPar(value);
   }
 
   /* ---------- Overflow menu ---------- */

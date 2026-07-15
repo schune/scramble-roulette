@@ -72,13 +72,20 @@ export class Navbar {
         'You have a round in progress. Discard it and start a new one?',
       );
       if (!discard) {
-        void this.router.navigate(['/']);
         return;
       }
       this.roundState.endRound(false);
     }
 
     this.roundState.requestPlaySetup();
+    void this.router.navigate(['/']);
+  }
+
+  /** Return to the Tee It Up landing (clears in-progress setup). */
+  protected goHome(event: Event): void {
+    event.preventDefault();
+    this.closeMenu();
+    this.roundState.requestPlayLanding();
     void this.router.navigate(['/']);
   }
 

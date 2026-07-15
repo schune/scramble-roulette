@@ -72,6 +72,16 @@
           }
         </ul>
       </section>
+    } @else if (showFollowingHint()) {
+      <p class="following-hint">
+        None of your followed players are mid-round right now.
+        <a routerLink="/friends">View friends</a>
+      </p>
+    } @else if (showFriendsPrompt()) {
+      <p class="following-hint">
+        Follow friends to see their live scores while you play.
+        <a routerLink="/friends">Find friends</a>
+      </p>
     }
 
     <main class="round-stage">

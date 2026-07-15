@@ -3,7 +3,7 @@
     <a
       class="brand brand--mobile"
       routerLink="/"
-      (click)="closeMenu()"
+      (click)="goHome($event)"
       aria-label="Scramble Roulette play"
     >
       <span class="brand__mark" aria-hidden="true">
@@ -15,7 +15,7 @@
     <a
       class="brand brand--desktop"
       routerLink="/"
-      (click)="closeMenu()"
+      (click)="goHome($event)"
       aria-label="Scramble Roulette home"
     >
       <span class="brand__mark" aria-hidden="true">
@@ -39,15 +39,27 @@
       <ul class="nav__links">
         @for (link of links; track link.path) {
           <li>
-            <a
-              [routerLink]="link.path"
-              routerLinkActive="is-active"
-              [routerLinkActiveOptions]="{ exact: link.path === '/' }"
-              class="nav__link"
-              (click)="closeMenu()"
-            >
-              {{ link.label }}
-            </a>
+            @if (link.path === '/') {
+              <a
+                routerLink="/"
+                routerLinkActive="is-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav__link"
+                (click)="goHome($event)"
+              >
+                {{ link.label }}
+              </a>
+            } @else {
+              <a
+                [routerLink]="link.path"
+                routerLinkActive="is-active"
+                [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+                class="nav__link"
+                (click)="closeMenu()"
+              >
+                {{ link.label }}
+              </a>
+            }
           </li>
         }
       </ul>

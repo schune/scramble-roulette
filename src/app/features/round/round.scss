@@ -129,6 +129,23 @@
   line-height: 1;
 }
 
+.following-hint {
+  flex: none;
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--sr-radius-sm);
+  background: color-mix(in srgb, var(--sr-green-700) 12%, var(--sr-cream-50));
+  border: 1px solid var(--sr-cream-300);
+  font-size: 0.82rem;
+  color: var(--sr-green-700);
+  line-height: 1.4;
+}
+
+.following-hint a {
+  color: var(--sr-green-800);
+  font-weight: 600;
+}
+
 .round-head__hole {
   display: flex;
   align-items: baseline;

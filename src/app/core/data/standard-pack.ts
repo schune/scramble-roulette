@@ -33,7 +33,7 @@ const cards: Card[] = [
     id: 'standard-04',
     name: 'Worst Drive Counts',
     category: 'Hurts',
-    text: 'Your worst drive must be used.',
+    text: "Your team's worst tee shot must be used.",
     packId: STANDARD_PACK_ID,
   },
   {
@@ -41,7 +41,6 @@ const cards: Card[] = [
     name: 'Scramble Jail',
     category: 'Hurts',
     text: 'The player whose shot is selected may not hit the next shot.',
-    flavor: "No carrying the squad today, Tiger.",
     packId: STANDARD_PACK_ID,
   },
   {
@@ -90,7 +89,7 @@ const cards: Card[] = [
     id: 'standard-12',
     name: 'Hero Ball',
     category: 'Hurts',
-    text: "Whoever's drive is selected must also hit the approach shot.",
+    text: "Whoever's shot is selected must also hit the next shot (including putts).",
     packId: STANDARD_PACK_ID,
   },
   {
@@ -105,7 +104,6 @@ const cards: Card[] = [
     name: 'The Closer',
     category: 'Hurts',
     text: '{{player}} is the only player who may putt on this hole.',
-    flavor: "We're all counting on you.",
     packId: STANDARD_PACK_ID,
   },
   {

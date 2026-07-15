@@ -144,6 +144,7 @@ export class RoundStateService {
   /** Reset setup draft and return the play page to its Tee It Up landing. */
   requestPlayLanding(): void {
     this.resetDraft();
+    this._playSetupRequested.set(0);
     this._playLandingReset.update((n) => n + 1);
   }
 
