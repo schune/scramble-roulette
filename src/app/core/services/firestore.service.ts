@@ -232,8 +232,10 @@ export class FirestoreService {
   }
 
   listenFeedLive(next: (entries: FeedLiveEntry[]) => void): Unsubscribe {
-    return onSnapshot(this.feedLiveColRef(), (snap) =>
-      next(snap.docs.map((d) => d.data() as FeedLiveEntry)),
+    return onSnapshot(
+      this.feedLiveColRef(),
+      (snap) => next(snap.docs.map((d) => d.data() as FeedLiveEntry)),
+      (err) => console.warn('[FirestoreService] feedLive listener error', err),
     );
   }
 
@@ -241,9 +243,18 @@ export class FirestoreService {
     await setDoc(this.feedPostDocRef(entry.userId, entry.roundId), entry);
   }
 
+  async feedPostExists(userId: string, roundId: string): Promise<boolean> {
+    const snap = await getDoc(this.feedPostDocRef(userId, roundId));
+    return snap.exists();
+  }
+
   listenFeedPosts(next: (entries: FeedPostEntry[]) => void, max = 50): Unsubscribe {
     const q = query(this.feedPostsColRef(), orderBy('postedAt', 'desc'), limit(max));
-    return onSnapshot(q, (snap) => next(snap.docs.map((d) => d.data() as FeedPostEntry)));
+    return onSnapshot(
+      q,
+      (snap) => next(snap.docs.map((d) => d.data() as FeedPostEntry)),
+      (err) => console.warn('[FirestoreService] feedPosts listener error', err),
+    );
   }
 
   /* ---------- Rounds ---------- */

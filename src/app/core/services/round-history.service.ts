@@ -66,7 +66,7 @@ export class RoundHistoryService {
 
   /** Persist a completed round to the active store (cloud or local). */
   add(round: Round): void {
-    const uid = this.currentUid;
+    const uid = this.auth.uid();
     if (uid) {
       this._history.update((list) => this.upsert(list, round)); // optimistic
       void this.firestore.saveRound(uid, round).catch(() => {
@@ -81,7 +81,7 @@ export class RoundHistoryService {
 
   /** Remove a round from the active store. */
   remove(id: string): void {
-    const uid = this.currentUid;
+    const uid = this.auth.uid();
     this._history.update((list) => list.filter((r) => r.id !== id)); // optimistic
     if (uid) {
       void this.firestore.deleteRound(uid, id).catch(() => {});
@@ -92,7 +92,7 @@ export class RoundHistoryService {
 
   /** Clear all rounds from the active store. */
   clear(): void {
-    const uid = this.currentUid;
+    const uid = this.auth.uid();
     const ids = this._history().map((r) => r.id);
     this._history.set([]);
     if (uid) {
@@ -115,7 +115,12 @@ export class RoundHistoryService {
       const missing = guest.filter((g) => !cloud.some((c) => c.id === g.id));
       if (missing.length > 0) {
         await this.firestore.saveManyRounds(uid, missing);
+        for (const round of missing) {
+          this.publishFeedPost(uid, round);
+        }
       }
+
+      await this.backfillMissingFeedPosts(uid, cloud);
     } catch {
       // Offline / transient: the live listener below still serves cached data.
     }
@@ -165,6 +170,34 @@ export class RoundHistoryService {
       postedAt: round.completedAt ?? new Date().toISOString(),
     };
 
-    void this.firestore.saveFeedPost(post).catch(() => {});
+    void this.firestore.saveFeedPost(post).catch((err) => {
+      console.warn('[RoundHistoryService] Failed to publish feed post', err);
+    });
+  }
+
+  /** Republish feed posts for recent rounds that may have missed publish (e.g. rules lag). */
+  private async backfillMissingFeedPosts(uid: string, rounds: Round[]): Promise<void> {
+    if (this.currentUid !== uid) {
+      return;
+    }
+
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const recent = rounds.filter((round) => {
+      if (round.status !== 'complete') {
+        return false;
+      }
+      const when = new Date(round.completedAt ?? round.createdAt).getTime();
+      return when >= cutoff;
+    });
+
+    for (const round of recent) {
+      if (this.currentUid !== uid) {
+        return;
+      }
+      const exists = await this.firestore.feedPostExists(uid, round.id);
+      if (!exists) {
+        this.publishFeedPost(uid, round);
+      }
+    }
   }
 }

@@ -42,18 +42,6 @@
       </div>
     </header>
 
-    @if (showFeedBanner()) {
-      <a routerLink="/feed" class="feed-banner">
-        <span class="feed-banner__label">{{ liveFeedCount() }} live on the feed</span>
-        <span class="feed-banner__cta">Check scores →</span>
-      </a>
-    } @else if (showFeedPrompt()) {
-      <p class="following-hint">
-        See every group's live scores on the Feed tab.
-        <a routerLink="/feed">Open feed</a>
-      </p>
-    }
-
     <main class="round-stage">
       @if (currentCard(); as card) {
         @if (!isDrawing()) {

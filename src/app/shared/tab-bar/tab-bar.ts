@@ -10,7 +10,7 @@ interface TabItem {
 }
 
 /**
- * Mobile bottom nav — Play (home), Feed, Profile.
+ * Mobile bottom nav — Feed, Play (home), Profile.
  */
 @Component({
   selector: 'app-tab-bar',
@@ -24,10 +24,16 @@ export class TabBar {
   private readonly roundState = inject(RoundStateService);
 
   protected readonly tabs: TabItem[] = [
-    { label: 'Play', path: '/', icon: 'play', primary: true },
     { label: 'Feed', path: '/feed', icon: 'feed' },
+    { label: 'Play', path: '/', icon: 'play', primary: true },
     { label: 'Profile', path: '/profile', icon: 'profile' },
   ];
+
+  protected onTabClick(tab: TabItem, event: Event): void {
+    if (tab.path === '/') {
+      this.goPlay(event);
+    }
+  }
 
   protected goPlay(event: Event): void {
     event.preventDefault();

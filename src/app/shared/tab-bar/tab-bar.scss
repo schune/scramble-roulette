@@ -23,6 +23,7 @@
 
   .tab-bar__item {
     flex: 1;
+    max-width: 33.333%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,6 +48,18 @@
 
   .tab-bar__item.is-active {
     background: rgba(250, 246, 234, 0.1);
+  }
+
+  .tab-bar__item[data-tab='feed'] {
+    order: 1;
+  }
+
+  .tab-bar__item[data-tab='play'] {
+    order: 2;
+  }
+
+  .tab-bar__item[data-tab='profile'] {
+    order: 3;
   }
 
   .tab-bar__item--primary {
