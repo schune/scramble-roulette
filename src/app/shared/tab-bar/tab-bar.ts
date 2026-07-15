@@ -5,12 +5,12 @@ import { RoundStateService } from '../../core/services';
 interface TabItem {
   label: string;
   path: string;
-  icon: 'history' | 'play' | 'friends' | 'profile';
+  icon: 'feed' | 'play' | 'profile';
   primary?: boolean;
 }
 
 /**
- * Mobile bottom nav — History, Play (home), Friends, Profile.
+ * Mobile bottom nav — Play (home), Feed, Profile.
  */
 @Component({
   selector: 'app-tab-bar',
@@ -24,9 +24,8 @@ export class TabBar {
   private readonly roundState = inject(RoundStateService);
 
   protected readonly tabs: TabItem[] = [
-    { label: 'History', path: '/previous-rounds', icon: 'history' },
     { label: 'Play', path: '/', icon: 'play', primary: true },
-    { label: 'Friends', path: '/friends', icon: 'friends' },
+    { label: 'Feed', path: '/feed', icon: 'feed' },
     { label: 'Profile', path: '/profile', icon: 'profile' },
   ];
 

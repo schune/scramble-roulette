@@ -1,8 +1,10 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
-import { Round } from '../models';
+import { FeedPostEntry, Round } from '../models';
 import { StorageService } from './storage.service';
 import { FirestoreService } from './firestore.service';
 import { AuthService } from './auth.service';
+import { ProfileService } from './profile.service';
+import { ScoreService } from './score.service';
 
 /**
  * Single source of truth for completed rounds, exposed as a reactive signal.
@@ -23,6 +25,8 @@ export class RoundHistoryService {
   private readonly storage = inject(StorageService);
   private readonly firestore = inject(FirestoreService);
   private readonly auth = inject(AuthService);
+  private readonly profile = inject(ProfileService);
+  private readonly score = inject(ScoreService);
 
   private readonly _history = signal<Round[]>([]);
   /** Completed rounds, newest first. */
@@ -68,6 +72,7 @@ export class RoundHistoryService {
       void this.firestore.saveRound(uid, round).catch(() => {
         /* onSnapshot reconciles; persistence retries when back online */
       });
+      this.publishFeedPost(uid, round);
     } else {
       this.storage.saveCompletedRound(round);
       this._history.set(this.storage.getRoundHistory());
@@ -139,5 +144,25 @@ export class RoundHistoryService {
         new Date(b.completedAt ?? b.createdAt).getTime() -
         new Date(a.completedAt ?? a.createdAt).getTime(),
     );
+  }
+
+  private publishFeedPost(uid: string, round: Round): void {
+    const holesPlayed = round.holes.filter((hole) => hole.score !== undefined).length;
+    const post: FeedPostEntry = {
+      userId: uid,
+      displayName: this.profile.displayName(),
+      ...(this.profile.avatar() ? { photoURL: this.profile.avatar()! } : {}),
+      roundId: round.id,
+      ...(round.courseName ? { courseName: round.courseName } : {}),
+      holeCount: round.holeCount,
+      holesPlayed,
+      playerNames: round.players.map((player) => player.name),
+      totalScore: this.score.totalScore(round),
+      toPar: this.score.totalScoreToPar(round),
+      ...(round.endedEarly ? { endedEarly: true } : {}),
+      postedAt: round.completedAt ?? new Date().toISOString(),
+    };
+
+    void this.firestore.saveFeedPost(post).catch(() => {});
   }
 }

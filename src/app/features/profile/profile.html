@@ -117,44 +117,37 @@
     }
   }
 
-  <!-- Friends & Following -->
+  <!-- Clubhouse Feed -->
   <section class="sr-card social" aria-labelledby="social-heading">
     <div>
       @if (isSignedIn()) {
-        <span class="sr-badge">{{ followingCount() }} following</span>
+        <span class="sr-badge">{{ liveFeedCount() }} live now</span>
       } @else {
         <span class="sr-badge">Sign in</span>
       }
-      <h2 id="social-heading" class="section-title social__title">Friends &amp; Following</h2>
+      <h2 id="social-heading" class="section-title social__title">Clubhouse Feed</h2>
       <p class="social__copy">
         @if (isSignedIn()) {
-          Follow your foursome on the Friends tab. When they're mid-round and signed in, their live
-          score appears here and on your round page.
+          See every group's live scores and posted scorecards on the Feed tab — including yours while
+          you're mid-round.
         } @else {
-          Sign in to find friends and track live scores from other groups on the course.
+          Sign in to view live rounds and posted scorecards from groups across Scramble Roulette.
         }
       </p>
     </div>
     @if (isSignedIn()) {
-      <a routerLink="/friends" class="sr-btn sr-btn--ghost social__cta">Find Friends</a>
+      <a routerLink="/feed" class="sr-btn sr-btn--ghost social__cta">Open Feed</a>
     } @else {
       <button type="button" class="sr-btn sr-btn--ghost social__cta" (click)="signIn()">
-        Sign in to follow
+        Sign in to view feed
       </button>
     }
 
-    @if (isSignedIn() && followingLiveRounds().length > 0) {
-      <ul class="social-live">
-        @for (live of followingLiveRounds(); track live.userId) {
-          <li class="social-live__row">
-            <span class="social-live__name">{{ live.displayName }}</span>
-            <span class="social-live__meta">
-              Hole {{ live.snapshot.currentHole }}/{{ live.snapshot.holeCount }} ·
-              {{ formatLiveToPar(live.snapshot.toPar) }}
-            </span>
-          </li>
-        }
-      </ul>
+    @if (isSignedIn() && liveFeedCount() > 0) {
+      <p class="social-live-summary">
+        {{ liveFeedCount() }} {{ liveFeedCount() === 1 ? 'group is' : 'groups are' }} on the course
+        right now.
+      </p>
     }
   </section>
 

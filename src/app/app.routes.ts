@@ -24,9 +24,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/profile/profile').then((m) => m.Profile),
   },
   {
+    path: 'feed',
+    title: 'Live Golf Feed · Scramble Roulette',
+    loadComponent: () => import('./features/feed/feed').then((m) => m.Feed),
+  },
+  {
     path: 'friends',
-    title: 'Find Golf Friends · Scramble Roulette',
-    loadComponent: () => import('./features/friends/friends').then((m) => m.Friends),
+    redirectTo: 'feed',
+    pathMatch: 'full',
   },
   {
     path: 'round',

@@ -53,6 +53,14 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
     keywords: 'golf profile, scramble golf stats, golf round history, golf score tracking',
     path: '/profile',
   },
+  feed: {
+    title: `Live Golf Feed — ${brand}`,
+    description:
+      'See every live scramble round and posted scorecard on Scramble Roulette — check other groups' +
+      ' scores while you are on the course.',
+    keywords: 'live golf scores, scramble golf feed, golf leaderboard, golf scoreboard',
+    path: '/feed',
+  },
   'previous-rounds': {
     title: `Golf Scramble Round History — ${brand}`,
     description:

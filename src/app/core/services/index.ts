@@ -9,5 +9,6 @@ export * from './firestore.service';
 export * from './sound.service';
 export * from './social.service';
 export * from './live-round-sync.service';
+export * from './feed.service';
 export * from './seo.service';
 export * from './scroll-lock.service';

@@ -10,7 +10,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
 import { Card } from '../../core/models';
-import { RoundStateService, ScoreService, ScrollLockService, SocialService, SoundService, CardDeckService } from '../../core/services';
+import { RoundStateService, ScoreService, ScrollLockService, FeedService, SoundService, CardDeckService } from '../../core/services';
 
 type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 
@@ -27,7 +27,7 @@ type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 export class Round {
   private readonly roundState = inject(RoundStateService);
   private readonly score = inject(ScoreService);
-  private readonly social = inject(SocialService);
+  private readonly feed = inject(FeedService);
   private readonly sound = inject(SoundService);
   private readonly deck = inject(CardDeckService);
   private readonly scrollLock = inject(ScrollLockService);
@@ -42,15 +42,9 @@ export class Round {
   protected readonly canDraw = this.roundState.canDraw;
   protected readonly canAdvance = this.roundState.canAdvance;
   protected readonly isFinalHole = this.roundState.isFinalHole;
-  protected readonly followingLiveRounds = this.social.followingLiveRounds;
-  protected readonly followingCount = this.social.followingCount;
-  protected readonly showFollowingPanel = computed(() => this.social.enabled() && this.followingLiveRounds().length > 0);
-  protected readonly showFollowingHint = computed(
-    () => this.social.enabled() && this.followingCount() > 0 && !this.showFollowingPanel(),
-  );
-  protected readonly showFriendsPrompt = computed(
-    () => this.social.enabled() && this.followingCount() === 0,
-  );
+  protected readonly liveFeedCount = this.feed.liveCount;
+  protected readonly showFeedBanner = computed(() => this.feed.enabled() && this.liveFeedCount() > 0);
+  protected readonly showFeedPrompt = computed(() => this.feed.enabled() && this.liveFeedCount() === 0);
 
   protected readonly editing = signal(false);
   protected readonly parInput = signal<number | null>(null);

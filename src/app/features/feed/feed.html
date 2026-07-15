@@ -1,0 +1,163 @@
+<div class="sr-page sr-container feed">
+  <app-page-header
+    eyebrow="Clubhouse"
+    title="Feed"
+    subtitle="Live rounds and posted scorecards from every group on Scramble Roulette."
+  />
+
+  @if (!isResolving()) {
+    @if (!isSignedIn()) {
+      <section class="sr-card feed-gate" aria-labelledby="feed-gate-heading">
+        <div>
+          <span class="sr-badge">Sign in required</span>
+          <h2 id="feed-gate-heading" class="section-title feed-gate__title">
+            See what every group is shooting
+          </h2>
+          <p class="feed-gate__copy">
+            Sign in with Google to view live scores during rounds and posted scorecards when groups
+            finish. Your round syncs here automatically while you play.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="feed-gate__signin"
+          [disabled]="signingIn()"
+          (click)="signIn()"
+        >
+          {{ signingIn() ? 'Signing in…' : 'Sign in with Google' }}
+        </button>
+        @if (authError(); as err) {
+          <p class="feed-gate__error" role="alert">{{ err }}</p>
+        }
+      </section>
+    } @else {
+      <div class="feed__body sr-stagger-in">
+        @if (hasActiveRound()) {
+          <p class="feed__round-link">
+            You're mid-round —
+            <a routerLink="/round">Back to your round</a>
+          </p>
+        }
+
+        @if (items().length === 0) {
+          <section class="sr-card feed-empty">
+            <h2 class="section-title">Nothing on the feed yet</h2>
+            <p class="feed-empty__copy">
+              When signed-in groups start rounds, their live scores show up here. Finished rounds
+              post their scorecard automatically.
+            </p>
+            <a routerLink="/" class="sr-btn sr-btn--primary">Start a Round</a>
+          </section>
+        } @else {
+          @if (liveRounds().length > 0) {
+            <section class="feed-section" aria-labelledby="live-heading">
+              <div class="feed-section__head">
+                <h2 id="live-heading" class="section-title">Live now</h2>
+                <span class="feed-section__count">{{ liveRounds().length }}</span>
+              </div>
+              <ul class="feed-list">
+                @for (item of items(); track item.id) {
+                  @if (isLiveItem(item)) {
+                    <li class="feed-card feed-card--live" [class.feed-card--own]="isOwnUser(item.entry.userId)">
+                      <div class="feed-card__head">
+                        <span class="feed-card__avatar" aria-hidden="true">
+                          {{ initials(item.entry.displayName) }}
+                        </span>
+                        <div class="feed-card__who">
+                          <span class="feed-card__name">
+                            {{ item.entry.displayName }}
+                            @if (isOwnUser(item.entry.userId)) {
+                              <span class="feed-card__you">You</span>
+                            }
+                          </span>
+                          @if (item.entry.courseName) {
+                            <span class="feed-card__course">{{ item.entry.courseName }}</span>
+                          }
+                        </div>
+                        <span class="feed-card__badge feed-card__badge--live">Live</span>
+                      </div>
+
+                      <dl class="feed-card__stats">
+                        <div>
+                          <dt>Hole</dt>
+                          <dd>{{ item.entry.currentHole }}/{{ item.entry.holeCount }}</dd>
+                        </div>
+                        <div>
+                          <dt>Total</dt>
+                          <dd>{{ item.entry.totalScore }}</dd>
+                        </div>
+                        <div>
+                          <dt>To Par</dt>
+                          <dd>{{ formatToPar(item.entry.toPar) }}</dd>
+                        </div>
+                      </dl>
+
+                      <p class="feed-card__players">{{ playerSummary(item.entry.playerNames) }}</p>
+                      <p class="feed-card__time">Updated {{ formatWhen(item.entry.updatedAt) }}</p>
+                    </li>
+                  }
+                }
+              </ul>
+            </section>
+          }
+
+          @if (completedPosts().length > 0) {
+            <section class="feed-section" aria-labelledby="posted-heading">
+              <div class="feed-section__head">
+                <h2 id="posted-heading" class="section-title">Posted scorecards</h2>
+              </div>
+              <ul class="feed-list">
+                @for (item of items(); track item.id) {
+                  @if (isCompletedItem(item)) {
+                    <li class="feed-card feed-card--posted" [class.feed-card--own]="isOwnUser(item.entry.userId)">
+                      <div class="feed-card__head">
+                        <span class="feed-card__avatar" aria-hidden="true">
+                          {{ initials(item.entry.displayName) }}
+                        </span>
+                        <div class="feed-card__who">
+                          <span class="feed-card__name">
+                            {{ item.entry.displayName }}
+                            @if (isOwnUser(item.entry.userId)) {
+                              <span class="feed-card__you">You</span>
+                            }
+                          </span>
+                          @if (item.entry.courseName) {
+                            <span class="feed-card__course">{{ item.entry.courseName }}</span>
+                          }
+                        </div>
+                        <span class="feed-card__badge">
+                          {{ item.entry.endedEarly ? 'Round saved' : 'Final' }}
+                        </span>
+                      </div>
+
+                      <div class="feed-card__scoreline">
+                        <span class="feed-card__topar">{{ formatToPar(item.entry.toPar) }}</span>
+                        <span class="feed-card__meta">
+                          {{ item.entry.totalScore }} strokes ·
+                          {{ item.entry.holesPlayed }}/{{ item.entry.holeCount }} holes
+                        </span>
+                      </div>
+
+                      <p class="feed-card__players">{{ playerSummary(item.entry.playerNames) }}</p>
+                      <p class="feed-card__time">Posted {{ formatWhen(item.entry.postedAt) }}</p>
+
+                      @if (isOwnUser(item.entry.userId)) {
+                        <a
+                          routerLink="/scorecard"
+                          [queryParams]="{ round: item.entry.roundId }"
+                          class="feed-card__link"
+                        >
+                          View your scorecard
+                        </a>
+                      }
+                    </li>
+                  }
+                }
+              </ul>
+            </section>
+          }
+        }
+      </div>
+    }
+  }
+</div>

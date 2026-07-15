@@ -48,7 +48,7 @@ export class Navbar {
 
   protected readonly links: NavLink[] = [
     { label: 'Play', path: '/' },
-    { label: 'History', path: '/previous-rounds' },
+    { label: 'Feed', path: '/feed' },
     { label: 'Official Rules', path: '/rules' },
     { label: 'Profile', path: '/profile' },
   ];

@@ -1,5 +1,5 @@
 import { Injectable, effect, inject } from '@angular/core';
-import { LiveRoundSnapshot, Round } from '../models';
+import { LiveRoundSnapshot, Round, FeedLiveEntry, FeedPostEntry } from '../models';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
 import { ProfileService } from './profile.service';
@@ -71,6 +71,7 @@ export class LiveRoundSyncService {
 
     try {
       await this.firestore.saveLiveRound(uid, snapshot);
+      await this.firestore.saveFeedLive(this.buildFeedLive(uid, round, snapshot));
       this.profile.syncPublicProfile({ isLive: true });
     } catch {
       // Non-fatal — local play continues even if sync fails.
@@ -80,9 +81,26 @@ export class LiveRoundSyncService {
   private async clear(uid: string): Promise<void> {
     try {
       await this.firestore.clearLiveRound(uid);
+      await this.firestore.clearFeedLive(uid);
       this.profile.syncPublicProfile({ isLive: false });
     } catch {
       // Ignore cleanup failures.
     }
+  }
+
+  private buildFeedLive(uid: string, round: Round, snapshot: LiveRoundSnapshot): FeedLiveEntry {
+    return {
+      userId: uid,
+      displayName: this.profile.displayName(),
+      ...(this.profile.avatar() ? { photoURL: this.profile.avatar()! } : {}),
+      roundId: snapshot.roundId,
+      ...(snapshot.courseName ? { courseName: snapshot.courseName } : {}),
+      holeCount: snapshot.holeCount,
+      currentHole: snapshot.currentHole,
+      playerNames: snapshot.playerNames,
+      totalScore: snapshot.totalScore,
+      toPar: snapshot.toPar,
+      updatedAt: snapshot.updatedAt,
+    };
   }
 }

@@ -21,6 +21,8 @@ import { FIRESTORE } from '../firebase/firebase.providers';
 import {
   FollowerEdge,
   FollowingEdge,
+  FeedLiveEntry,
+  FeedPostEntry,
   LiveRoundSnapshot,
   PublicProfile,
   Round,
@@ -40,6 +42,8 @@ export const LIVE_ROUND_DOC_ID = 'current';
  *   users/{uid}/following/{id}      → outbound follow edges
  *   users/{uid}/followers/{id}      → inbound follow edges
  *   users/{uid}/liveRound/current   → in-progress scoreboard for followers
+ *   feedLive/{uid}                  → global live round feed entry
+ *   feedPosts/{uid}_{roundId}       → completed round posted to feed
  */
 @Injectable({ providedIn: 'root' })
 export class FirestoreService {
@@ -75,6 +79,22 @@ export class FirestoreService {
 
   private liveRoundDocRef(uid: string): DocumentReference<DocumentData> {
     return doc(this.db, 'users', uid, 'liveRound', LIVE_ROUND_DOC_ID);
+  }
+
+  private feedLiveDocRef(uid: string): DocumentReference<DocumentData> {
+    return doc(this.db, 'feedLive', uid);
+  }
+
+  private feedLiveColRef(): CollectionReference<DocumentData> {
+    return collection(this.db, 'feedLive');
+  }
+
+  private feedPostsColRef(): CollectionReference<DocumentData> {
+    return collection(this.db, 'feedPosts');
+  }
+
+  private feedPostDocRef(userId: string, roundId: string): DocumentReference<DocumentData> {
+    return doc(this.db, 'feedPosts', `${userId}_${roundId}`);
   }
 
   private publicProfilesColRef(): CollectionReference<DocumentData> {
@@ -199,6 +219,31 @@ export class FirestoreService {
     return onSnapshot(this.liveRoundDocRef(uid), (snap) =>
       next(snap.exists() ? (snap.data() as LiveRoundSnapshot) : null),
     );
+  }
+
+  /* ---------- Global feed ---------- */
+
+  async saveFeedLive(entry: FeedLiveEntry): Promise<void> {
+    await setDoc(this.feedLiveDocRef(entry.userId), entry);
+  }
+
+  async clearFeedLive(uid: string): Promise<void> {
+    await deleteDoc(this.feedLiveDocRef(uid));
+  }
+
+  listenFeedLive(next: (entries: FeedLiveEntry[]) => void): Unsubscribe {
+    return onSnapshot(this.feedLiveColRef(), (snap) =>
+      next(snap.docs.map((d) => d.data() as FeedLiveEntry)),
+    );
+  }
+
+  async saveFeedPost(entry: FeedPostEntry): Promise<void> {
+    await setDoc(this.feedPostDocRef(entry.userId, entry.roundId), entry);
+  }
+
+  listenFeedPosts(next: (entries: FeedPostEntry[]) => void, max = 50): Unsubscribe {
+    const q = query(this.feedPostsColRef(), orderBy('postedAt', 'desc'), limit(max));
+    return onSnapshot(q, (snap) => next(snap.docs.map((d) => d.data() as FeedPostEntry)));
   }
 
   /* ---------- Rounds ---------- */
