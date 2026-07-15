@@ -3,8 +3,16 @@ export interface OfficialRule {
   copy: string;
 }
 
-/** Card id for Mulligan Roulette — shows an in-round link to mulligan rules. */
-export const MULLIGAN_ROULETTE_CARD_ID = 'standard-13';
+/** Cards that grant mulligans — show an in-round link to Rule #4. */
+export const MULLIGAN_CARD_IDS = new Set([
+  'standard-03', // Sandbagger's Mulligan
+  'standard-13', // Mulligan Roulette
+  'standard-15', // Reload
+]);
+
+export function isMulliganCard(cardId: string): boolean {
+  return MULLIGAN_CARD_IDS.has(cardId);
+}
 
 export const OFFICIAL_GOLF_RULES: OfficialRule[] = [
   {

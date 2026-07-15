@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MULLIGAN_ROULETTE_CARD_ID, MULLIGAN_RULE } from '../../core/data/official-rules';
+import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
 import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, SocialService, SoundService, CardDeckService } from '../../core/services';
 
@@ -271,7 +271,7 @@ export class Round {
   }
 
   protected showsMulliganRulesLink(card: Card): boolean {
-    return card.id === MULLIGAN_ROULETTE_CARD_ID;
+    return isMulliganCard(card.id);
   }
 
   protected openMulliganRules(event: Event): void {
