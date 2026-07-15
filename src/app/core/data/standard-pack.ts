@@ -98,7 +98,6 @@ const cards: Card[] = [
     name: 'Mulligan Roulette',
     category: 'Helps',
     text: '{{player}} receives two mulligans on this hole.',
-    flavor: 'Use them wisely.',
     packId: STANDARD_PACK_ID,
   },
   {

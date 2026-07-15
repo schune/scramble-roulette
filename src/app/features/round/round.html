@@ -88,7 +88,15 @@
             </header>
             <h2 class="card-display__name">{{ card.name }}</h2>
             <p class="card-display__text">{{ card.text }}</p>
-            @if (card.flavor) {
+            @if (showsMulliganRulesLink(card)) {
+              <button
+                type="button"
+                class="card-display__rules-link"
+                (click)="openMulliganRules($event)"
+              >
+                View Mulligan Rules
+              </button>
+            } @else if (card.flavor) {
               <p class="card-display__flavor">{{ card.flavor }}</p>
             }
             @if (card.helpText) {
@@ -314,7 +322,15 @@
               <span class="draw-cinematic__cat">{{ card.category }}</span>
               <h2 id="cine-card-name" class="draw-cinematic__name">{{ card.name }}</h2>
               <p class="draw-cinematic__rule">{{ card.text }}</p>
-              @if (card.flavor) {
+              @if (showsMulliganRulesLink(card)) {
+                <button
+                  type="button"
+                  class="draw-cinematic__rules-link"
+                  (click)="openMulliganRules($event)"
+                >
+                  View Mulligan Rules
+                </button>
+              } @else if (card.flavor) {
                 <p class="draw-cinematic__flavor">{{ card.flavor }}</p>
               }
               @if (card.helpText) {
@@ -357,6 +373,26 @@
           </button>
           <button type="button" class="sr-btn sr-btn--ghost sr-btn--block" (click)="cancelEnd()">
             Keep Playing
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (mulliganRulesOpen()) {
+    <div
+      class="modal modal--overlay-cinematic"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mulligan-rules-title"
+    >
+      <div class="modal__backdrop" (click)="closeMulliganRules()"></div>
+      <div class="modal__panel sr-card modal__panel--center">
+        <h2 id="mulligan-rules-title" class="modal__title">{{ mulliganRule.title }}</h2>
+        <p class="modal__copy">{{ mulliganRule.copy }}</p>
+        <div class="modal__actions modal__actions--center">
+          <button type="button" class="sr-btn sr-btn--primary" (click)="closeMulliganRules()">
+            Got it
           </button>
         </div>
       </div>

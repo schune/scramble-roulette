@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { MULLIGAN_ROULETTE_CARD_ID, MULLIGAN_RULE } from '../../core/data/official-rules';
 import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, SocialService, SoundService, CardDeckService } from '../../core/services';
 
@@ -18,6 +19,9 @@ type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
   templateUrl: './round.html',
   styleUrl: './round.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:keydown.escape)': 'onEscape()',
+  },
 })
 export class Round {
   private readonly roundState = inject(RoundStateService);
@@ -51,6 +55,8 @@ export class Round {
   protected readonly skipCardEntrance = signal(false);
   /** Flip finished — card stays face-up until the player dismisses. */
   protected readonly cinematicRevealed = signal(false);
+  protected readonly mulliganRulesOpen = signal(false);
+  protected readonly mulliganRule = MULLIGAN_RULE;
 
   protected readonly sparkles = Array.from({ length: 28 }, (_, i) => i);
 
@@ -262,6 +268,26 @@ export class Round {
 
   protected initials(name: string): string {
     return name.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  protected showsMulliganRulesLink(card: Card): boolean {
+    return card.id === MULLIGAN_ROULETTE_CARD_ID;
+  }
+
+  protected openMulliganRules(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mulliganRulesOpen.set(true);
+  }
+
+  protected closeMulliganRules(): void {
+    this.mulliganRulesOpen.set(false);
+  }
+
+  protected onEscape(): void {
+    if (this.mulliganRulesOpen()) {
+      this.closeMulliganRules();
+    }
   }
 
   private syncFromHole(): void {

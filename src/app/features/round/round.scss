@@ -284,13 +284,22 @@
   border-radius: var(--sr-radius-lg);
   padding: clamp(1.25rem, 4vw, 2rem);
   background: linear-gradient(150deg, var(--sr-cream-50), var(--sr-surface));
-  border: none;
-  box-shadow:
-    var(--sr-shadow-lg),
-    inset 0 0 0 1px var(--sr-cream-300),
-    inset 0 6px 0 0 var(--sr-accent, var(--sr-gold-500));
+  border: 1px solid var(--sr-cream-300);
+  overflow: hidden;
+  box-shadow: var(--sr-shadow-lg);
   transform-origin: center;
   animation: card-flip-in 0.55s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+
+.card-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--sr-accent, var(--sr-gold-500));
+  pointer-events: none;
 }
 
 .card-display--settled {
@@ -304,7 +313,7 @@
 .card-display::after {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: 0;
   border-radius: inherit;
   pointer-events: none;
   box-shadow: 0 0 0 0 var(--sr-accent, var(--sr-gold-500));
@@ -384,6 +393,25 @@
   font-style: italic;
   color: var(--sr-muted);
   font-size: 0.95rem;
+}
+
+.card-display__rules-link {
+  display: inline-block;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--sr-green-700);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.card-display__rules-link:hover {
+  color: var(--sr-green-900);
 }
 
 .card-display__help {
@@ -749,13 +777,23 @@
   text-align: center;
   padding: 1.5rem 1.25rem;
   background: linear-gradient(155deg, var(--sr-surface), var(--sr-cream-50));
-  border: none;
+  border: 1px solid var(--sr-cream-300);
+  overflow: hidden;
   box-shadow:
     0 30px 80px rgba(0, 0, 0, 0.5),
-    0 0 60px color-mix(in srgb, var(--cine-accent, var(--sr-gold-500)) 45%, transparent),
-    inset 0 0 0 1px var(--sr-cream-300),
-    inset 0 6px 0 0 var(--cine-accent, var(--sr-gold-500));
+    0 0 60px color-mix(in srgb, var(--cine-accent, var(--sr-gold-500)) 45%, transparent);
   transform: rotateY(180deg) translateZ(1px);
+}
+
+.draw-cinematic__face--front::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--cine-accent, var(--sr-gold-500));
+  pointer-events: none;
 }
 
 .draw-cinematic__cat {
@@ -792,6 +830,29 @@
   font-style: italic;
   font-size: 0.88rem;
   color: var(--sr-muted);
+}
+
+.draw-cinematic__rules-link {
+  display: inline-block;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--sr-green-800);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.draw-cinematic__rules-link:hover {
+  color: var(--sr-green-900);
+}
+
+.modal--overlay-cinematic {
+  z-index: 250;
 }
 
 .draw-cinematic__help {
@@ -1033,6 +1094,11 @@
 
   .card-display,
   .card-display::after {
+    animation: none;
+  }
+
+  .card-display::before,
+  .draw-cinematic__face--front::before {
     animation: none;
   }
 
