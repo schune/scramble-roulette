@@ -76,7 +76,7 @@
             </svg>
           }
         </button>
-        <button type="button" class="sr-btn sr-btn--gold nav__cta" (click)="goNewRound()">
+        <button type="button" class="sr-btn sr-btn--gold nav__cta" (click)="goNewRound($event)">
           New Round
         </button>
 
@@ -166,7 +166,7 @@
     <button
       type="button"
       class="sr-btn sr-btn--gold nav__cta-mobile"
-      (click)="goNewRound()"
+      (click)="goNewRound($event)"
     >
       New Round
     </button>

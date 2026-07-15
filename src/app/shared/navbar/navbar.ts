@@ -61,11 +61,24 @@ export class Navbar {
     this.menuOpen.set(false);
   }
 
-  /** Go to play landing — works even when already on `/` or mid-setup. */
-  protected goNewRound(): void {
+  /** Go to play setup — discards an in-progress round when confirmed. */
+  protected goNewRound(event: Event): void {
+    event.stopPropagation();
     this.closeMenu();
     this.closeAccountMenu();
-    this.roundState.requestPlayLanding();
+
+    if (this.roundState.hasActiveRound()) {
+      const discard = confirm(
+        'You have a round in progress. Discard it and start a new one?',
+      );
+      if (!discard) {
+        void this.router.navigate(['/']);
+        return;
+      }
+      this.roundState.endRound(false);
+    }
+
+    this.roundState.requestPlaySetup();
     void this.router.navigate(['/']);
   }
 

@@ -78,7 +78,9 @@ export class NewRound {
       if (this.roundState.playLandingReset() === 0) {
         return;
       }
-      this.playPhase.set('landing');
+      this.playPhase.set(
+        this.roundState.playSetupRequested() > 0 && !this.activeRound() ? 'setup' : 'landing',
+      );
       this.teeOffPhase.set(null);
       this.clearTeeOffTimers();
       this.confirmingDiscard.set(false);

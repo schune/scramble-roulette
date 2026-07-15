@@ -80,7 +80,10 @@ export class RoundStateService {
 
   /** Bumped when nav or other chrome requests the play landing screen. */
   private readonly _playLandingReset = signal(0);
+  /** When > 0, paired with a landing reset, open setup instead of the Tee It Up landing. */
+  private readonly _playSetupRequested = signal(0);
   readonly playLandingReset = this._playLandingReset.asReadonly();
+  readonly playSetupRequested = this._playSetupRequested.asReadonly();
 
   constructor() {
     const saved = this.storage.getActiveRound();
@@ -142,6 +145,13 @@ export class RoundStateService {
   requestPlayLanding(): void {
     this.resetDraft();
     this._playLandingReset.update((n) => n + 1);
+  }
+
+  /** Reset setup draft and jump straight to the setup form (navbar New Round). */
+  requestPlaySetup(): void {
+    this.resetDraft();
+    this._playLandingReset.update((n) => n + 1);
+    this._playSetupRequested.update((n) => n + 1);
   }
 
   /* ---------- Round lifecycle ---------- */
