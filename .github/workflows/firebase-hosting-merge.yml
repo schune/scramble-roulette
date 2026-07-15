@@ -12,13 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: "npm install && npm run build "
-      - uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCRAMBLE_ROULETTE }}
-      - run: npx firebase-tools@latest deploy --only firestore:rules --project scramble-roulette --non-interactive
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCRAMBLE_ROULETTE }}
           channelId: live
           projectId: scramble-roulette
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SCRAMBLE_ROULETTE }}
+      - name: Deploy Firestore rules
+        continue-on-error: true
+        run: npx firebase-tools@latest deploy --only firestore:rules --project scramble-roulette --non-interactive
