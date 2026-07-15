@@ -119,6 +119,7 @@
   max-height: min(52vh, 28rem);
   overflow-y: auto;
   overscroll-behavior: contain;
+  touch-action: pan-y;
   padding-inline: 0.35rem 0.2rem;
 }
 

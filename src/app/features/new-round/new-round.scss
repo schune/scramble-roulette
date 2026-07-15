@@ -346,7 +346,7 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .tee-off__veil {

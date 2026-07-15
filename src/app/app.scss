@@ -116,24 +116,19 @@
 /* ---------- Mobile app shell ---------- */
 @media (max-width: 860px) {
   :host {
+    height: 100vh;
     height: 100dvh;
-    height: 100svh;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .app-shell {
+    height: 100vh;
     height: 100dvh;
-    height: 100svh;
+    min-height: 100vh;
+    min-height: 100dvh;
     padding-top: env(safe-area-inset-top, 0px);
     overflow-x: hidden;
-  }
-
-  /* Routed page hosts fill the viewport and delegate scroll inward */
-  .app-main__viewport > :not(router-outlet) {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
   }
 
   .app-footer {

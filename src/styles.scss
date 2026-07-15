@@ -162,6 +162,7 @@ a:hover {
   .app-main__viewport > app-scorecard,
   .app-main__viewport > app-rules,
   .app-main__viewport > app-profile,
+  .app-main__viewport > app-friends,
   .app-main__viewport > app-home,
   .app-main__viewport > app-round {
     display: flex;
@@ -179,6 +180,17 @@ a:hover {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     padding-block: clamp(0.85rem, 2.5vw, 1.25rem);
+  }
+
+  html.scroll-locked .sr-page {
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  html.scroll-locked .modal,
+  html.scroll-locked .draw-cinematic,
+  html.scroll-locked .tee-off {
+    touch-action: auto;
   }
 
   .sr-container {

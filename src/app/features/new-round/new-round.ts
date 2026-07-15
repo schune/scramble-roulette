@@ -12,7 +12,7 @@ import {
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { ProfileService, RoundStateService, SoundService } from '../../core/services';
+import { ProfileService, RoundStateService, ScrollLockService, SoundService } from '../../core/services';
 import { HoleCount } from '../../core/models';
 
 type TeeOffPhase = 'charge' | 'fairway' | 'reveal';
@@ -37,6 +37,7 @@ export class NewRound {
   private readonly roundState = inject(RoundStateService);
   private readonly profile = inject(ProfileService);
   private readonly sound = inject(SoundService);
+  private readonly scrollLock = inject(ScrollLockService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -88,6 +89,13 @@ export class NewRound {
       this.courseNameControl.setValue('');
       this.nameControl.reset('');
       this.nameControl.markAsUntouched();
+    });
+
+    effect((onCleanup) => {
+      if (this.confirmingDiscard() || this.teeOffPhase()) {
+        const release = this.scrollLock.lock();
+        onCleanup(release);
+      }
     });
 
     this.destroyRef.onDestroy(() => this.clearTeeOffTimers());

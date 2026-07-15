@@ -71,6 +71,8 @@
   gap: 0.55rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
   scrollbar-width: thin;
 }
 
@@ -274,20 +276,26 @@
 
 @media (max-width: 860px) {
   .round.sr-page {
-    display: block;
+    display: flex;
+    flex-direction: column;
     padding-block: 0.65rem 0.5rem;
   }
 
   .round-stage {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: visible;
-    min-height: auto;
-    flex: none;
     padding-block: 0.35rem;
   }
 
   .round-dock {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    flex: none;
     margin-top: 0.5rem;
     padding-top: 0.65rem;
+    padding-bottom: 0.25rem;
     border-top: 1px solid var(--sr-cream-300);
     background: var(--sr-bg);
   }
@@ -540,7 +548,7 @@
   display: grid;
   place-items: center;
   overflow: hidden;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .draw-cinematic--hold {

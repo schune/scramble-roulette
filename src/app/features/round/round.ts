@@ -3,13 +3,14 @@ import {
   Component,
   DestroyRef,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
 import { Card } from '../../core/models';
-import { RoundStateService, ScoreService, SocialService, SoundService, CardDeckService } from '../../core/services';
+import { RoundStateService, ScoreService, ScrollLockService, SocialService, SoundService, CardDeckService } from '../../core/services';
 
 type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 
@@ -29,6 +30,7 @@ export class Round {
   private readonly social = inject(SocialService);
   private readonly sound = inject(SoundService);
   private readonly deck = inject(CardDeckService);
+  private readonly scrollLock = inject(ScrollLockService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -88,6 +90,17 @@ export class Round {
   constructor() {
     this.syncFromHole();
     this.destroyRef.onDestroy(() => this.clearCinematicTimers());
+
+    effect((onCleanup) => {
+      if (
+        this.confirmingEnd() ||
+        this.mulliganRulesOpen() ||
+        this.drawCinematic() !== null
+      ) {
+        const release = this.scrollLock.lock();
+        onCleanup(release);
+      }
+    });
   }
 
   protected isDrawing(): boolean {

@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { ProfileService, RoundHistoryService, ScoreService } from '../../core/services';
+import { ProfileService, RoundHistoryService, ScoreService, ScrollLockService } from '../../core/services';
 import { HoleResult, Round } from '../../core/models';
 
 interface StatCard {
@@ -21,6 +21,7 @@ export class PreviousRounds {
   private readonly roundHistory = inject(RoundHistoryService);
   private readonly score = inject(ScoreService);
   private readonly profile = inject(ProfileService);
+  private readonly scrollLock = inject(ScrollLockService);
 
   /** Completed rounds (local for guests, cloud when signed in), newest first. */
   protected readonly rounds = this.roundHistory.history;
@@ -37,8 +38,18 @@ export class PreviousRounds {
       { label: 'Holes Played', value: s.holesPlayed ? `${s.holesPlayed}` : '—', hint: 'All-time' },
     ];
   });
+
   /** Round pending deletion (drives the confirmation modal). */
   protected readonly pendingDelete = signal<Round | null>(null);
+
+  constructor() {
+    effect((onCleanup) => {
+      if (this.pendingDelete()) {
+        const release = this.scrollLock.lock();
+        onCleanup(release);
+      }
+    });
+  }
 
   protected totalScore(round: Round): number {
     return this.score.totalScore(round);

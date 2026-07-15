@@ -10,3 +10,4 @@ export * from './sound.service';
 export * from './social.service';
 export * from './live-round-sync.service';
 export * from './seo.service';
+export * from './scroll-lock.service';
