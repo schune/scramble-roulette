@@ -1,4 +1,4 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
+import { Injector, Injectable, effect, inject, signal } from '@angular/core';
 import { FeedPostEntry, Round } from '../models';
 import { StorageService } from './storage.service';
 import { FirestoreService } from './firestore.service';
@@ -25,8 +25,8 @@ export class RoundHistoryService {
   private readonly storage = inject(StorageService);
   private readonly firestore = inject(FirestoreService);
   private readonly auth = inject(AuthService);
-  private readonly profile = inject(ProfileService);
   private readonly score = inject(ScoreService);
+  private readonly injector = inject(Injector);
 
   private readonly _history = signal<Round[]>([]);
   /** Completed rounds, newest first. */
@@ -147,11 +147,13 @@ export class RoundHistoryService {
   }
 
   private publishFeedPost(uid: string, round: Round): void {
+    // Lazy lookup avoids a ProfileService <-> RoundHistoryService DI cycle (NG0200).
+    const profile = this.injector.get(ProfileService);
     const holesPlayed = round.holes.filter((hole) => hole.score !== undefined).length;
     const post: FeedPostEntry = {
       userId: uid,
-      displayName: this.profile.displayName(),
-      ...(this.profile.avatar() ? { photoURL: this.profile.avatar()! } : {}),
+      displayName: profile.displayName(),
+      ...(profile.avatar() ? { photoURL: profile.avatar()! } : {}),
       roundId: round.id,
       ...(round.courseName ? { courseName: round.courseName } : {}),
       holeCount: round.holeCount,
