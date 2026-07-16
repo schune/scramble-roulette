@@ -553,14 +553,17 @@ a:hover {
 
 .score-celebration--bogey .score-celebration__image,
 .score-celebration--double-bogey .score-celebration__image {
-  max-height: min(48vh, 320px);
   border-radius: 999px;
+}
+
+.score-celebration--bogey .score-celebration__image {
+  max-height: min(56vh, 400px);
 }
 
 .score-celebration--double-bogey .score-celebration__image {
   flex: 1 1 0;
-  max-width: min(42vw, 170px);
-  max-height: min(38vh, 240px);
+  max-width: min(44vw, 190px);
+  max-height: min(42vh, 270px);
 }
 
 @keyframes sr-backdrop-in {
