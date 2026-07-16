@@ -88,7 +88,7 @@ export class RoundStateService {
   constructor() {
     const saved = this.storage.getActiveRound();
     if (saved) {
-      this._activeRound.set(saved);
+      this._activeRound.set(this.normalizeRound(saved));
     }
 
     effect(() => {
@@ -316,6 +316,11 @@ export class RoundStateService {
   }
 
   /* ---------- Helpers ---------- */
+  private normalizeRound(round: Round): Round {
+    const packId = round.packId ?? this.deck.defaultPackId;
+    return packId === round.packId ? round : { ...round, packId };
+  }
+
   private updateRound(mutator: (round: Round) => Round): void {
     this._activeRound.update((round) => (round ? mutator(round) : round));
   }

@@ -187,6 +187,11 @@ a:hover {
     touch-action: none;
   }
 
+  html.scroll-locked .app-main {
+    position: relative;
+    z-index: 100;
+  }
+
   html.scroll-locked .modal,
   html.scroll-locked .draw-cinematic,
   html.scroll-locked .tee-off {

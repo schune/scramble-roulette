@@ -863,6 +863,11 @@
   z-index: 250;
 }
 
+.modal--birdie {
+  z-index: 300;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+}
+
 .birdie-celebration__kicker {
   margin-bottom: 0.35rem;
   font-size: 0.78rem;

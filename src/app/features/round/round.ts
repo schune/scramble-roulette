@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
-import { isLukesBachelorPack } from '../../core/data/standard-pack';
+import { isLukesBachelorPack, LUKES_BACHELOR_PACK_NAME } from '../../core/data/standard-pack';
 import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, ScrollLockService, SoundService, CardDeckService } from '../../core/services';
 
@@ -77,6 +77,19 @@ export class Round {
   protected readonly toPar = computed(() => {
     const round = this.round();
     return round ? this.score.totalScoreToPar(round) : 0;
+  });
+
+  protected readonly isBachelorDeck = computed(() => {
+    const round = this.round();
+    if (!round) {
+      return false;
+    }
+    const packId =
+      round.packId ?? this.currentHoleResult()?.card.packId ?? this.deck.defaultPackId;
+    return (
+      isLukesBachelorPack(packId) ||
+      this.deck.getPack(packId).name === LUKES_BACHELOR_PACK_NAME
+    );
   });
 
   constructor() {
@@ -216,8 +229,7 @@ export class Round {
     this.editing.set(false);
     this.sound.play('holeComplete');
 
-    const round = this.round();
-    if (round && isLukesBachelorPack(round.packId) && this.score.scoreToPar(par, score) === -1) {
+    if (this.isBachelorDeck() && this.currentHoleResult()?.resultLabel === 'Birdie') {
       this.birdieCelebrationOpen.set(true);
     }
   }

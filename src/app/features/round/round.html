@@ -369,12 +369,12 @@
 
   @if (birdieCelebrationOpen()) {
     <div
-      class="modal modal--overlay-cinematic"
+      class="modal modal--overlay-cinematic modal--birdie"
       role="dialog"
       aria-modal="true"
       aria-labelledby="birdie-title"
     >
-      <div class="modal__backdrop"></div>
+      <div class="modal__backdrop" (click)="dismissBirdieCelebration()"></div>
       <div class="modal__panel sr-card modal__panel--center">
         <p class="modal__copy birdie-celebration__kicker">Hole {{ r.currentHole }}</p>
         <h2 id="birdie-title" class="modal__title">Nice Birdie!</h2>

@@ -5,9 +5,10 @@ export const STANDARD_PACK_ID = 'standard';
 
 /** Luke's Bachelor deck — birdie celebration and other pack-specific UX. */
 export const LUKES_BACHELOR_PACK_ID = STANDARD_PACK_ID;
+export const LUKES_BACHELOR_PACK_NAME = "Luke's Bachelor Pack";
 
-export function isLukesBachelorPack(packId: string): boolean {
-  return packId === LUKES_BACHELOR_PACK_ID;
+export function isLukesBachelorPack(packId: string | undefined): boolean {
+  return (packId ?? STANDARD_PACK_ID) === LUKES_BACHELOR_PACK_ID;
 }
 
 /**
@@ -145,6 +146,6 @@ const cards: Card[] = [
 
 export const STANDARD_PACK: CardPack = {
   id: STANDARD_PACK_ID,
-  name: "Luke's Bachelor Pack",
+  name: LUKES_BACHELOR_PACK_NAME,
   cards,
 };
