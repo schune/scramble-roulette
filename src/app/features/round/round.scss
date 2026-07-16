@@ -868,21 +868,47 @@
   padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
 }
 
+.birdie-celebration__panel {
+  max-width: min(92vw, 400px);
+  padding: 1.1rem 1rem 1rem;
+  border: 2px solid var(--sr-gold-500);
+  box-shadow: var(--sr-shadow-lg);
+}
+
 .birdie-celebration__kicker {
-  margin-bottom: 0.35rem;
-  font-size: 0.78rem;
+  margin: 0 0 0.25rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--sr-gold-400);
+  color: var(--sr-gold-600);
+}
+
+.birdie-celebration__title {
+  margin: 0 0 0.85rem;
+  font-family: var(--sr-font-display);
+  font-size: clamp(2.15rem, 8.5vw, 2.85rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--sr-green-800);
+}
+
+.birdie-celebration__frame {
+  margin: 0 0 1rem;
+  padding: 0.45rem;
+  border-radius: var(--sr-radius-lg);
+  background: radial-gradient(ellipse at center, #123524 0%, #041a12 62%, #000 100%);
+  border: 2px solid var(--sr-gold-500);
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.55);
 }
 
 .birdie-celebration__image {
   display: block;
-  width: min(78vw, 320px);
-  height: auto;
-  margin: 0 auto 1rem;
-  border-radius: var(--sr-radius-lg);
+  width: 100%;
+  aspect-ratio: 5 / 6;
+  object-fit: cover;
+  object-position: center 42%;
+  border-radius: 18px;
 }
 
 .draw-cinematic__help {
