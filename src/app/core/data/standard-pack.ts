@@ -20,7 +20,7 @@ const cards: Card[] = [
     id: 'standard-01',
     name: 'Bro Has No Game',
     category: 'Hurts',
-    text: 'The player with the lowest body count cannot contribute a shot on this hole. If two people tie, flip a tee.',
+    text: 'The player with the lowest body count cannot contribute a tee shot. If two people tie, flip a tee.',
     packId: STANDARD_PACK_ID,
   },
   {
