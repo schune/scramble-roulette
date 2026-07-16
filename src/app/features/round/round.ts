@@ -14,26 +14,68 @@ import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, ScrollLockService, SoundService, CardDeckService } from '../../core/services';
 
 type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
-type BachelorScoreCelebration = 'birdie' | 'bogey';
+type BachelorScoreCelebration = 'birdie' | 'bogey' | 'double-bogey';
+
+interface ScoreCelebrationImage {
+  src: string;
+  alt: string;
+}
 
 interface ScoreCelebrationView {
   title: string;
-  imageSrc: string;
-  imageAlt: string;
+  images: ScoreCelebrationImage[];
 }
+
+const BOGEY_BALL_IMAGE = '/images/luke-bogey.png';
 
 const BACHELOR_SCORE_CELEBRATIONS: Record<BachelorScoreCelebration, ScoreCelebrationView> = {
   birdie: {
     title: 'Nice Birdie!',
-    imageSrc: '/images/luke-birdie.png',
-    imageAlt: 'Luke as a bird golfing',
+    images: [
+      {
+        src: '/images/luke-birdie.png',
+        alt: 'Luke as a bird golfing',
+      },
+    ],
   },
   bogey: {
     title: 'Drat! A Bogey!',
-    imageSrc: '/images/luke-bogey.png',
-    imageAlt: 'Luke as a miserable golf ball',
+    images: [
+      {
+        src: BOGEY_BALL_IMAGE,
+        alt: 'Luke as a miserable golf ball',
+      },
+    ],
+  },
+  'double-bogey': {
+    title: 'Uh Oh! Double Bogey!',
+    images: [
+      {
+        src: BOGEY_BALL_IMAGE,
+        alt: 'Luke as a miserable golf ball',
+      },
+      {
+        src: BOGEY_BALL_IMAGE,
+        alt: 'Luke as a miserable golf ball',
+      },
+    ],
   },
 };
+
+function bachelorCelebrationForResult(
+  resultLabel: string | undefined,
+): BachelorScoreCelebration | null {
+  switch (resultLabel) {
+    case 'Birdie':
+      return 'birdie';
+    case 'Bogey':
+      return 'bogey';
+    case 'Double Bogey':
+      return 'double-bogey';
+    default:
+      return null;
+  }
+}
 
 @Component({
   selector: 'app-round',
@@ -253,9 +295,9 @@ export class Round {
     this.editing.set(false);
     this.sound.play('holeComplete');
 
-    const resultLabel = this.currentHoleResult()?.resultLabel;
-    if (this.isBachelorDeck() && (resultLabel === 'Birdie' || resultLabel === 'Bogey')) {
-      this.scoreCelebration.set(resultLabel === 'Birdie' ? 'birdie' : 'bogey');
+    const celebration = bachelorCelebrationForResult(this.currentHoleResult()?.resultLabel);
+    if (this.isBachelorDeck() && celebration) {
+      this.scoreCelebration.set(celebration);
     }
   }
 

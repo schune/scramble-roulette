@@ -372,6 +372,7 @@
       class="modal modal--overlay-cinematic modal--score-celebration"
       [class.score-celebration--birdie]="scoreCelebration() === 'birdie'"
       [class.score-celebration--bogey]="scoreCelebration() === 'bogey'"
+      [class.score-celebration--double-bogey]="scoreCelebration() === 'double-bogey'"
       role="dialog"
       aria-modal="true"
       aria-labelledby="score-celebration-title"
@@ -380,14 +381,19 @@
       <div class="modal__panel sr-card modal__panel--center score-celebration__panel">
         <p class="modal__copy score-celebration__kicker">Hole {{ r.currentHole }}</p>
         <h2 id="score-celebration-title" class="score-celebration__title">{{ celebration.title }}</h2>
-        <figure class="score-celebration__frame">
-          <img
-            class="score-celebration__image"
-            [src]="celebration.imageSrc"
-            [alt]="celebration.imageAlt"
-            width="480"
-            height="480"
-          />
+        <figure
+          class="score-celebration__frame"
+          [class.score-celebration__frame--duo]="celebration.images.length > 1"
+        >
+          @for (image of celebration.images; track $index) {
+            <img
+              class="score-celebration__image"
+              [src]="image.src"
+              [alt]="image.alt"
+              width="480"
+              height="480"
+            />
+          }
         </figure>
         <div class="modal__actions modal__actions--center">
           <button type="button" class="sr-btn sr-btn--gold" (click)="dismissScoreCelebration()">
