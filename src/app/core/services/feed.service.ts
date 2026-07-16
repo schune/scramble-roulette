@@ -1,6 +1,14 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Unsubscribe } from 'firebase/firestore';
-import { FeedItem, FeedLiveEntry, FeedPostEntry, HoleCount, Player, Round } from '../models';
+import {
+  FeedItem,
+  FeedLiveEntry,
+  FeedPostEntry,
+  HoleCount,
+  isStaleLiveFeedEntry,
+  Player,
+  Round,
+} from '../models';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
 
@@ -19,13 +27,20 @@ export class FeedService {
 
   private readonly _live = signal<FeedLiveEntry[]>([]);
   private readonly _posts = signal<FeedPostEntry[]>([]);
+  /** Ticks every minute so stale live entries drop off without a Firestore write. */
+  private readonly _now = signal(Date.now());
 
-  readonly liveRounds = this._live.asReadonly();
+  private readonly visibleLive = computed(() => {
+    const now = this._now();
+    return this._live().filter((entry) => !isStaleLiveFeedEntry(entry, now));
+  });
+
+  readonly liveRounds = this.visibleLive;
   readonly completedPosts = this._posts.asReadonly();
-  readonly liveCount = computed(() => this._live().length);
+  readonly liveCount = computed(() => this.visibleLive().length);
 
   readonly items = computed<FeedItem[]>(() => {
-    const live: FeedItem[] = this._live()
+    const live: FeedItem[] = this.visibleLive()
       .map((entry) => ({ kind: 'live' as const, id: entry.userId, entry }))
       .sort(
         (a, b) =>
@@ -49,8 +64,13 @@ export class FeedService {
   private currentUid: string | null = null;
   private liveUnsub: Unsubscribe | null = null;
   private postsUnsub: Unsubscribe | null = null;
+  private staleCheckTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
+    if (typeof window !== 'undefined') {
+      this.staleCheckTimer = setInterval(() => this._now.set(Date.now()), 60_000);
+    }
+
     effect(() => {
       const uid = this.auth.uid();
       if (uid === this.currentUid) {
@@ -131,7 +151,7 @@ export class FeedService {
   private roundFromLive(entry: FeedLiveEntry): Round {
     return {
       id: entry.roundId,
-      createdAt: entry.updatedAt,
+      createdAt: entry.startedAt ?? entry.updatedAt,
       holeCount: entry.holeCount as HoleCount,
       status: 'in-progress',
       players: this.playersFromNames(entry.playerNames),

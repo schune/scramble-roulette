@@ -38,6 +38,8 @@ export interface LiveRoundSnapshot {
   playerNames: string[];
   totalScore: number;
   toPar: number;
+  /** When the round started (ISO). */
+  startedAt?: string;
   updatedAt: string;
   holes?: HoleResult[];
 }

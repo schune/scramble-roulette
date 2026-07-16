@@ -70,6 +70,7 @@ export class LiveRoundSyncService {
       playerNames: round.players.map((player) => player.name),
       totalScore: this.score.totalScore(round),
       toPar: this.score.totalScoreToPar(round),
+      startedAt: round.createdAt,
       updatedAt: new Date().toISOString(),
       holes: round.holes,
     };
@@ -105,6 +106,7 @@ export class LiveRoundSyncService {
       playerNames: snapshot.playerNames,
       totalScore: snapshot.totalScore,
       toPar: snapshot.toPar,
+      startedAt: snapshot.startedAt ?? round.createdAt,
       updatedAt: snapshot.updatedAt,
       holes: round.holes,
     };
