@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { OFFICIAL_GOLF_RULES } from '../../core/data/official-rules';
+import { OFFICIAL_GOLF_RULES, OFFICIAL_RULING_NOTE } from '../../core/data/official-rules';
 import { PageHeader } from '../../shared/page-header/page-header';
 
 interface Rule {
@@ -29,6 +29,7 @@ export class Rules {
   }
 
   protected readonly officialRules: Rule[] = OFFICIAL_GOLF_RULES;
+  protected readonly rulingNote = OFFICIAL_RULING_NOTE;
 
   protected readonly steps: Rule[] = [
     {
