@@ -261,26 +261,70 @@
   .round.sr-page {
     display: flex;
     flex-direction: column;
-    padding-block: 0.65rem 0.5rem;
+    gap: 0.65rem;
+    padding-block: 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    min-height: 0;
+  }
+
+  .round-head {
+    padding: 0.8rem 0.95rem 0.75rem;
+    margin-bottom: 0;
+  }
+
+  .round-head__row--meta {
+    margin-top: 0.55rem;
+    padding-top: 0.55rem;
   }
 
   .round-stage {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
     overflow: visible;
-    padding-block: 0.35rem;
+    padding-block: 0;
   }
 
   .round-dock {
-    position: sticky;
-    bottom: 0;
-    z-index: 2;
+    position: static;
     flex: none;
-    margin-top: 0.5rem;
-    padding-top: 0.65rem;
-    padding-bottom: 0.25rem;
-    border-top: 1px solid var(--sr-cream-300);
-    background: var(--sr-bg);
+    margin-top: 0;
+    padding: 0;
+    border-top: none;
+    background: transparent;
+    gap: 0.65rem;
+  }
+
+  .round-dock__panel {
+    padding: 1rem 0.95rem;
+  }
+
+  .round-dock__cta {
+    margin-top: 1rem;
+  }
+
+  .round-dock__nav {
+    padding-top: 0.15rem;
+    gap: 1.5rem;
+  }
+
+  .hole-result__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .hole-result__stat,
+  .hole-result__badge {
+    text-align: center;
+  }
+
+  .hole-result__badge {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .hole-result__badge-label {
+    font-size: clamp(0.78rem, 3.2vw, 1rem);
   }
 }
 
