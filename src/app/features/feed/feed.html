@@ -61,11 +61,11 @@
                     <li class="feed-card feed-card--live" [class.feed-card--own]="isOwnUser(item.entry.userId)">
                       <div class="feed-card__head">
                         <span class="feed-card__avatar" aria-hidden="true">
-                          {{ initials(item.entry.displayName) }}
+                          {{ initialsFor(item.entry) }}
                         </span>
                         <div class="feed-card__who">
                           <span class="feed-card__name">
-                            {{ item.entry.displayName }}
+                            {{ displayNameFor(item.entry) }}
                             @if (isOwnUser(item.entry.userId)) {
                               <span class="feed-card__you">You</span>
                             }
@@ -123,11 +123,11 @@
                     <li class="feed-card feed-card--posted" [class.feed-card--own]="isOwnUser(item.entry.userId)">
                       <div class="feed-card__head">
                         <span class="feed-card__avatar" aria-hidden="true">
-                          {{ initials(item.entry.displayName) }}
+                          {{ initialsFor(item.entry) }}
                         </span>
                         <div class="feed-card__who">
                           <span class="feed-card__name">
-                            {{ item.entry.displayName }}
+                            {{ displayNameFor(item.entry) }}
                             @if (isOwnUser(item.entry.userId)) {
                               <span class="feed-card__you">You</span>
                             }
@@ -152,13 +152,25 @@
                       <p class="feed-card__players">{{ playerSummary(item.entry.playerNames) }}</p>
                       <p class="feed-card__time">Posted {{ formatWhen(item.entry.postedAt) }}</p>
 
-                      <a
-                        routerLink="/scorecard"
-                        [queryParams]="{ round: item.entry.roundId, user: item.entry.userId }"
-                        class="feed-card__link"
-                      >
-                        View scorecard
-                      </a>
+                      <div class="feed-card__actions">
+                        <a
+                          routerLink="/scorecard"
+                          [queryParams]="{ round: item.entry.roundId, user: item.entry.userId }"
+                          class="feed-card__link"
+                        >
+                          View scorecard
+                        </a>
+
+                        @if (isOwnUser(item.entry.userId)) {
+                          <button
+                            type="button"
+                            class="feed-card__delete"
+                            (click)="requestDelete(item.entry, $event)"
+                          >
+                            Delete round
+                          </button>
+                        }
+                      </div>
                     </li>
                   }
                 }
@@ -170,3 +182,23 @@
     }
   }
 </div>
+
+@if (pendingDelete(); as entry) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="feed-delete-title">
+    <div class="modal__backdrop" (click)="cancelDelete()"></div>
+    <div class="modal__panel sr-card modal__panel--center">
+      <h2 id="feed-delete-title" class="modal__title">Delete this round?</h2>
+      <p class="modal__copy">
+        @if (entry.courseName) {
+          {{ entry.courseName }} ·
+        }
+        Posted {{ formatWhen(entry.postedAt) }}.
+        This removes it from your history and the feed for good.
+      </p>
+      <div class="modal__actions modal__actions--center">
+        <button type="button" class="sr-btn sr-btn--ghost" (click)="cancelDelete()">Keep It</button>
+        <button type="button" class="sr-btn sr-btn--danger" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+}

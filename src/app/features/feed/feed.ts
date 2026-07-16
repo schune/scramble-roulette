@@ -1,12 +1,15 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { FeedItem } from '../../core/models';
+import { FeedItem, FeedPostEntry } from '../../core/models';
 import {
   AuthService,
   FeedService,
+  ProfileService,
+  RoundHistoryService,
   RoundStateService,
   ScoreService,
+  ScrollLockService,
   describeSignInError,
 } from '../../core/services';
 
@@ -22,6 +25,9 @@ export class Feed {
   private readonly auth = inject(AuthService);
   private readonly score = inject(ScoreService);
   private readonly roundState = inject(RoundStateService);
+  private readonly profile = inject(ProfileService);
+  private readonly roundHistory = inject(RoundHistoryService);
+  private readonly scrollLock = inject(ScrollLockService);
 
   protected readonly isResolving = this.auth.isResolving;
   protected readonly isSignedIn = this.auth.isSignedIn;
@@ -33,6 +39,16 @@ export class Feed {
 
   protected readonly signingIn = signal(false);
   protected readonly authError = signal<string | null>(null);
+  protected readonly pendingDelete = signal<FeedPostEntry | null>(null);
+
+  constructor() {
+    effect((onCleanup) => {
+      if (this.pendingDelete()) {
+        const release = this.scrollLock.lock();
+        onCleanup(release);
+      }
+    });
+  }
 
   protected isLiveItem(item: FeedItem): item is Extract<FeedItem, { kind: 'live' }> {
     return item.kind === 'live';
@@ -46,6 +62,13 @@ export class Feed {
     return this.currentUid() === userId;
   }
 
+  protected displayNameFor(entry: { userId: string; displayName: string }): string {
+    if (this.isOwnUser(entry.userId)) {
+      return this.profile.displayName();
+    }
+    return entry.displayName;
+  }
+
   protected formatToPar(value: number): string {
     return this.score.formatToPar(value);
   }
@@ -57,6 +80,10 @@ export class Feed {
   protected initials(name: string): string {
     const parts = name.trim().split(/\s+/).slice(0, 2);
     return parts.map((p) => p.charAt(0).toUpperCase()).join('') || '?';
+  }
+
+  protected initialsFor(entry: { userId: string; displayName: string }): string {
+    return this.initials(this.displayNameFor(entry));
   }
 
   protected formatWhen(iso: string): string {
@@ -77,6 +104,25 @@ export class Feed {
       hour: 'numeric',
       minute: '2-digit',
     });
+  }
+
+  protected requestDelete(entry: FeedPostEntry, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.pendingDelete.set(entry);
+  }
+
+  protected cancelDelete(): void {
+    this.pendingDelete.set(null);
+  }
+
+  protected confirmDelete(): void {
+    const entry = this.pendingDelete();
+    if (!entry) {
+      return;
+    }
+    this.roundHistory.remove(entry.roundId);
+    this.pendingDelete.set(null);
   }
 
   protected async signIn(): Promise<void> {

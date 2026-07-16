@@ -342,7 +342,35 @@
   gap: 0.5rem;
 }
 
+.history-item {
+  display: flex;
+  align-items: stretch;
+  gap: 0.45rem;
+}
+
+.history-item__delete {
+  flex: none;
+  align-self: center;
+  margin: 0;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--sr-red-700) 35%, transparent);
+  border-radius: var(--sr-radius-sm);
+  background: color-mix(in srgb, var(--sr-red-700) 8%, var(--sr-surface));
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--sr-red-700);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.history-item__delete:hover {
+  background: color-mix(in srgb, var(--sr-red-700) 14%, var(--sr-surface));
+}
+
 .history-row {
+  flex: 1;
+  min-width: 0;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;

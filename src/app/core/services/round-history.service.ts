@@ -85,6 +85,7 @@ export class RoundHistoryService {
     this._history.update((list) => list.filter((r) => r.id !== id)); // optimistic
     if (uid) {
       void this.firestore.deleteRound(uid, id).catch(() => {});
+      void this.firestore.deleteFeedPost(uid, id).catch(() => {});
     } else {
       this.storage.removeRoundFromHistory(id);
     }
@@ -97,8 +98,32 @@ export class RoundHistoryService {
     this._history.set([]);
     if (uid) {
       void this.firestore.deleteManyRounds(uid, ids).catch(() => {});
+      for (const id of ids) {
+        void this.firestore.deleteFeedPost(uid, id).catch(() => {});
+      }
     } else {
       this.storage.clearRoundHistory();
+    }
+  }
+
+  /** Refresh feed identity after a display-name change (signed-in only). */
+  refreshFeedIdentity(rounds: Round[] = this._history()): void {
+    const uid = this.auth.uid();
+    if (!uid) {
+      return;
+    }
+
+    const profile = this.injector.get(ProfileService);
+    const displayName = profile.displayName();
+    const photoURL = profile.avatar() ?? undefined;
+
+    void this.firestore.patchFeedLiveIdentity(uid, displayName, photoURL).catch(() => {});
+
+    for (const round of rounds) {
+      if (round.status !== 'complete') {
+        continue;
+      }
+      this.publishFeedPost(uid, round);
     }
   }
 
@@ -121,6 +146,11 @@ export class RoundHistoryService {
       }
 
       await this.backfillMissingFeedPosts(uid, cloud);
+
+      const syncedRounds = await this.firestore.getRounds(uid);
+      if (this.currentUid === uid) {
+        this.refreshFeedIdentity(syncedRounds);
+      }
     } catch {
       // Offline / transient: the live listener below still serves cached data.
     }

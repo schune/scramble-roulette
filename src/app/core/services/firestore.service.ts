@@ -243,6 +243,30 @@ export class FirestoreService {
     await setDoc(this.feedPostDocRef(entry.userId, entry.roundId), entry);
   }
 
+  async deleteFeedPost(userId: string, roundId: string): Promise<void> {
+    await deleteDoc(this.feedPostDocRef(userId, roundId));
+  }
+
+  async patchFeedLiveIdentity(
+    uid: string,
+    displayName: string,
+    photoURL?: string,
+  ): Promise<void> {
+    const ref = this.feedLiveDocRef(uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      return;
+    }
+    await setDoc(
+      ref,
+      {
+        displayName,
+        ...(photoURL ? { photoURL } : {}),
+      },
+      { merge: true },
+    );
+  }
+
   async feedPostExists(userId: string, roundId: string): Promise<boolean> {
     const snap = await getDoc(this.feedPostDocRef(userId, roundId));
     return snap.exists();

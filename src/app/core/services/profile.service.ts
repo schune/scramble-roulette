@@ -129,6 +129,7 @@ export class ProfileService {
       this._cloudProfile.set(updated);
       void this.firestore.saveProfile(uid, updated).catch(() => {});
       this.syncPublicProfile();
+      this.roundHistory.refreshFeedIdentity();
     } else {
       this.updateLocal((profile) => ({ ...profile, displayName: trimmed }));
     }

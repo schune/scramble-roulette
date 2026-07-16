@@ -278,10 +278,38 @@
 
 .feed-card__link {
   display: inline-block;
-  margin-top: 0.55rem;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--sr-green-800);
+}
+
+.feed-card__time + .feed-card__link {
+  margin-top: 0.55rem;
+}
+
+.feed-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  margin-top: 0.55rem;
+}
+
+.feed-card__delete {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sr-red-700);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.feed-card__delete:hover {
+  text-decoration: underline;
 }
 
 .feed-card__link:hover {

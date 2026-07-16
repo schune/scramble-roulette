@@ -14,7 +14,9 @@ import { CardDeckService } from '../../core/services/card-deck.service';
 import {
   AuthService,
   ProfileService,
+  RoundHistoryService,
   ScoreService,
+  ScrollLockService,
   describeSignInError,
 } from '../../core/services';
 
@@ -37,12 +39,15 @@ interface StatCard {
 export class Profile {
   private readonly profile = inject(ProfileService);
   private readonly score = inject(ScoreService);
+  private readonly roundHistory = inject(RoundHistoryService);
+  private readonly scrollLock = inject(ScrollLockService);
   private readonly deck = inject(CardDeckService);
   private readonly auth = inject(AuthService);
   private readonly host = inject(ElementRef<HTMLElement>);
 
   protected readonly menuOpen = signal(false);
   protected readonly deckExpanded = signal(false);
+  protected readonly pendingDelete = signal<Round | null>(null);
   protected readonly deckCards: readonly Card[] = this.deck.getPack().cards;
   protected readonly packName = this.deck.getPack().name;
 
@@ -53,6 +58,7 @@ export class Profile {
   /* ---------- Account ---------- */
   protected readonly isResolving = this.auth.isResolving;
   protected readonly isSignedIn = this.auth.isSignedIn;
+  protected readonly currentUid = this.auth.uid;
   protected readonly email = this.auth.email;
   protected readonly signingIn = signal(false);
   protected readonly authError = signal<string | null>(null);
@@ -89,6 +95,13 @@ export class Profile {
     // Google name after sign-in, or the guest name after signing out).
     effect(() => {
       this.nameDraft.set(this.profile.displayName());
+    });
+
+    effect((onCleanup) => {
+      if (this.pendingDelete()) {
+        const release = this.scrollLock.lock();
+        onCleanup(release);
+      }
     });
   }
 
@@ -167,6 +180,25 @@ export class Profile {
     });
   }
 
+  protected requestDelete(round: Round, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.pendingDelete.set(round);
+  }
+
+  protected cancelDelete(): void {
+    this.pendingDelete.set(null);
+  }
+
+  protected confirmDelete(): void {
+    const round = this.pendingDelete();
+    if (!round) {
+      return;
+    }
+    this.roundHistory.remove(round.id);
+    this.pendingDelete.set(null);
+  }
+
   /* ---------- Overflow menu ---------- */
 
   protected toggleMenu(): void {
@@ -193,6 +225,10 @@ export class Profile {
   }
 
   protected onEscape(): void {
+    if (this.pendingDelete()) {
+      this.cancelDelete();
+      return;
+    }
     this.menuOpen.set(false);
     this.deckExpanded.set(false);
   }

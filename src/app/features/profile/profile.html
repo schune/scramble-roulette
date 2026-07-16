@@ -202,12 +202,24 @@
     @if (recentRounds().length > 0) {
       <ul class="history-list">
         @for (round of recentRounds(); track round.id) {
-          <li>
-            <a class="history-row" routerLink="/scorecard" [queryParams]="{ round: round.id }">
+          <li class="history-item">
+            <a
+              class="history-row"
+              routerLink="/scorecard"
+              [queryParams]="currentUid() ? { round: round.id, user: currentUid() } : { round: round.id }"
+            >
               <span class="history-row__date">{{ formatDate(round.completedAt ?? round.createdAt) }}</span>
               <span class="history-row__meta">{{ round.holeCount }} holes · {{ round.players.length }} players</span>
               <span class="history-row__topar">{{ toPar(round) }}</span>
             </a>
+            <button
+              type="button"
+              class="history-item__delete"
+              [attr.aria-label]="'Delete round from ' + formatDate(round.completedAt ?? round.createdAt)"
+              (click)="requestDelete(round, $event)"
+            >
+              Delete
+            </button>
           </li>
         }
       </ul>
@@ -216,3 +228,20 @@
     }
   </section>
 </div>
+
+@if (pendingDelete(); as target) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profile-delete-title">
+    <div class="modal__backdrop" (click)="cancelDelete()"></div>
+    <div class="modal__panel sr-card modal__panel--center">
+      <h2 id="profile-delete-title" class="modal__title">Delete this round?</h2>
+      <p class="modal__copy">
+        {{ formatDate(target.completedAt ?? target.createdAt) }} · {{ target.holeCount }} holes.
+        This removes it from your history and the feed for good.
+      </p>
+      <div class="modal__actions modal__actions--center">
+        <button type="button" class="sr-btn sr-btn--ghost" (click)="cancelDelete()">Keep It</button>
+        <button type="button" class="sr-btn sr-btn--danger" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+}
