@@ -29,7 +29,7 @@ export const OFFICIAL_GOLF_RULES: OfficialRule[] = [
   },
   {
     title: 'Rule #4: Mulligan Commitment',
-    copy: 'If a player elects to use a mulligan, the original shot is immediately void. The mulligan becomes the only playable ball.',
+    copy: 'If a player elects to use a mulligan, the original shot is void the moment that choice is made — before the next shot is hit. The mulligan becomes the only playable ball.',
   },
   {
     title: 'Rule #5: Designated Driver Exemption',

@@ -32,7 +32,7 @@ export const RULES_FAQ_SCHEMA = {
       name: 'Rule #4: Mulligan Commitment',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'If a player elects to use a mulligan, the original shot is immediately void. The mulligan becomes the only playable ball.',
+        text: 'If a player elects to use a mulligan, the original shot is void the moment that choice is made — before the next shot is hit. The mulligan becomes the only playable ball.',
       },
     },
     {
