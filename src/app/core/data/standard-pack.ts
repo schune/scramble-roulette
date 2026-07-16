@@ -95,7 +95,7 @@ const cards: Card[] = [
   },
   {
     id: 'standard-12',
-    name: 'Mangina',
+    name: 'Golden Goose',
     category: 'Hurts',
     text: "{{player}} may hit from the front tees on this hole. Don't fuck it up.",
     packId: STANDARD_PACK_ID,
