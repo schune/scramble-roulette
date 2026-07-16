@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
+import { isLukesBachelorPack } from '../../core/data/standard-pack';
 import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, ScrollLockService, SoundService, CardDeckService } from '../../core/services';
 
@@ -55,6 +56,8 @@ export class Round {
   protected readonly cinematicRevealed = signal(false);
   protected readonly mulliganRulesOpen = signal(false);
   protected readonly mulliganRule = MULLIGAN_RULE;
+  protected readonly birdieCelebrationOpen = signal(false);
+  protected readonly birdieImageSrc = '/images/luke-birdie.png';
 
   protected readonly sparkles = Array.from({ length: 28 }, (_, i) => i);
 
@@ -84,6 +87,7 @@ export class Round {
       if (
         this.confirmingEnd() ||
         this.mulliganRulesOpen() ||
+        this.birdieCelebrationOpen() ||
         this.drawCinematic() !== null
       ) {
         const release = this.scrollLock.lock();
@@ -211,6 +215,11 @@ export class Round {
     this.roundState.recordCurrentHole(par, score);
     this.editing.set(false);
     this.sound.play('holeComplete');
+
+    const round = this.round();
+    if (round && isLukesBachelorPack(round.packId) && this.score.scoreToPar(par, score) === -1) {
+      this.birdieCelebrationOpen.set(true);
+    }
   }
 
   protected edit(): void {
@@ -293,8 +302,14 @@ export class Round {
     this.mulliganRulesOpen.set(false);
   }
 
+  protected dismissBirdieCelebration(): void {
+    this.birdieCelebrationOpen.set(false);
+  }
+
   protected onEscape(): void {
-    if (this.mulliganRulesOpen()) {
+    if (this.birdieCelebrationOpen()) {
+      this.dismissBirdieCelebration();
+    } else if (this.mulliganRulesOpen()) {
       this.closeMulliganRules();
     }
   }

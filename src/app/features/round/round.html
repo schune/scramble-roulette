@@ -367,6 +367,33 @@
     </div>
   }
 
+  @if (birdieCelebrationOpen()) {
+    <div
+      class="modal modal--overlay-cinematic"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="birdie-title"
+    >
+      <div class="modal__backdrop"></div>
+      <div class="modal__panel sr-card modal__panel--center">
+        <p class="modal__copy birdie-celebration__kicker">Hole {{ r.currentHole }}</p>
+        <h2 id="birdie-title" class="modal__title">Nice Birdie!</h2>
+        <img
+          class="birdie-celebration__image"
+          [src]="birdieImageSrc"
+          alt="Luke as a bird golfing"
+          width="480"
+          height="480"
+        />
+        <div class="modal__actions modal__actions--center">
+          <button type="button" class="sr-btn sr-btn--gold" (click)="dismissBirdieCelebration()">
+            Continue Round
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
 } @else {
   <div class="sr-page sr-container round">
     <section class="sr-card sr-empty">

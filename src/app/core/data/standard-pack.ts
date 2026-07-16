@@ -3,6 +3,13 @@ import { Card, CardPack } from '../models';
 /** Id for the first/default card pack. */
 export const STANDARD_PACK_ID = 'standard';
 
+/** Luke's Bachelor deck — birdie celebration and other pack-specific UX. */
+export const LUKES_BACHELOR_PACK_ID = STANDARD_PACK_ID;
+
+export function isLukesBachelorPack(packId: string): boolean {
+  return packId === LUKES_BACHELOR_PACK_ID;
+}
+
 /**
  * The "Standard" pack. All cards are equal rarity; category reflects
  * how the card tends to affect your score (Helps / Hurts / Neutral).
