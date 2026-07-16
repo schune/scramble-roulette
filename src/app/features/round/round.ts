@@ -29,7 +29,7 @@ const BACHELOR_SCORE_CELEBRATIONS: Record<BachelorScoreCelebration, ScoreCelebra
     imageAlt: 'Luke as a bird golfing',
   },
   bogey: {
-    title: "That's a Bogey!",
+    title: 'Drat! A Bogey!',
     imageSrc: '/images/luke-bogey.png',
     imageAlt: 'Luke as a miserable golf ball',
   },
