@@ -108,6 +108,8 @@ export class NewRound {
         clearTimeout(this.addFeedbackTimer);
       }
     });
+
+    this.bindKeyboardViewport();
   }
 
   protected beginSetup(): void {
@@ -143,6 +145,11 @@ export class NewRound {
 
   protected selectHoles(count: HoleCount): void {
     this.roundState.setHoleCount(count);
+  }
+
+  protected onPlayerNameFocus(): void {
+    queueMicrotask(() => this.ensureAddPlayerFormVisible());
+    setTimeout(() => this.ensureAddPlayerFormVisible(), 150);
   }
 
   protected addPlayer(): void {
@@ -249,6 +256,67 @@ export class NewRound {
   }
 
   private focusPlayerNameInput(): void {
-    queueMicrotask(() => this.playerNameInput()?.nativeElement.focus());
+    queueMicrotask(() => {
+      this.playerNameInput()?.nativeElement.focus();
+      this.ensureAddPlayerFormVisible();
+    });
+  }
+
+  private bindKeyboardViewport(): void {
+    if (typeof window === 'undefined' || !window.visualViewport) {
+      return;
+    }
+
+    const viewport = window.visualViewport;
+    const sync = () => this.syncKeyboardInset();
+
+    sync();
+    viewport.addEventListener('resize', sync);
+    viewport.addEventListener('scroll', sync);
+
+    this.destroyRef.onDestroy(() => {
+      viewport.removeEventListener('resize', sync);
+      viewport.removeEventListener('scroll', sync);
+      document.documentElement.style.removeProperty('--keyboard-inset');
+    });
+  }
+
+  private syncKeyboardInset(): void {
+    const viewport = window.visualViewport;
+    if (!viewport) {
+      return;
+    }
+
+    const inset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+    document.documentElement.style.setProperty('--keyboard-inset', `${Math.round(inset)}px`);
+
+    if (document.activeElement === this.playerNameInput()?.nativeElement) {
+      queueMicrotask(() => this.ensureAddPlayerFormVisible());
+    }
+  }
+
+  private ensureAddPlayerFormVisible(): void {
+    const input = this.playerNameInput()?.nativeElement;
+    if (!input || typeof window === 'undefined') {
+      return;
+    }
+
+    const form = input.closest('.add-player') as HTMLElement | null;
+    const scrollEl = input.closest('.sr-page') as HTMLElement | null;
+    const viewport = window.visualViewport;
+    if (!form || !scrollEl || !viewport) {
+      form?.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+
+    const button = form.querySelector('.add-player__btn') as HTMLElement | null;
+    const target = button ?? form;
+    const rect = target.getBoundingClientRect();
+    const visibleBottom = viewport.offsetTop + viewport.height;
+    const overflow = rect.bottom - (visibleBottom - 16);
+
+    if (overflow > 0) {
+      scrollEl.scrollTop += overflow;
+    }
   }
 }

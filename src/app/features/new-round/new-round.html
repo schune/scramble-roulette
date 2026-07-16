@@ -349,6 +349,7 @@
                   [class.sr-input--invalid]="nameControl.touched && nameControl.invalid"
                   [formControl]="nameControl"
                   (keyup.enter)="addPlayer()"
+                  (focus)="onPlayerNameFocus()"
                 />
               </div>
               <button

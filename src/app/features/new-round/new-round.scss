@@ -1150,6 +1150,22 @@
   min-width: 200px;
 }
 
+@media (max-width: 860px) {
+  .play-page.sr-page {
+    padding-bottom: calc(1.25rem + var(--keyboard-inset, 0px));
+    scroll-padding-bottom: calc(1.25rem + var(--keyboard-inset, 0px));
+  }
+
+  .players-roster {
+    min-height: 0;
+    max-height: none;
+  }
+
+  .empty-players {
+    padding: 1.1rem 0.85rem;
+  }
+}
+
 @media (max-width: 560px) {
   .add-player {
     flex-direction: column;
