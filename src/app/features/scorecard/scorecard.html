@@ -122,7 +122,15 @@
                   </td>
                   <td>{{ hole.resultLabel ?? '—' }}</td>
                   <td class="card-table__card">
-                    <span class="card-table__card-name">{{ hole.card.name }}</span>
+                    <button
+                      type="button"
+                      class="card-table__card-btn"
+                      [attr.data-category]="hole.card.category"
+                      [attr.aria-label]="'View card for hole ' + hole.holeNumber + ': ' + hole.card.name"
+                      (click)="openCard(hole.card, hole.holeNumber)"
+                    >
+                      <span class="card-table__card-name">{{ hole.card.name }}</span>
+                    </button>
                   </td>
                 </tr>
               }
@@ -160,5 +168,57 @@
         <a routerLink="/previous-rounds" class="sr-btn sr-btn--ghost">Previous Rounds</a>
       </div>
     </section>
+  }
+
+  @if (selectedCard(); as card) {
+    <div
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="card-detail-title"
+    >
+      <div class="modal__backdrop" (click)="closeCard()"></div>
+      <div class="modal__panel sr-card card-detail" [attr.data-category]="card.category">
+        <p class="card-detail__hole">Hole {{ selectedHole() }}</p>
+        <span class="sr-badge card-detail__cat">{{ card.category }}</span>
+        <h2 id="card-detail-title" class="card-detail__name">{{ card.name }}</h2>
+        <p class="card-detail__text">{{ card.text }}</p>
+        @if (showsMulliganRulesLink(card)) {
+          <button type="button" class="card-detail__rules-link" (click)="openMulliganRules($event)">
+            View Mulligan Rules
+          </button>
+        } @else if (card.flavor) {
+          <p class="card-detail__flavor">{{ card.flavor }}</p>
+        }
+        @if (card.helpText) {
+          <p class="card-detail__help">{{ card.helpText }}</p>
+        }
+        <div class="modal__actions modal__actions--center">
+          <button type="button" class="sr-btn sr-btn--primary" (click)="closeCard()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (mulliganRulesOpen()) {
+    <div
+      class="modal modal--overlay-cinematic"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mulligan-rules-title"
+    >
+      <div class="modal__backdrop" (click)="closeMulliganRules()"></div>
+      <div class="modal__panel sr-card modal__panel--center">
+        <h2 id="mulligan-rules-title" class="modal__title">{{ mulliganRule.title }}</h2>
+        <p class="modal__copy">{{ mulliganRule.copy }}</p>
+        <div class="modal__actions modal__actions--center">
+          <button type="button" class="sr-btn sr-btn--primary" (click)="closeMulliganRules()">
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
   }
 </div>

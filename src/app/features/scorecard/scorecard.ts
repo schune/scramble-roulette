@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
+import { Card } from '../../core/models';
 import { PageHeader } from '../../shared/page-header/page-header';
 import {
   AuthService,
@@ -9,6 +11,7 @@ import {
   RoundHistoryService,
   RoundStateService,
   ScoreService,
+  ScrollLockService,
 } from '../../core/services';
 
 @Component({
@@ -17,6 +20,9 @@ import {
   templateUrl: './scorecard.html',
   styleUrl: './scorecard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:keydown.escape)': 'onEscape()',
+  },
 })
 export class Scorecard {
   private readonly roundState = inject(RoundStateService);
@@ -24,7 +30,22 @@ export class Scorecard {
   private readonly roundHistory = inject(RoundHistoryService);
   private readonly feed = inject(FeedService);
   private readonly auth = inject(AuthService);
+  private readonly scrollLock = inject(ScrollLockService);
   private readonly route = inject(ActivatedRoute);
+
+  protected readonly selectedCard = signal<Card | null>(null);
+  protected readonly selectedHole = signal<number | null>(null);
+  protected readonly mulliganRulesOpen = signal(false);
+  protected readonly mulliganRule = MULLIGAN_RULE;
+
+  constructor() {
+    effect((onCleanup) => {
+      if (this.selectedCard() || this.mulliganRulesOpen()) {
+        const release = this.scrollLock.lock();
+        onCleanup(release);
+      }
+    });
+  }
 
   /** Optional ?round=<id> selects a specific completed round from history. */
   private readonly requestedId = toSignal(
@@ -135,5 +156,38 @@ export class Scorecard {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  protected openCard(card: Card, holeNumber: number): void {
+    this.selectedCard.set(card);
+    this.selectedHole.set(holeNumber);
+  }
+
+  protected closeCard(): void {
+    this.selectedCard.set(null);
+    this.selectedHole.set(null);
+    this.mulliganRulesOpen.set(false);
+  }
+
+  protected showsMulliganRulesLink(card: Card): boolean {
+    return isMulliganCard(card.id);
+  }
+
+  protected openMulliganRules(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mulliganRulesOpen.set(true);
+  }
+
+  protected closeMulliganRules(): void {
+    this.mulliganRulesOpen.set(false);
+  }
+
+  protected onEscape(): void {
+    if (this.mulliganRulesOpen()) {
+      this.closeMulliganRules();
+    } else if (this.selectedCard()) {
+      this.closeCard();
+    }
   }
 }
