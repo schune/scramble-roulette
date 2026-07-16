@@ -238,8 +238,10 @@
 }
 
 .card-table__card-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: flex-start;
+  width: 100%;
   max-width: 100%;
   margin: 0;
   padding: 0;
@@ -265,6 +267,9 @@
 }
 
 .card-table__card-name {
+  display: block;
+  width: 100%;
+  text-align: left;
   font-weight: 600;
   color: var(--sr-ink);
   font-size: 0.92rem;
