@@ -5,6 +5,7 @@ import {
   ProfileService,
   RoundStateService,
   SoundService,
+  bindRedirectAuthError,
   describeSignInError,
 } from '../../core/services';
 
@@ -52,6 +53,10 @@ export class Navbar {
     { label: 'Official Rules', path: '/rules' },
     { label: 'Profile', path: '/profile' },
   ];
+
+  constructor() {
+    bindRedirectAuthError(this.auth, this.authError);
+  }
 
   protected toggleMenu(): void {
     this.menuOpen.update((open) => !open);

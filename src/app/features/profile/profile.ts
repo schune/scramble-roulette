@@ -17,6 +17,7 @@ import {
   RoundHistoryService,
   ScoreService,
   ScrollLockService,
+  bindRedirectAuthError,
   describeSignInError,
 } from '../../core/services';
 
@@ -91,6 +92,8 @@ export class Profile {
   protected readonly recentRounds = this.profile.recentRounds;
 
   constructor() {
+    bindRedirectAuthError(this.auth, this.authError);
+
     // Keep the editable name field in sync with the active profile (e.g. the
     // Google name after sign-in, or the guest name after signing out).
     effect(() => {

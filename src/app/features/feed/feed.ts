@@ -10,6 +10,7 @@ import {
   RoundStateService,
   ScoreService,
   ScrollLockService,
+  bindRedirectAuthError,
   describeSignInError,
 } from '../../core/services';
 
@@ -42,6 +43,8 @@ export class Feed {
   protected readonly pendingDelete = signal<FeedPostEntry | null>(null);
 
   constructor() {
+    bindRedirectAuthError(this.auth, this.authError);
+
     effect((onCleanup) => {
       if (this.pendingDelete()) {
         const release = this.scrollLock.lock();

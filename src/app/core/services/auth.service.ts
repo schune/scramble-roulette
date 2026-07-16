@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal, WritableSignal } from '@angular/core';
 import {
   GoogleAuthProvider,
   User,
@@ -46,6 +46,19 @@ export function describeSignInError(reason: AuthErrorReason): string {
   }
 }
 
+/** Surface a failed redirect sign-in once auth has finished booting. */
+export function bindRedirectAuthError(
+  auth: AuthService,
+  authError: WritableSignal<string | null>,
+): void {
+  void auth.authReady.then(() => {
+    const reason = auth.redirectError();
+    if (reason && reason !== 'popup-closed') {
+      authError.set(describeSignInError(reason));
+    }
+  });
+}
+
 /**
  * Wraps Firebase Authentication behind Angular signals. The signed-in user is
  * exposed as a signal so OnPush components update automatically (this app is
@@ -61,6 +74,7 @@ export class AuthService {
 
   /** `undefined` = resolving · `null` = guest · `User` = signed in. */
   private readonly _user = signal<User | null | undefined>(undefined);
+  private readonly _redirectError = signal<AuthErrorReason | null>(null);
 
   readonly user = this._user.asReadonly();
   readonly isResolving = computed(() => this._user() === undefined);
@@ -69,6 +83,7 @@ export class AuthService {
   readonly displayName = computed(() => this._user()?.displayName ?? null);
   readonly email = computed(() => this._user()?.email ?? null);
   readonly photoURL = computed(() => this._user()?.photoURL ?? null);
+  readonly redirectError = this._redirectError.asReadonly();
 
   /** Resolves once redirect handling and the initial auth state are ready. */
   readonly authReady: Promise<void>;
@@ -79,6 +94,8 @@ export class AuthService {
 
   /** Open Google sign-in. Safari uses redirect; other browsers try popup first. */
   async signInWithGoogle(): Promise<SignInResult> {
+    this._redirectError.set(null);
+
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
@@ -93,7 +110,8 @@ export class AuthService {
     }
 
     try {
-      await signInWithPopup(this.auth, provider);
+      const credential = await signInWithPopup(this.auth, provider);
+      this._user.set(credential.user);
       return { ok: true };
     } catch (err: unknown) {
       const reason = this.classify(err);
@@ -110,16 +128,24 @@ export class AuthService {
 
   private async initAuth(): Promise<void> {
     try {
-      await getRedirectResult(this.auth);
+      const result = await getRedirectResult(this.auth);
+      if (result?.user) {
+        this._user.set(result.user);
+      }
     } catch (err: unknown) {
+      const reason = this.classify(err);
+      this._redirectError.set(reason);
       console.warn('[AuthService] Redirect sign-in failed', err);
     }
 
-    return new Promise<void>((resolve) => {
-      const unsubscribe = onAuthStateChanged(this.auth, (user) => {
+    await new Promise<void>((resolve) => {
+      let ready = false;
+      onAuthStateChanged(this.auth, (user) => {
         this._user.set(user);
-        unsubscribe();
-        resolve();
+        if (!ready) {
+          ready = true;
+          resolve();
+        }
       });
     });
   }

@@ -15,6 +15,7 @@ describe('App', () => {
       displayName: signal<null>(null).asReadonly(),
       email: signal<null>(null).asReadonly(),
       photoURL: signal<null>(null).asReadonly(),
+      redirectError: signal<null>(null).asReadonly(),
       authReady: Promise.resolve(),
       signInWithGoogle: async () => ({ ok: true as const }),
       signOut: async () => undefined,

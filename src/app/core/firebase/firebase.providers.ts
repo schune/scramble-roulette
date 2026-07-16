@@ -7,7 +7,7 @@ import {
   persistentLocalCache,
   persistentMultipleTabManager,
 } from 'firebase/firestore';
-import { firebaseConfig } from './firebase.config';
+import { firebaseConfig, resolveAuthDomain } from './firebase.config';
 
 /** The initialized Firebase app instance. */
 export const FIREBASE_APP = new InjectionToken<FirebaseApp>('FIREBASE_APP');
@@ -28,7 +28,10 @@ export const FIRESTORE = new InjectionToken<Firestore>('FIRESTORE');
  * shared guest cache.
  */
 export function provideFirebase(): EnvironmentProviders {
-  const app = initializeApp(firebaseConfig);
+  const app = initializeApp({
+    ...firebaseConfig,
+    authDomain: resolveAuthDomain(),
+  });
   const auth = getAuth(app);
   const firestore = initializeFirestore(app, {
     // Round/profile objects carry optional fields; drop `undefined` rather
