@@ -855,11 +855,11 @@
   align-items: center;
   gap: 0.6rem;
   font-size: 1.5rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
 }
 
-.setup-section__title:not(:has(+ .setup-section__sub)) {
-  margin-bottom: calc(0.25rem + 1lh + 1.25rem);
+.setup-section__title:has(+ .setup-section__sub) {
+  margin-bottom: 0.25rem;
 }
 
 .setup-section__step {
