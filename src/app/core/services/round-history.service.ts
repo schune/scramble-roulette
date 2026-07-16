@@ -168,6 +168,7 @@ export class RoundHistoryService {
       toPar: this.score.totalScoreToPar(round),
       ...(round.endedEarly ? { endedEarly: true } : {}),
       postedAt: round.completedAt ?? new Date().toISOString(),
+      holes: round.holes,
     };
 
     void this.firestore.saveFeedPost(post).catch((err) => {

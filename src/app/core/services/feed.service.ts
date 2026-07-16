@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Unsubscribe } from 'firebase/firestore';
-import { FeedItem, FeedLiveEntry, FeedPostEntry } from '../models';
+import { FeedItem, FeedLiveEntry, FeedPostEntry, HoleCount, Player, Round } from '../models';
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
 
@@ -87,5 +87,67 @@ export class FeedService {
     this.postsUnsub = null;
     this._live.set([]);
     this._posts.set([]);
+  }
+
+  /** Resolve a feed-backed round for the scorecard (live or posted). */
+  getFeedRound(userId: string, roundId: string): Round | null {
+    const live = this._live().find(
+      (entry) => entry.userId === userId && entry.roundId === roundId,
+    );
+    if (live) {
+      return this.roundFromLive(live);
+    }
+
+    const post = this._posts().find(
+      (entry) => entry.userId === userId && entry.roundId === roundId,
+    );
+    if (post) {
+      return this.roundFromPost(post);
+    }
+
+    return null;
+  }
+
+  private roundFromLive(entry: FeedLiveEntry): Round | null {
+    if (!entry.holes?.length) {
+      return null;
+    }
+    return {
+      id: entry.roundId,
+      createdAt: entry.updatedAt,
+      holeCount: entry.holeCount as HoleCount,
+      status: 'in-progress',
+      players: this.playersFromNames(entry.playerNames),
+      holes: entry.holes,
+      currentHole: entry.currentHole,
+      packId: entry.holes[0]?.card.packId ?? 'standard',
+      ...(entry.courseName ? { courseName: entry.courseName } : {}),
+    };
+  }
+
+  private roundFromPost(entry: FeedPostEntry): Round | null {
+    if (!entry.holes?.length) {
+      return null;
+    }
+    return {
+      id: entry.roundId,
+      createdAt: entry.postedAt,
+      holeCount: entry.holeCount as HoleCount,
+      status: 'complete',
+      players: this.playersFromNames(entry.playerNames),
+      holes: entry.holes,
+      currentHole: entry.holesPlayed,
+      packId: entry.holes[0]?.card.packId ?? 'standard',
+      completedAt: entry.postedAt,
+      ...(entry.courseName ? { courseName: entry.courseName } : {}),
+      ...(entry.endedEarly ? { endedEarly: true } : {}),
+    };
+  }
+
+  private playersFromNames(names: string[]): Player[] {
+    return names.map((name, index) => ({
+      id: `feed-player-${index}`,
+      name,
+    }));
   }
 }

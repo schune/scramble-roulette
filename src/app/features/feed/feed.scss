@@ -185,8 +185,40 @@
 }
 
 .feed-card__badge--live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   background: color-mix(in srgb, var(--sr-green-600) 18%, var(--sr-cream-50));
   color: var(--sr-green-800);
+}
+
+.feed-card__live-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--sr-green-600);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--sr-green-600) 55%, transparent);
+  animation: feed-live-pulse 1.8s ease-out infinite;
+}
+
+@keyframes feed-live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--sr-green-600) 55%, transparent);
+  }
+
+  70% {
+    box-shadow: 0 0 0 0.45rem transparent;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-card__live-dot {
+    animation: none;
+  }
 }
 
 .feed-card__stats {

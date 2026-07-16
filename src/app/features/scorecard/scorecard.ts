@@ -3,7 +3,13 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { RoundHistoryService, RoundStateService, ScoreService } from '../../core/services';
+import {
+  AuthService,
+  FeedService,
+  RoundHistoryService,
+  RoundStateService,
+  ScoreService,
+} from '../../core/services';
 
 @Component({
   selector: 'app-scorecard',
@@ -16,11 +22,19 @@ export class Scorecard {
   private readonly roundState = inject(RoundStateService);
   private readonly score = inject(ScoreService);
   private readonly roundHistory = inject(RoundHistoryService);
+  private readonly feed = inject(FeedService);
+  private readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
 
   /** Optional ?round=<id> selects a specific completed round from history. */
   private readonly requestedId = toSignal(
     this.route.queryParamMap.pipe(map((params) => params.get('round'))),
+    { initialValue: null },
+  );
+
+  /** Optional ?user=<uid> loads a feed-backed round (live or posted). */
+  protected readonly requestedUserId = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('user'))),
     { initialValue: null },
   );
 
@@ -30,6 +44,23 @@ export class Scorecard {
    */
   protected readonly round = computed(() => {
     const id = this.requestedId();
+    const userId = this.requestedUserId();
+    const currentUid = this.auth.uid();
+
+    if (id && userId) {
+      if (currentUid === userId) {
+        const fromHistory = this.roundHistory.history().find((r) => r.id === id);
+        if (fromHistory) {
+          return fromHistory;
+        }
+        const active = this.roundState.activeRound();
+        if (active?.id === id) {
+          return active;
+        }
+      }
+      return this.feed.getFeedRound(userId, id);
+    }
+
     if (id) {
       const fromHistory = this.roundHistory.history().find((r) => r.id === id);
       if (fromHistory) {
@@ -39,6 +70,16 @@ export class Scorecard {
     }
     return this.roundState.activeRound() ?? this.roundHistory.history()[0] ?? null;
   });
+
+  protected readonly isSpectatorView = computed(() => {
+    const userId = this.requestedUserId();
+    const currentUid = this.auth.uid();
+    return !!userId && userId !== currentUid;
+  });
+
+  protected readonly isLiveView = computed(
+    () => this.round()?.status !== 'complete' && !!this.round(),
+  );
 
   protected readonly missingRequestedRound = computed(
     () => !!this.requestedId() && !this.round(),

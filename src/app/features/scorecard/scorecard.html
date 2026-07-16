@@ -1,10 +1,12 @@
 <div class="sr-page sr-container scorecard-page">
   <app-page-header
-    [eyebrow]="isComplete() ? 'Final Card' : 'The Card'"
-    [title]="isComplete() ? 'Round Complete' : 'Scorecard'"
+    [eyebrow]="isComplete() ? 'Final Card' : isLiveView() ? 'Live Card' : 'The Card'"
+    [title]="isComplete() ? 'Round Complete' : isLiveView() ? 'Live Scorecard' : 'Scorecard'"
     [subtitle]="subtitle()"
   >
-    @if (isComplete()) {
+    @if (isSpectatorView()) {
+      <a routerLink="/feed" class="sr-btn sr-btn--ghost">Back to Feed</a>
+    } @else if (isComplete()) {
       <a routerLink="/" class="sr-btn sr-btn--gold">Play Again</a>
       <a routerLink="/" class="sr-btn sr-btn--ghost">Back to Play</a>
     } @else if (round()) {
@@ -16,10 +18,16 @@
     <section class="sr-card sr-empty">
       <div class="sr-empty__crest" aria-hidden="true">SR</div>
       <p class="sr-empty__title">Round not found</p>
-      <p class="sr-lead">That scorecard may have been deleted or the link is out of date.</p>
+      <p class="sr-lead">
+        @if (requestedUserId()) {
+          That live scorecard may still be syncing, or the round has ended.
+        } @else {
+          That scorecard may have been deleted or the link is out of date.
+        }
+      </p>
       <div class="sr-empty__actions">
-        <a routerLink="/previous-rounds" class="sr-btn sr-btn--primary">Previous Rounds</a>
-        <a routerLink="/" class="sr-btn sr-btn--ghost">Play</a>
+        <a routerLink="/feed" class="sr-btn sr-btn--primary">Back to Feed</a>
+        <a routerLink="/previous-rounds" class="sr-btn sr-btn--ghost">Previous Rounds</a>
       </div>
     </section>
   } @else if (round(); as r) {

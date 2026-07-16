@@ -74,7 +74,10 @@
                             <span class="feed-card__course">{{ item.entry.courseName }}</span>
                           }
                         </div>
-                        <span class="feed-card__badge feed-card__badge--live">Live</span>
+                        <span class="feed-card__badge feed-card__badge--live">
+                          <span class="feed-card__live-dot" aria-hidden="true"></span>
+                          Live
+                        </span>
                       </div>
 
                       <dl class="feed-card__stats">
@@ -94,6 +97,14 @@
 
                       <p class="feed-card__players">{{ playerSummary(item.entry.playerNames) }}</p>
                       <p class="feed-card__time">Updated {{ formatWhen(item.entry.updatedAt) }}</p>
+
+                      <a
+                        routerLink="/scorecard"
+                        [queryParams]="{ round: item.entry.roundId, user: item.entry.userId }"
+                        class="feed-card__link"
+                      >
+                        View scorecard
+                      </a>
                     </li>
                   }
                 }
@@ -141,15 +152,13 @@
                       <p class="feed-card__players">{{ playerSummary(item.entry.playerNames) }}</p>
                       <p class="feed-card__time">Posted {{ formatWhen(item.entry.postedAt) }}</p>
 
-                      @if (isOwnUser(item.entry.userId)) {
-                        <a
-                          routerLink="/scorecard"
-                          [queryParams]="{ round: item.entry.roundId }"
-                          class="feed-card__link"
-                        >
-                          View your scorecard
-                        </a>
-                      }
+                      <a
+                        routerLink="/scorecard"
+                        [queryParams]="{ round: item.entry.roundId, user: item.entry.userId }"
+                        class="feed-card__link"
+                      >
+                        View scorecard
+                      </a>
                     </li>
                   }
                 }

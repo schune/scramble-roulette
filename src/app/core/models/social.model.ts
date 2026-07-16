@@ -27,6 +27,8 @@ export interface FollowerEdge {
   createdAt: string;
 }
 
+import { HoleResult } from './hole-result.model';
+
 /** Lightweight live scoreboard followers can read during a round. */
 export interface LiveRoundSnapshot {
   roundId: string;
@@ -37,6 +39,7 @@ export interface LiveRoundSnapshot {
   totalScore: number;
   toPar: number;
   updatedAt: string;
+  holes?: HoleResult[];
 }
 
 /** Live round plus the followee identity for UI rendering. */

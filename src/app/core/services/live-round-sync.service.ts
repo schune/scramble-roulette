@@ -67,6 +67,7 @@ export class LiveRoundSyncService {
       totalScore: this.score.totalScore(round),
       toPar: this.score.totalScoreToPar(round),
       updatedAt: new Date().toISOString(),
+      holes: round.holes,
     };
 
     try {
@@ -101,6 +102,7 @@ export class LiveRoundSyncService {
       totalScore: snapshot.totalScore,
       toPar: snapshot.toPar,
       updatedAt: snapshot.updatedAt,
+      holes: round.holes,
     };
   }
 }
