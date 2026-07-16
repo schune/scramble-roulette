@@ -24,6 +24,7 @@ interface ScoreCelebrationImage {
 interface ScoreCelebrationView {
   title: string;
   images: ScoreCelebrationImage[];
+  ctaLabel: string;
 }
 
 const BOGEY_BALL_IMAGE = '/images/luke-bogey.png';
@@ -31,6 +32,7 @@ const BOGEY_BALL_IMAGE = '/images/luke-bogey.png';
 const BACHELOR_SCORE_CELEBRATIONS: Record<BachelorScoreCelebration, ScoreCelebrationView> = {
   birdie: {
     title: 'Nice Birdie!',
+    ctaLabel: 'Continue Round',
     images: [
       {
         src: '/images/luke-birdie.png',
@@ -40,6 +42,7 @@ const BACHELOR_SCORE_CELEBRATIONS: Record<BachelorScoreCelebration, ScoreCelebra
   },
   bogey: {
     title: 'Drat! A Bogey!',
+    ctaLabel: 'I SUCK AT GOLF',
     images: [
       {
         src: BOGEY_BALL_IMAGE,
@@ -49,6 +52,7 @@ const BACHELOR_SCORE_CELEBRATIONS: Record<BachelorScoreCelebration, ScoreCelebra
   },
   'double-bogey': {
     title: 'Uh Oh! Double Bogey!',
+    ctaLabel: 'I SUCK AT GOLF',
     images: [
       {
         src: BOGEY_BALL_IMAGE,
