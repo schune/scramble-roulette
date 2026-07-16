@@ -2,8 +2,10 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import {
   GoogleAuthProvider,
   User,
+  browserLocalPersistence,
   getRedirectResult,
   onAuthStateChanged,
+  setPersistence,
   signInWithPopup,
   signInWithRedirect,
   signOut,
@@ -11,9 +13,17 @@ import {
 import { FIREBASE_AUTH } from '../firebase/firebase.providers';
 
 /** Friendly, UI-facing sign-in failure reasons. */
-export type AuthErrorReason = 'popup-closed' | 'unauthorized-domain' | 'network' | 'unknown';
+export type AuthErrorReason =
+  | 'popup-closed'
+  | 'popup-blocked'
+  | 'unauthorized-domain'
+  | 'storage-blocked'
+  | 'network'
+  | 'unknown';
 
-export type SignInResult = { ok: true } | { ok: false; reason: AuthErrorReason };
+export type SignInResult =
+  | { ok: true; redirecting?: boolean }
+  | { ok: false; reason: AuthErrorReason };
 
 /**
  * Map a sign-in failure to a user-facing message. `'popup-closed'` is a
@@ -21,8 +31,14 @@ export type SignInResult = { ok: true } | { ok: false; reason: AuthErrorReason }
  */
 export function describeSignInError(reason: AuthErrorReason): string {
   switch (reason) {
+    case 'popup-closed':
+      return 'Sign-in was cancelled.';
+    case 'popup-blocked':
+      return 'Your browser blocked the sign-in window. Trying a full-page redirect instead.';
     case 'unauthorized-domain':
       return 'This domain isn’t authorized for sign-in yet.';
+    case 'storage-blocked':
+      return 'Safari is blocking sign-in storage. Turn off Private Browsing or allow site data, then try again.';
     case 'network':
       return 'Network error — check your connection and try again.';
     default:
@@ -54,46 +70,68 @@ export class AuthService {
   readonly email = computed(() => this._user()?.email ?? null);
   readonly photoURL = computed(() => this._user()?.photoURL ?? null);
 
-  /** Resolves once the initial auth state has been determined. */
+  /** Resolves once redirect handling and the initial auth state are ready. */
   readonly authReady: Promise<void>;
 
   constructor() {
-    let markReady!: () => void;
-    this.authReady = new Promise<void>((resolve) => (markReady = resolve));
-    let settled = false;
-
-    onAuthStateChanged(this.auth, (user) => {
-      this._user.set(user);
-      if (!settled) {
-        settled = true;
-        markReady();
-      }
-    });
-
-    void this.completeRedirectSignIn();
+    this.authReady = this.initAuth();
   }
 
-  /** Open Google sign-in. Uses redirect on mobile where popups are often blocked. */
+  /** Open Google sign-in. Safari uses redirect; other browsers try popup first. */
   async signInWithGoogle(): Promise<SignInResult> {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
+
     try {
-      if (this.prefersRedirect()) {
-        await signInWithRedirect(this.auth, provider);
-        return { ok: true };
-      }
+      await setPersistence(this.auth, browserLocalPersistence);
+    } catch {
+      // Continue — persistence may already be set or blocked in private browsing.
+    }
+
+    if (this.prefersRedirect()) {
+      return this.signInWithRedirectFlow(provider);
+    }
+
+    try {
       await signInWithPopup(this.auth, provider);
       return { ok: true };
     } catch (err: unknown) {
-      return { ok: false, reason: this.classify(err) };
+      const reason = this.classify(err);
+      if (reason === 'popup-blocked' || reason === 'popup-closed') {
+        return this.signInWithRedirectFlow(provider);
+      }
+      return { ok: false, reason };
     }
   }
 
-  private async completeRedirectSignIn(): Promise<void> {
+  async signOut(): Promise<void> {
+    await signOut(this.auth);
+  }
+
+  private async initAuth(): Promise<void> {
     try {
       await getRedirectResult(this.auth);
-    } catch {
-      // Redirect failures surface on the next explicit sign-in attempt.
+    } catch (err: unknown) {
+      console.warn('[AuthService] Redirect sign-in failed', err);
+    }
+
+    return new Promise<void>((resolve) => {
+      const unsubscribe = onAuthStateChanged(this.auth, (user) => {
+        this._user.set(user);
+        unsubscribe();
+        resolve();
+      });
+    });
+  }
+
+  private async signInWithRedirectFlow(
+    provider: GoogleAuthProvider,
+  ): Promise<SignInResult> {
+    try {
+      await signInWithRedirect(this.auth, provider);
+      return { ok: true, redirecting: true };
+    } catch (err: unknown) {
+      return { ok: false, reason: this.classify(err) };
     }
   }
 
@@ -101,11 +139,14 @@ export class AuthService {
     if (typeof navigator === 'undefined') {
       return false;
     }
-    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  }
 
-  async signOut(): Promise<void> {
-    await signOut(this.auth);
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod|Android/i.test(ua)) {
+      return true;
+    }
+
+    // Desktop Safari blocks popups and third-party auth cookies aggressively.
+    return /Safari/i.test(ua) && !/Chrome|Chromium|Edg|OPR|Firefox/i.test(ua);
   }
 
   private classify(err: unknown): AuthErrorReason {
@@ -118,10 +159,14 @@ export class AuthService {
       case 'auth/cancelled-popup-request':
       case 'auth/user-cancelled':
         return 'popup-closed';
+      case 'auth/popup-blocked':
+        return 'popup-blocked';
       case 'auth/unauthorized-domain':
         return 'unauthorized-domain';
       case 'auth/network-request-failed':
         return 'network';
+      case 'auth/web-storage-unsupported':
+        return 'storage-blocked';
       default:
         return 'unknown';
     }

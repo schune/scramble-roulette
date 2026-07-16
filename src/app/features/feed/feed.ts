@@ -132,6 +132,9 @@ export class Feed {
     this.authError.set(null);
     this.signingIn.set(true);
     const result = await this.auth.signInWithGoogle();
+    if (result.ok && result.redirecting) {
+      return;
+    }
     this.signingIn.set(false);
     if (!result.ok && result.reason !== 'popup-closed') {
       this.authError.set(describeSignInError(result.reason));

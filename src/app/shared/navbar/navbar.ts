@@ -102,6 +102,9 @@ export class Navbar {
     this.authError.set(null);
     this.signingIn.set(true);
     const result = await this.auth.signInWithGoogle();
+    if (result.ok && result.redirecting) {
+      return;
+    }
     this.signingIn.set(false);
     if (result.ok) {
       this.closeAccountMenu();
