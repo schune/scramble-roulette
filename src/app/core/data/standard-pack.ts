@@ -84,6 +84,7 @@ const cards: Card[] = [
     name: 'Bag Swap',
     category: 'Hurts',
     text: "You cannot use your own clubs on this hole. Choose from any of your teammates' bags.",
+    flavor: 'Lefties are exempt.',
     packId: STANDARD_PACK_ID,
   },
   {
