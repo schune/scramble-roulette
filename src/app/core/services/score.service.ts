@@ -61,6 +61,11 @@ export class ScoreService {
     return round.holes.filter((hole) => hole.score !== undefined && hole.par !== undefined);
   }
 
+  /** Count of holes with both par and score recorded. */
+  scoredHoleCount(round: Round): number {
+    return this.scoredHoles(round).length;
+  }
+
   /** Total strokes across scored holes. */
   totalScore(round: Round): number {
     return this.scoredHoles(round).reduce((sum, hole) => sum + (hole.score ?? 0), 0);

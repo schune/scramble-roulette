@@ -88,7 +88,12 @@ export class RoundStateService {
   constructor() {
     const saved = this.storage.getActiveRound();
     if (saved) {
-      this._activeRound.set(this.normalizeRound(saved));
+      const normalized = this.normalizeRound(saved);
+      if (normalized) {
+        this._activeRound.set(normalized);
+      } else {
+        this.storage.clearActiveRound();
+      }
     }
 
     effect(() => {
@@ -316,9 +321,36 @@ export class RoundStateService {
   }
 
   /* ---------- Helpers ---------- */
-  private normalizeRound(round: Round): Round {
+  private normalizeRound(round: Round): Round | null {
+    const holeCount = round.holeCount === 9 || round.holeCount === 18 ? round.holeCount : null;
+    if (
+      !holeCount ||
+      round.status !== 'in-progress' ||
+      !Array.isArray(round.players) ||
+      round.players.length < 2 ||
+      !Array.isArray(round.holes)
+    ) {
+      return null;
+    }
+
+    const currentHole = Math.min(Math.max(Math.floor(round.currentHole) || 1, 1), holeCount);
     const packId = round.packId ?? this.deck.defaultPackId;
-    return packId === round.packId ? round : { ...round, packId };
+    const holes = round.holes.filter(
+      (hole) =>
+        Number.isInteger(hole.holeNumber) &&
+        hole.holeNumber >= 1 &&
+        hole.holeNumber <= holeCount &&
+        !!hole.card,
+    );
+
+    return {
+      ...round,
+      holeCount,
+      currentHole,
+      packId,
+      holes,
+      players: round.players.filter((player) => player.name?.trim()),
+    };
   }
 
   private updateRound(mutator: (round: Round) => Round): void {

@@ -64,7 +64,7 @@ export class PreviousRounds {
   }
 
   protected holesPlayed(round: Round): number {
-    return round.holes.length;
+    return this.score.scoredHoleCount(round);
   }
 
   protected sortedHoles(round: Round): HoleResult[] {

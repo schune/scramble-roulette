@@ -108,36 +108,50 @@ export class FeedService {
     return null;
   }
 
-  private roundFromLive(entry: FeedLiveEntry): Round | null {
-    if (!entry.holes?.length) {
-      return null;
+  /** Fetch a feed-backed round from Firestore when it is not in the listener cache. */
+  async fetchFeedRound(userId: string, roundId: string): Promise<Round | null> {
+    const cached = this.getFeedRound(userId, roundId);
+    if (cached) {
+      return cached;
     }
+
+    const live = await this.firestore.getFeedLive(userId);
+    if (live?.roundId === roundId) {
+      return this.roundFromLive(live);
+    }
+
+    const post = await this.firestore.getFeedPost(userId, roundId);
+    if (post) {
+      return this.roundFromPost(post);
+    }
+
+    return this.firestore.getRound(userId, roundId);
+  }
+
+  private roundFromLive(entry: FeedLiveEntry): Round {
     return {
       id: entry.roundId,
       createdAt: entry.updatedAt,
       holeCount: entry.holeCount as HoleCount,
       status: 'in-progress',
       players: this.playersFromNames(entry.playerNames),
-      holes: entry.holes,
+      holes: entry.holes ?? [],
       currentHole: entry.currentHole,
-      packId: entry.holes[0]?.card.packId ?? 'standard',
+      packId: entry.holes?.[0]?.card.packId ?? 'standard',
       ...(entry.courseName ? { courseName: entry.courseName } : {}),
     };
   }
 
-  private roundFromPost(entry: FeedPostEntry): Round | null {
-    if (!entry.holes?.length) {
-      return null;
-    }
+  private roundFromPost(entry: FeedPostEntry): Round {
     return {
       id: entry.roundId,
       createdAt: entry.postedAt,
       holeCount: entry.holeCount as HoleCount,
       status: 'complete',
       players: this.playersFromNames(entry.playerNames),
-      holes: entry.holes,
+      holes: entry.holes ?? [],
       currentHole: entry.holesPlayed,
-      packId: entry.holes[0]?.card.packId ?? 'standard',
+      packId: entry.holes?.[0]?.card.packId ?? 'standard',
       completedAt: entry.postedAt,
       ...(entry.courseName ? { courseName: entry.courseName } : {}),
       ...(entry.endedEarly ? { endedEarly: true } : {}),

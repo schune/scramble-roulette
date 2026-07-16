@@ -37,7 +37,10 @@ export class TabBar {
 
   protected goPlay(event: Event): void {
     event.preventDefault();
-    this.roundState.requestPlayLanding();
+    if (this.roundState.hasActiveRound()) {
+      void this.router.navigate(['/round']);
+      return;
+    }
     void this.router.navigate(['/']);
   }
 }

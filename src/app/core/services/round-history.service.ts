@@ -142,6 +142,7 @@ export class RoundHistoryService {
         await this.firestore.saveManyRounds(uid, missing);
         for (const round of missing) {
           this.publishFeedPost(uid, round);
+          this.storage.removeRoundFromHistory(round.id);
         }
       }
 
@@ -184,7 +185,7 @@ export class RoundHistoryService {
   private publishFeedPost(uid: string, round: Round): void {
     // Lazy lookup avoids a ProfileService <-> RoundHistoryService DI cycle (NG0200).
     const profile = this.injector.get(ProfileService);
-    const holesPlayed = round.holes.filter((hole) => hole.score !== undefined).length;
+    const holesPlayed = this.score.scoredHoleCount(round);
     const post: FeedPostEntry = {
       userId: uid,
       displayName: profile.displayName(),

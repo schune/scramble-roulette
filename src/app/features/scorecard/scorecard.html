@@ -14,7 +14,13 @@
     }
   </app-page-header>
 
-  @if (missingRequestedRound()) {
+  @if (waitingForFeedRound()) {
+    <section class="sr-card sr-empty">
+      <div class="sr-empty__crest" aria-hidden="true">SR</div>
+      <p class="sr-empty__title">Loading scorecard…</p>
+      <p class="sr-lead">Pulling the latest holes from the feed.</p>
+    </section>
+  } @else if (missingRequestedRound()) {
     <section class="sr-card sr-empty">
       <div class="sr-empty__crest" aria-hidden="true">SR</div>
       <p class="sr-empty__title">Round not found</p>
@@ -49,7 +55,7 @@
         <div class="share-card__score">
           <span class="share-card__topar">{{ formatToPar(toPar()) }}</span>
           <span class="share-card__strokes">
-            {{ totalScore() }} strokes · {{ holes().length }}/{{ r.holeCount }} holes played
+            {{ totalScore() }} strokes · {{ scoredHoleCount() }}/{{ r.holeCount }} holes played
           </span>
         </div>
 
@@ -72,7 +78,7 @@
         </div>
         <div class="totals__stat">
           <span class="totals__label">Holes Played</span>
-          <span class="totals__val">{{ holes().length }} / {{ r.holeCount }}</span>
+          <span class="totals__val">{{ scoredHoleCount() }} / {{ r.holeCount }}</span>
         </div>
         <div class="totals__stat">
           <span class="totals__label">To Par</span>
@@ -152,9 +158,19 @@
       </section>
     } @else {
       <section class="sr-card sr-empty">
-        <p class="sr-empty__title">No holes played yet</p>
-        <p class="sr-lead">Head back to the round and draw your first card.</p>
-        <a routerLink="/round" class="sr-btn sr-btn--primary">Go to Round</a>
+        <p class="sr-empty__title">No holes scored yet</p>
+        <p class="sr-lead">
+          @if (isSpectatorView()) {
+            This group has started the round but hasn't locked in a score yet.
+          } @else {
+            Head back to the round and draw your first card.
+          }
+        </p>
+        @if (!isSpectatorView()) {
+          <a routerLink="/round" class="sr-btn sr-btn--primary">Go to Round</a>
+        } @else {
+          <a routerLink="/feed" class="sr-btn sr-btn--primary">Back to Feed</a>
+        }
       </section>
     }
     </div>

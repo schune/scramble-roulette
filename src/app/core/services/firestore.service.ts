@@ -272,6 +272,21 @@ export class FirestoreService {
     return snap.exists();
   }
 
+  async getFeedPost(userId: string, roundId: string): Promise<FeedPostEntry | null> {
+    const snap = await getDoc(this.feedPostDocRef(userId, roundId));
+    return snap.exists() ? (snap.data() as FeedPostEntry) : null;
+  }
+
+  async getFeedLive(userId: string): Promise<FeedLiveEntry | null> {
+    const snap = await getDoc(this.feedLiveDocRef(userId));
+    return snap.exists() ? (snap.data() as FeedLiveEntry) : null;
+  }
+
+  async getRound(uid: string, roundId: string): Promise<Round | null> {
+    const snap = await getDoc(this.roundDocRef(uid, roundId));
+    return snap.exists() ? (snap.data() as Round) : null;
+  }
+
   listenFeedPosts(next: (entries: FeedPostEntry[]) => void, max = 50): Unsubscribe {
     const q = query(this.feedPostsColRef(), orderBy('postedAt', 'desc'), limit(max));
     return onSnapshot(

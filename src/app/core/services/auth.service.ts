@@ -2,8 +2,10 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import {
   GoogleAuthProvider,
   User,
+  getRedirectResult,
   onAuthStateChanged,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../firebase/firebase.providers';
@@ -67,18 +69,39 @@ export class AuthService {
         markReady();
       }
     });
+
+    void this.completeRedirectSignIn();
   }
 
-  /** Open the Google sign-in popup. Never throws — returns a tagged result. */
+  /** Open Google sign-in. Uses redirect on mobile where popups are often blocked. */
   async signInWithGoogle(): Promise<SignInResult> {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     try {
+      if (this.prefersRedirect()) {
+        await signInWithRedirect(this.auth, provider);
+        return { ok: true };
+      }
       await signInWithPopup(this.auth, provider);
       return { ok: true };
     } catch (err: unknown) {
       return { ok: false, reason: this.classify(err) };
     }
+  }
+
+  private async completeRedirectSignIn(): Promise<void> {
+    try {
+      await getRedirectResult(this.auth);
+    } catch {
+      // Redirect failures surface on the next explicit sign-in attempt.
+    }
+  }
+
+  private prefersRedirect(): boolean {
+    if (typeof navigator === 'undefined') {
+      return false;
+    }
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   }
 
   async signOut(): Promise<void> {

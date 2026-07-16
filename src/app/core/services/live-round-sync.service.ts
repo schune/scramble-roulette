@@ -52,7 +52,11 @@ export class LiveRoundSyncService {
       }
 
       this.publishTimer = setTimeout(() => {
-        void this.publish(uid, round);
+        const current = this.roundState.activeRound();
+        if (!current || current.id !== round.id) {
+          return;
+        }
+        void this.publish(uid, current);
       }, 800);
     });
   }

@@ -248,8 +248,22 @@ export class ProfileService {
       };
     }
 
-    const toPars = history.map((round) => this.score.totalScoreToPar(round));
-    const holesPlayed = history.reduce((sum, round) => sum + round.holes.length, 0);
+    const scoredRounds = history.filter((round) => this.score.scoredHoleCount(round) > 0);
+    const holesPlayed = history.reduce(
+      (sum, round) => sum + this.score.scoredHoleCount(round),
+      0,
+    );
+
+    if (scoredRounds.length === 0) {
+      return {
+        roundsPlayed: history.length,
+        holesPlayed,
+        bestScoreToPar: null,
+        averageScoreToPar: null,
+      };
+    }
+
+    const toPars = scoredRounds.map((round) => this.score.totalScoreToPar(round));
     const averageRaw = toPars.reduce((sum, value) => sum + value, 0) / toPars.length;
 
     return {

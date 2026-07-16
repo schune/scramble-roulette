@@ -310,7 +310,8 @@ export class Round {
   }
 
   protected holesPlayed(): number {
-    return this.round()?.holes.length ?? 0;
+    const round = this.round();
+    return round ? this.score.scoredHoleCount(round) : 0;
   }
 
   protected formatToPar(value: number): string {

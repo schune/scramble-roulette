@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
-import { Card } from '../../core/models';
+import { Card, Round } from '../../core/models';
 import { PageHeader } from '../../shared/page-header/page-header';
 import {
   AuthService,
@@ -37,6 +37,9 @@ export class Scorecard {
   protected readonly selectedHole = signal<number | null>(null);
   protected readonly mulliganRulesOpen = signal(false);
   protected readonly mulliganRule = MULLIGAN_RULE;
+  private readonly fetchedFeedRound = signal<Round | null>(null);
+  protected readonly feedRoundLoading = signal(false);
+  private readonly feedRoundFetched = signal(false);
 
   constructor() {
     effect((onCleanup) => {
@@ -44,6 +47,39 @@ export class Scorecard {
         const release = this.scrollLock.lock();
         onCleanup(release);
       }
+    });
+
+    effect((onCleanup) => {
+      const id = this.requestedId();
+      const userId = this.requestedUserId();
+      if (!id || !userId) {
+        this.fetchedFeedRound.set(null);
+        this.feedRoundLoading.set(false);
+        this.feedRoundFetched.set(true);
+        return;
+      }
+
+      if (this.feed.getFeedRound(userId, id)) {
+        this.fetchedFeedRound.set(null);
+        this.feedRoundLoading.set(false);
+        this.feedRoundFetched.set(true);
+        return;
+      }
+
+      this.feedRoundLoading.set(true);
+      this.feedRoundFetched.set(false);
+      let cancelled = false;
+      void this.feed.fetchFeedRound(userId, id).then((round) => {
+        if (!cancelled) {
+          this.fetchedFeedRound.set(round);
+          this.feedRoundLoading.set(false);
+          this.feedRoundFetched.set(true);
+        }
+      });
+
+      onCleanup(() => {
+        cancelled = true;
+      });
     });
   }
 
@@ -79,7 +115,7 @@ export class Scorecard {
           return active;
         }
       }
-      return this.feed.getFeedRound(userId, id);
+      return this.feed.getFeedRound(userId, id) ?? this.fetchedFeedRound();
     }
 
     if (id) {
@@ -102,9 +138,21 @@ export class Scorecard {
     () => this.round()?.status !== 'complete' && !!this.round(),
   );
 
-  protected readonly missingRequestedRound = computed(
-    () => !!this.requestedId() && !this.round(),
+  protected readonly waitingForFeedRound = computed(
+    () => !!this.requestedUserId() && !!this.requestedId() && this.feedRoundLoading(),
   );
+
+  protected readonly missingRequestedRound = computed(() => {
+    const id = this.requestedId();
+    if (!id || this.round()) {
+      return false;
+    }
+    const userId = this.requestedUserId();
+    if (userId) {
+      return this.feedRoundFetched() && !this.feedRoundLoading();
+    }
+    return true;
+  });
 
   protected readonly subtitle = computed(
     () =>
@@ -115,9 +163,11 @@ export class Scorecard {
   protected readonly isComplete = computed(() => this.round()?.status === 'complete');
   protected readonly holes = computed(() => this.round()?.holes ?? []);
   protected readonly players = computed(() => this.round()?.players ?? []);
-  protected readonly hasScores = computed(() =>
-    this.holes().some((hole) => hole.score !== undefined),
-  );
+  protected readonly scoredHoleCount = computed(() => {
+    const round = this.round();
+    return round ? this.score.scoredHoleCount(round) : 0;
+  });
+  protected readonly hasScores = computed(() => this.scoredHoleCount() > 0);
 
   protected readonly totalScore = computed(() => {
     const round = this.round();
