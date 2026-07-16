@@ -367,28 +367,30 @@
     </div>
   }
 
-  @if (birdieCelebrationOpen()) {
+  @if (scoreCelebrationView(); as celebration) {
     <div
-      class="modal modal--overlay-cinematic modal--birdie"
+      class="modal modal--overlay-cinematic modal--score-celebration"
+      [class.score-celebration--birdie]="scoreCelebration() === 'birdie'"
+      [class.score-celebration--bogey]="scoreCelebration() === 'bogey'"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="birdie-title"
+      aria-labelledby="score-celebration-title"
     >
-      <div class="modal__backdrop" (click)="dismissBirdieCelebration()"></div>
-      <div class="modal__panel sr-card modal__panel--center birdie-celebration__panel">
-        <p class="modal__copy birdie-celebration__kicker">Hole {{ r.currentHole }}</p>
-        <h2 id="birdie-title" class="birdie-celebration__title">Nice Birdie!</h2>
-        <figure class="birdie-celebration__frame">
+      <div class="modal__backdrop" (click)="dismissScoreCelebration()"></div>
+      <div class="modal__panel sr-card modal__panel--center score-celebration__panel">
+        <p class="modal__copy score-celebration__kicker">Hole {{ r.currentHole }}</p>
+        <h2 id="score-celebration-title" class="score-celebration__title">{{ celebration.title }}</h2>
+        <figure class="score-celebration__frame">
           <img
-            class="birdie-celebration__image"
-            [src]="birdieImageSrc"
-            alt="Luke as a bird golfing"
+            class="score-celebration__image"
+            [src]="celebration.imageSrc"
+            [alt]="celebration.imageAlt"
             width="480"
             height="480"
           />
         </figure>
         <div class="modal__actions modal__actions--center">
-          <button type="button" class="sr-btn sr-btn--gold" (click)="dismissBirdieCelebration()">
+          <button type="button" class="sr-btn sr-btn--gold" (click)="dismissScoreCelebration()">
             Continue Round
           </button>
         </div>

@@ -476,6 +476,74 @@ a:hover {
   flex: 1 1 auto;
 }
 
+.modal--score-celebration {
+  z-index: 300;
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+}
+
+.score-celebration__panel {
+  max-width: min(92vw, 400px);
+  padding: 1.1rem 1rem 1rem;
+  border: 2px solid var(--sr-gold-500);
+  box-shadow: var(--sr-shadow-lg);
+}
+
+.score-celebration__kicker {
+  margin: 0 0 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sr-gold-600);
+}
+
+.score-celebration__title {
+  margin: 0 0 0.85rem;
+  font-family: var(--sr-font-display);
+  font-size: clamp(2.15rem, 8.5vw, 2.85rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--sr-green-800);
+}
+
+.score-celebration__frame {
+  margin: 0 0 1rem;
+  padding: 0.45rem;
+  border-radius: var(--sr-radius-lg);
+  background: radial-gradient(ellipse at center, #1a5c45, #041a12);
+  border: 2px solid var(--sr-gold-500);
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.55);
+}
+
+.score-celebration__image {
+  display: block;
+  width: 100%;
+  max-height: min(52vh, 360px);
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+  border-radius: 18px;
+}
+
+.score-celebration--bogey .score-celebration__panel,
+.score-celebration--bogey .score-celebration__frame {
+  border-color: var(--sr-hurt);
+}
+
+.score-celebration--bogey .score-celebration__title {
+  color: var(--sr-hurt);
+}
+
+.score-celebration--bogey .score-celebration__frame {
+  background: radial-gradient(ellipse at center, #4a2418, #041a12);
+}
+
+.score-celebration--bogey .score-celebration__image {
+  max-height: min(48vh, 320px);
+  border-radius: 999px;
+}
+
 @keyframes sr-backdrop-in {
   from {
     opacity: 0;

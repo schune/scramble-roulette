@@ -14,6 +14,26 @@ import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, ScrollLockService, SoundService, CardDeckService } from '../../core/services';
 
 type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
+type BachelorScoreCelebration = 'birdie' | 'bogey';
+
+interface ScoreCelebrationView {
+  title: string;
+  imageSrc: string;
+  imageAlt: string;
+}
+
+const BACHELOR_SCORE_CELEBRATIONS: Record<BachelorScoreCelebration, ScoreCelebrationView> = {
+  birdie: {
+    title: 'Nice Birdie!',
+    imageSrc: '/images/luke-birdie.png',
+    imageAlt: 'Luke as a bird golfing',
+  },
+  bogey: {
+    title: "That's a Bogey!",
+    imageSrc: '/images/luke-bogey.png',
+    imageAlt: 'Luke as a miserable golf ball',
+  },
+};
 
 @Component({
   selector: 'app-round',
@@ -56,8 +76,12 @@ export class Round {
   protected readonly cinematicRevealed = signal(false);
   protected readonly mulliganRulesOpen = signal(false);
   protected readonly mulliganRule = MULLIGAN_RULE;
-  protected readonly birdieCelebrationOpen = signal(false);
-  protected readonly birdieImageSrc = '/images/luke-birdie.png';
+  protected readonly scoreCelebration = signal<BachelorScoreCelebration | null>(null);
+
+  protected readonly scoreCelebrationView = computed(() => {
+    const kind = this.scoreCelebration();
+    return kind ? BACHELOR_SCORE_CELEBRATIONS[kind] : null;
+  });
 
   protected readonly sparkles = Array.from({ length: 28 }, (_, i) => i);
 
@@ -100,7 +124,7 @@ export class Round {
       if (
         this.confirmingEnd() ||
         this.mulliganRulesOpen() ||
-        this.birdieCelebrationOpen() ||
+        this.scoreCelebration() !== null ||
         this.drawCinematic() !== null
       ) {
         const release = this.scrollLock.lock();
@@ -229,8 +253,9 @@ export class Round {
     this.editing.set(false);
     this.sound.play('holeComplete');
 
-    if (this.isBachelorDeck() && this.currentHoleResult()?.resultLabel === 'Birdie') {
-      this.birdieCelebrationOpen.set(true);
+    const resultLabel = this.currentHoleResult()?.resultLabel;
+    if (this.isBachelorDeck() && (resultLabel === 'Birdie' || resultLabel === 'Bogey')) {
+      this.scoreCelebration.set(resultLabel === 'Birdie' ? 'birdie' : 'bogey');
     }
   }
 
@@ -314,13 +339,13 @@ export class Round {
     this.mulliganRulesOpen.set(false);
   }
 
-  protected dismissBirdieCelebration(): void {
-    this.birdieCelebrationOpen.set(false);
+  protected dismissScoreCelebration(): void {
+    this.scoreCelebration.set(null);
   }
 
   protected onEscape(): void {
-    if (this.birdieCelebrationOpen()) {
-      this.dismissBirdieCelebration();
+    if (this.scoreCelebration()) {
+      this.dismissScoreCelebration();
     } else if (this.mulliganRulesOpen()) {
       this.closeMulliganRules();
     }
