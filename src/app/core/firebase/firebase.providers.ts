@@ -1,13 +1,13 @@
 import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
-import { FirebaseApp, initializeApp } from 'firebase/app';
-import { Auth, getAuth } from 'firebase/auth';
+import { FirebaseApp } from 'firebase/app';
+import { Auth } from 'firebase/auth';
 import {
   Firestore,
   initializeFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
 } from 'firebase/firestore';
-import { firebaseConfig, resolveAuthDomain } from './firebase.config';
+import { getFirebaseApp, getFirebaseAuth } from './firebase-init';
 
 /** The initialized Firebase app instance. */
 export const FIREBASE_APP = new InjectionToken<FirebaseApp>('FIREBASE_APP');
@@ -15,6 +15,10 @@ export const FIREBASE_APP = new InjectionToken<FirebaseApp>('FIREBASE_APP');
 export const FIREBASE_AUTH = new InjectionToken<Auth>('FIREBASE_AUTH');
 /** Cloud Firestore instance (with offline persistence enabled). */
 export const FIRESTORE = new InjectionToken<Firestore>('FIRESTORE');
+
+function isIosDevice(): boolean {
+  return typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
 
 /**
  * Initializes Firebase once at bootstrap and exposes Auth + Firestore through
@@ -28,16 +32,16 @@ export const FIRESTORE = new InjectionToken<Firestore>('FIRESTORE');
  * shared guest cache.
  */
 export function provideFirebase(): EnvironmentProviders {
-  const app = initializeApp({
-    ...firebaseConfig,
-    authDomain: resolveAuthDomain(),
-  });
-  const auth = getAuth(app);
+  const app = getFirebaseApp();
+  const auth = getFirebaseAuth();
   const firestore = initializeFirestore(app, {
     // Round/profile objects carry optional fields; drop `undefined` rather
     // than reject the write.
     ignoreUndefinedProperties: true,
-    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    // iOS Safari can lose auth redirect state when Firestore grabs IndexedDB first.
+    localCache: isIosDevice()
+      ? persistentLocalCache()
+      : persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
   });
 
   return makeEnvironmentProviders([

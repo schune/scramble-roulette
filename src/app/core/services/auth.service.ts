@@ -2,14 +2,18 @@ import { Injectable, computed, inject, signal, WritableSignal } from '@angular/c
 import {
   GoogleAuthProvider,
   User,
-  browserLocalPersistence,
   getRedirectResult,
   onAuthStateChanged,
-  setPersistence,
   signInWithPopup,
   signInWithRedirect,
   signOut,
 } from 'firebase/auth';
+import {
+  clearRedirectPending,
+  getRedirectResultPromise,
+  hadPendingRedirect,
+  markRedirectPending,
+} from '../firebase/firebase-init';
 import { FIREBASE_AUTH } from '../firebase/firebase.providers';
 
 /** Friendly, UI-facing sign-in failure reasons. */
@@ -18,6 +22,8 @@ export type AuthErrorReason =
   | 'popup-blocked'
   | 'unauthorized-domain'
   | 'storage-blocked'
+  | 'redirect-incomplete'
+  | 'in-app-browser'
   | 'network'
   | 'unknown';
 
@@ -39,6 +45,10 @@ export function describeSignInError(reason: AuthErrorReason): string {
       return 'This domain isn’t authorized for sign-in yet.';
     case 'storage-blocked':
       return 'Safari is blocking sign-in storage. Turn off Private Browsing or allow site data, then try again.';
+    case 'redirect-incomplete':
+      return 'Google sign-in didn’t finish. Open the site in Safari (not an in-app browser), turn off Private Browsing, and try again.';
+    case 'in-app-browser':
+      return 'Sign-in doesn’t work inside this app’s browser. Tap the menu (⋯) and choose “Open in Safari” or “Open in Browser”.';
     case 'network':
       return 'Network error — check your connection and try again.';
     default:
@@ -57,6 +67,15 @@ export function bindRedirectAuthError(
       authError.set(describeSignInError(reason));
     }
   });
+}
+
+function isInAppBrowser(): boolean {
+  if (typeof navigator === 'undefined') {
+    return false;
+  }
+
+  const ua = navigator.userAgent;
+  return /FBAN|FBAV|Instagram|Line\/|Twitter|LinkedInApp|GSA\/|Snapchat/i.test(ua);
 }
 
 /**
@@ -90,20 +109,26 @@ export class AuthService {
 
   constructor() {
     this.authReady = this.initAuth();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          void this.retryRedirectResult();
+        }
+      });
+    }
   }
 
-  /** Open Google sign-in. Safari uses redirect; other browsers try popup first. */
+  /** Open Google sign-in. Mobile Safari uses redirect; desktop tries popup first. */
   async signInWithGoogle(): Promise<SignInResult> {
     this._redirectError.set(null);
 
+    if (isInAppBrowser()) {
+      return { ok: false, reason: 'in-app-browser' };
+    }
+
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-
-    try {
-      await setPersistence(this.auth, browserLocalPersistence);
-    } catch {
-      // Continue — persistence may already be set or blocked in private browsing.
-    }
 
     if (this.prefersRedirect()) {
       return this.signInWithRedirectFlow(provider);
@@ -123,18 +148,26 @@ export class AuthService {
   }
 
   async signOut(): Promise<void> {
+    clearRedirectPending();
     await signOut(this.auth);
   }
 
   private async initAuth(): Promise<void> {
+    const pendingRedirect = hadPendingRedirect();
+
     try {
-      const result = await getRedirectResult(this.auth);
+      const result = await getRedirectResultPromise();
       if (result?.user) {
         this._user.set(result.user);
+        clearRedirectPending();
+      } else if (pendingRedirect) {
+        this._redirectError.set('redirect-incomplete');
+        clearRedirectPending();
       }
     } catch (err: unknown) {
       const reason = this.classify(err);
       this._redirectError.set(reason);
+      clearRedirectPending();
       console.warn('[AuthService] Redirect sign-in failed', err);
     }
 
@@ -148,15 +181,41 @@ export class AuthService {
         }
       });
     });
+
+    if (!this.isSignedIn() && pendingRedirect && !this._redirectError()) {
+      this._redirectError.set('redirect-incomplete');
+      clearRedirectPending();
+    }
+  }
+
+  private async retryRedirectResult(): Promise<void> {
+    if (this.isSignedIn()) {
+      return;
+    }
+
+    try {
+      const result = await getRedirectResult(this.auth);
+      if (result?.user) {
+        this._user.set(result.user);
+        clearRedirectPending();
+        this._redirectError.set(null);
+      }
+    } catch (err: unknown) {
+      const reason = this.classify(err);
+      this._redirectError.set(reason);
+      console.warn('[AuthService] Redirect retry failed', err);
+    }
   }
 
   private async signInWithRedirectFlow(
     provider: GoogleAuthProvider,
   ): Promise<SignInResult> {
     try {
+      markRedirectPending();
       await signInWithRedirect(this.auth, provider);
       return { ok: true, redirecting: true };
     } catch (err: unknown) {
+      clearRedirectPending();
       return { ok: false, reason: this.classify(err) };
     }
   }
@@ -180,6 +239,15 @@ export class AuthService {
       typeof err === 'object' && err !== null && 'code' in err
         ? String((err as { code: unknown }).code)
         : '';
+    const message =
+      typeof err === 'object' && err !== null && 'message' in err
+        ? String((err as { message: unknown }).message)
+        : '';
+
+    if (/missing initial state/i.test(message)) {
+      return 'redirect-incomplete';
+    }
+
     switch (code) {
       case 'auth/popup-closed-by-user':
       case 'auth/cancelled-popup-request':
