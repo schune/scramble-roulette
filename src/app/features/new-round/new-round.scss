@@ -816,6 +816,10 @@
   margin-bottom: 0.25rem;
 }
 
+.setup-section__title:not(:has(+ .setup-section__sub)) {
+  margin-bottom: calc(0.25rem + 1lh + 1.25rem);
+}
+
 .setup-section__step {
   display: grid;
   place-items: center;
