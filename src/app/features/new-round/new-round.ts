@@ -66,6 +66,10 @@ export class NewRound {
   });
 
   protected readonly editingId = signal<string | null>(null);
+  protected readonly lastAddedPlayerId = signal<string | null>(null);
+  protected readonly addButtonPulsed = signal(false);
+
+  private addFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
   protected readonly confirmingDiscard = signal(false);
   protected readonly editControl = new FormControl('', {
     nonNullable: true,
@@ -98,7 +102,12 @@ export class NewRound {
       }
     });
 
-    this.destroyRef.onDestroy(() => this.clearTeeOffTimers());
+    this.destroyRef.onDestroy(() => {
+      this.clearTeeOffTimers();
+      if (this.addFeedbackTimer) {
+        clearTimeout(this.addFeedbackTimer);
+      }
+    });
   }
 
   protected beginSetup(): void {
@@ -141,13 +150,40 @@ export class NewRound {
       this.nameControl.markAsTouched();
       return;
     }
+
     this.roundState.addPlayer(this.nameControl.value);
     this.nameControl.reset('');
     this.nameControl.markAsUntouched();
 
+    const added = this.players().at(-1);
+    if (added) {
+      this.sound.play('playerAdded');
+      this.lastAddedPlayerId.set(added.id);
+      this.addButtonPulsed.set(true);
+      this.scheduleAddFeedbackReset();
+
+      queueMicrotask(() => {
+        document.getElementById(`player-row-${added.id}`)?.scrollIntoView({
+          block: 'nearest',
+          behavior: this.prefersReducedMotion() ? 'auto' : 'smooth',
+        });
+      });
+    }
+
     if (!this.teamIsFull()) {
       this.focusPlayerNameInput();
     }
+  }
+
+  private scheduleAddFeedbackReset(): void {
+    if (this.addFeedbackTimer) {
+      clearTimeout(this.addFeedbackTimer);
+    }
+    this.addFeedbackTimer = setTimeout(() => {
+      this.lastAddedPlayerId.set(null);
+      this.addButtonPulsed.set(false);
+      this.addFeedbackTimer = null;
+    }, 700);
   }
 
   protected startEdit(id: string, name: string): void {

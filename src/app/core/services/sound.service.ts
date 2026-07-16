@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { StorageService } from './storage.service';
 
-export type SoundEffect = 'draw' | 'reveal' | 'holeComplete' | 'roundComplete';
+export type SoundEffect = 'draw' | 'reveal' | 'holeComplete' | 'roundComplete' | 'playerAdded';
 
 interface Note {
   freq: number;
@@ -43,6 +43,10 @@ export class SoundService {
       { freq: 659.25, at: 0.13, dur: 0.14 },
       { freq: 783.99, at: 0.26, dur: 0.14 },
       { freq: 1046.5, at: 0.39, dur: 0.26 },
+    ],
+    playerAdded: [
+      { freq: 440, at: 0, dur: 0.08 },
+      { freq: 554.37, at: 0.06, dur: 0.12 },
     ],
   };
 

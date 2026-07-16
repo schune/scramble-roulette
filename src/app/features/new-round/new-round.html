@@ -270,39 +270,15 @@
           </h2>
           <p class="setup-section__sub">You'll need at least two to start the draw.</p>
 
-          <form class="add-player" (submit)="$event.preventDefault()">
-            <div class="add-player__field">
-              <label class="sr-visually-hidden" for="player-name">Player name</label>
-              <input
-                #playerNameInput
-                id="player-name"
-                type="text"
-                class="sr-input"
-                placeholder="e.g. Paula Schumacher"
-                autocomplete="off"
-                maxlength="40"
-                [class.sr-input--invalid]="nameControl.touched && nameControl.invalid"
-                [formControl]="nameControl"
-                (keyup.enter)="addPlayer()"
-              />
-            </div>
-            <button
-              type="button"
-              class="sr-btn sr-btn--primary add-player__btn"
-              (click)="addPlayer()"
-            >
-              Add Player
-            </button>
-          </form>
-
-          @if (nameControl.touched && nameControl.invalid) {
-            <p class="field-error" role="alert">Please enter a name to add a player.</p>
-          }
-
           @if (players().length > 0) {
-            <ul class="player-list">
+            <ul class="player-list" aria-live="polite">
               @for (player of players(); track player.id) {
-                <li class="player-row" [class.is-editing]="editingId() === player.id">
+                <li
+                  class="player-row"
+                  [id]="'player-row-' + player.id"
+                  [class.is-editing]="editingId() === player.id"
+                  [class.player-row--new]="lastAddedPlayerId() === player.id"
+                >
                   @if (editingId() === player.id) {
                     <input
                       type="text"
@@ -354,6 +330,36 @@
               <p class="empty-players__title">No players yet</p>
               <p class="empty-players__copy">Add your foursome (or more) to fill out the card.</p>
             </div>
+          }
+
+          <form class="add-player" (submit)="$event.preventDefault()">
+            <div class="add-player__field">
+              <label class="sr-visually-hidden" for="player-name">Player name</label>
+              <input
+                #playerNameInput
+                id="player-name"
+                type="text"
+                class="sr-input"
+                placeholder="e.g. Paula Schumacher"
+                autocomplete="off"
+                maxlength="40"
+                [class.sr-input--invalid]="nameControl.touched && nameControl.invalid"
+                [formControl]="nameControl"
+                (keyup.enter)="addPlayer()"
+              />
+            </div>
+            <button
+              type="button"
+              class="sr-btn sr-btn--primary add-player__btn"
+              [class.add-player__btn--pulsed]="addButtonPulsed()"
+              (click)="addPlayer()"
+            >
+              Add Player
+            </button>
+          </form>
+
+          @if (nameControl.touched && nameControl.invalid) {
+            <p class="field-error" role="alert">Please enter a name to add a player.</p>
           }
         </section>
       </div>
