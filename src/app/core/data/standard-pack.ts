@@ -34,7 +34,7 @@ const cards: Card[] = [
     id: 'standard-03',
     name: 'Toe Cheese',
     category: 'Hurts',
-    text: "Let's see who's got an athlete's foot and who's got toe cheese — all putts must be kicked. No putters allowed.",
+    text: "Let's see who's got an athlete's foot — all putts must be kicked. No putters allowed.",
     packId: STANDARD_PACK_ID,
   },
   {
