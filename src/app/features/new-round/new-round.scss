@@ -578,12 +578,26 @@
   animation: tee-overlay-out 0.55s ease forwards;
 }
 
+/* ---------- Setup navigation ---------- */
+.setup-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: clamp(0.85rem, 2vw, 1.1rem);
+}
+
+.setup-topbar .play-rules-link {
+  flex: none;
+}
+
 /* ---------- Setup reveal ---------- */
 .setup-back {
   align-self: flex-start;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0;
   padding-inline: 0.65rem;
   font-size: 0.88rem;
+  flex: none;
 }
 
 .setup-flow__step {

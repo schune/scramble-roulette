@@ -3,14 +3,17 @@
   [class.play-page--tee-off]="!!teeOffPhase()"
 >
   @if (playPhase() === 'setup') {
+    <nav class="setup-topbar" aria-label="Setup navigation">
+      <button type="button" class="setup-back sr-btn sr-btn--ghost" (click)="backToLanding()">
+        ← Back to home
+      </button>
+      <a routerLink="/rules" class="play-rules-link">Official rules</a>
+    </nav>
     <app-page-header
       eyebrow="New Round"
       title="Set up your round"
       subtitle="Course, holes, and players — about a minute."
     />
-    <p class="play-rules-note">
-      <a routerLink="/rules" class="play-rules-link">Official rules</a>
-    </p>
   } @else if (activeRound()) {
     <p class="play-rules-note">
       <a routerLink="/rules" class="play-rules-link">Official rules</a>
@@ -216,10 +219,6 @@
 
   @if (playPhase() === 'setup') {
     <div class="setup-flow">
-      <button type="button" class="setup-back sr-btn sr-btn--ghost" (click)="backToLanding()">
-        ← Back to home
-      </button>
-
       <!-- Step 1: course -->
       <section class="sr-card setup-section course-section setup-flow__step" aria-labelledby="course-heading">
         <h2 id="course-heading" class="setup-section__title">
