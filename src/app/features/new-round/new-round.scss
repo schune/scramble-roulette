@@ -1092,12 +1092,22 @@
 
 /* ---------- Empty state ---------- */
 .empty-players {
+  display: block;
+  width: 100%;
   margin-top: 0;
   padding: 1.75rem 1rem;
   text-align: center;
   border: 2px dashed var(--sr-cream-300);
   border-radius: var(--sr-radius);
   background: var(--sr-surface-alt);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.empty-players:hover,
+.empty-players:focus-visible {
+  border-color: var(--sr-gold-500);
+  background: var(--sr-cream-50);
 }
 
 .empty-players__mark {
@@ -1111,12 +1121,14 @@
 }
 
 .empty-players__title {
+  display: block;
   margin: 0 0 0.2rem;
   font-weight: 700;
   color: var(--sr-green-800);
 }
 
 .empty-players__copy {
+  display: block;
   margin: 0;
   color: var(--sr-muted);
   font-size: 0.92rem;

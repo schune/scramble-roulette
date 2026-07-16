@@ -152,6 +152,10 @@ export class NewRound {
     setTimeout(() => this.ensureAddPlayerFormVisible(), 150);
   }
 
+  protected focusNameInput(): void {
+    this.focusPlayerNameInput();
+  }
+
   protected addPlayer(): void {
     if (this.nameControl.invalid) {
       this.nameControl.markAsTouched();

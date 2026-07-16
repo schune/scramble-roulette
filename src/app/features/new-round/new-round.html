@@ -327,11 +327,11 @@
                   }
                 </ul>
               } @else {
-                <div class="empty-players">
+                <button type="button" class="empty-players" (click)="focusNameInput()">
                   <span class="empty-players__mark" aria-hidden="true"></span>
-                  <p class="empty-players__title">No players yet</p>
-                  <p class="empty-players__copy">Add your foursome (or more) to fill out the card.</p>
-                </div>
+                  <span class="empty-players__title">No players yet</span>
+                  <span class="empty-players__copy">Tap to add your foursome (or more) to fill out the card.</span>
+                </button>
               }
             </div>
 
