@@ -35,6 +35,10 @@ export const OFFICIAL_GOLF_RULES: OfficialRule[] = [
     title: 'Rule #5: Designated Driver Exemption',
     copy: 'The designated driver may be exempt from drinking challenges. Another player must drink in his place. The designated driver chooses the substitute.',
   },
+  {
+    title: 'Rule #6: Official Rulings',
+    copy: 'If there are any questions about the rules, contact Luke or anyone in his group for an official ruling.',
+  },
 ];
 
 export const MULLIGAN_RULE = OFFICIAL_GOLF_RULES[3];

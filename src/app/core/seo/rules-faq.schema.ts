@@ -43,5 +43,13 @@ export const RULES_FAQ_SCHEMA = {
         text: 'The designated driver may be exempt from drinking challenges. Another player must drink in his place. The designated driver chooses the substitute.',
       },
     },
+    {
+      '@type': 'Question',
+      name: 'Rule #6: Official Rulings',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'If there are any questions about the rules, contact Luke or anyone in his group for an official ruling.',
+      },
+    },
   ],
 };
