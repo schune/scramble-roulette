@@ -161,13 +161,6 @@ export class NewRound {
       this.lastAddedPlayerId.set(added.id);
       this.addButtonPulsed.set(true);
       this.scheduleAddFeedbackReset();
-
-      queueMicrotask(() => {
-        document.getElementById(`player-row-${added.id}`)?.scrollIntoView({
-          block: 'nearest',
-          behavior: this.prefersReducedMotion() ? 'auto' : 'smooth',
-        });
-      });
     }
 
     if (!this.teamIsFull()) {
