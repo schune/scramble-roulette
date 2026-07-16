@@ -32,9 +32,9 @@ const cards: Card[] = [
   },
   {
     id: 'standard-03',
-    name: 'Sandbagger\'s Mulligan',
-    category: 'Helps',
-    text: 'The highest handicap player receives one mulligan on this hole.',
+    name: 'Toe Cheese',
+    category: 'Hurts',
+    text: "Let's see if you have athlete's foot — all putts must be made by kicking the ball with your feet. No putters allowed.",
     packId: STANDARD_PACK_ID,
   },
   {
