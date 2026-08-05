@@ -77,6 +77,11 @@ export class NewRound {
   private addFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
   private focusVisibilityTimer: ReturnType<typeof setTimeout> | null = null;
   protected readonly confirmingDiscard = signal(false);
+  protected readonly previewPackId = signal<string | null>(null);
+  protected readonly previewPack = computed(() => {
+    const packId = this.previewPackId();
+    return packId ? this.deck.getPack(packId) : null;
+  });
   protected readonly editControl = new FormControl('', {
     nonNullable: true,
     validators: [nonBlank],
@@ -95,6 +100,7 @@ export class NewRound {
       this.teeOffPhase.set(null);
       this.clearTeeOffTimers();
       this.confirmingDiscard.set(false);
+      this.previewPackId.set(null);
       this.editingId.set(null);
       this.courseNameControl.setValue('');
       this.nameControl.reset('');
@@ -102,7 +108,7 @@ export class NewRound {
     });
 
     effect((onCleanup) => {
-      if (this.confirmingDiscard() || this.teeOffPhase()) {
+      if (this.confirmingDiscard() || this.teeOffPhase() || this.previewPackId()) {
         const release = this.scrollLock.lock();
         onCleanup(release);
       }
@@ -158,6 +164,15 @@ export class NewRound {
 
   protected selectPack(packId: string): void {
     this.roundState.setPackId(packId);
+  }
+
+  protected openPackPreview(packId: string, event: Event): void {
+    event.stopPropagation();
+    this.previewPackId.set(packId);
+  }
+
+  protected closePackPreview(): void {
+    this.previewPackId.set(null);
   }
 
   protected packLabel(pack: CardPack): string {

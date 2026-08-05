@@ -279,16 +279,30 @@
 
         <div class="format-options" role="group" aria-label="Card pack">
           @for (pack of packOptions; track pack.id) {
-            <button
-              type="button"
-              class="format-card"
-              [class.is-selected]="packId() === pack.id"
-              [attr.aria-pressed]="packId() === pack.id"
-              (click)="selectPack(pack.id)"
-            >
-              <span class="format-card__label">{{ packLabel(pack) }}</span>
-              <span class="format-card__meta">{{ packMeta(pack) }}</span>
-            </button>
+            <div class="format-card-wrap">
+              <button
+                type="button"
+                class="format-card"
+                [class.is-selected]="packId() === pack.id"
+                [attr.aria-pressed]="packId() === pack.id"
+                (click)="selectPack(pack.id)"
+              >
+                <span class="format-card__label">{{ packLabel(pack) }}</span>
+                <span class="format-card__meta">{{ packMeta(pack) }}</span>
+              </button>
+              <button
+                type="button"
+                class="format-card__info"
+                [attr.aria-label]="'View all cards in ' + pack.name"
+                (click)="openPackPreview(pack.id, $event)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.75" />
+                  <path d="M12 11v6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+                  <circle cx="12" cy="8" r="1.1" fill="currentColor" />
+                </svg>
+              </button>
+            </div>
           }
         </div>
       </section>
@@ -470,6 +484,42 @@
       <div class="modal__actions modal__actions--center">
         <button type="button" class="sr-btn sr-btn--ghost" (click)="cancelDiscard()">Keep Round</button>
         <button type="button" class="sr-btn sr-btn--danger" (click)="confirmDiscard()">Discard</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (previewPack(); as pack) {
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="'pack-preview-title-' + pack.id"
+    srFocusTrap
+  >
+    <div class="modal__backdrop" (click)="closePackPreview()"></div>
+    <div class="modal__panel sr-card pack-preview">
+      <h2 [id]="'pack-preview-title-' + pack.id" class="pack-preview__title">{{ pack.name }}</h2>
+      <p class="pack-preview__meta">{{ pack.cards.length }} cards in this deck</p>
+      <ol class="pack-preview__list">
+        @for (card of pack.cards; track card.id; let i = $index) {
+          <li class="pack-preview__item" [attr.data-category]="card.category">
+            <div class="pack-preview__head">
+              <span class="pack-preview__num">{{ i + 1 }}</span>
+              <span class="pack-preview__name">{{ card.name }}</span>
+              <span class="pack-preview__cat">{{ card.category }}</span>
+            </div>
+            <p class="pack-preview__text">{{ card.text }}</p>
+            @if (card.flavor) {
+              <p class="pack-preview__flavor">{{ card.flavor }}</p>
+            }
+          </li>
+        }
+      </ol>
+      <div class="modal__actions modal__actions--center">
+        <button type="button" class="sr-btn sr-btn--primary" (click)="closePackPreview()">
+          Close
+        </button>
       </div>
     </div>
   </div>
