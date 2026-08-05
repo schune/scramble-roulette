@@ -8,7 +8,7 @@ const cards: Card[] = [
     id: 'standard-01',
     name: 'Team Mulligan',
     category: 'Helps',
-    text: 'Your team gets one mulligan on any shot this hole — tee to green. Use it whenever you need it.',
+    text: 'One mulligan for your whole team this hole — not one per player. Any teammate may use it on any shot from tee to green.',
     packId: STANDARD_PACK_ID,
   },
   {
