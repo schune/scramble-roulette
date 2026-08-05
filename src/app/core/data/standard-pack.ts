@@ -41,9 +41,9 @@ const cards: Card[] = [
   },
   {
     id: 'standard-06',
-    name: 'Team Building Exercise',
+    name: 'No Putter',
     category: 'Hurts',
-    text: 'Every player must contribute at least one shot before the ball can be holed. If you hole out early, add one stroke to the score for each teammate who never got a swing.',
+    text: 'Your team must putt with any club except a putter this hole.',
     packId: STANDARD_PACK_ID,
   },
   {
