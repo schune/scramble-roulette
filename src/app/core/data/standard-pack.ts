@@ -62,9 +62,9 @@ const cards: Card[] = [
   },
   {
     id: 'standard-09',
-    name: 'Preferred Lies',
+    name: 'Extra Tee',
     category: 'Helps',
-    text: 'Lift, clean, and place within one club length anywhere through the green. You may not move closer to the hole.',
+    text: 'Your team hits two rounds of tee shots and picks the best ball before continuing the hole.',
     packId: STANDARD_PACK_ID,
   },
   {
@@ -127,7 +127,7 @@ const cards: Card[] = [
     id: 'standard-18',
     name: 'Pin Seeker',
     category: 'Helps',
-    text: '{{player}} may move the ball up to one club length closer to the hole once before their shot.',
+    text: 'Your team may move the ball up to one club length closer to the hole once this hole.',
     packId: STANDARD_PACK_ID,
   },
 ];
