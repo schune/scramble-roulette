@@ -1,6 +1,6 @@
 import { HoleResult } from './hole-result.model';
 
-/** Hide unscored live rounds from the feed after this long. */
+/** Hide idle live rounds from the feed after this long without any activity. */
 export const STALE_LIVE_FEED_MS = 6 * 60 * 60 * 1000;
 
 /** In-progress round broadcast to the global feed (`feedLive/{userId}`). */
@@ -22,21 +22,19 @@ export interface FeedLiveEntry {
   holes?: HoleResult[];
 }
 
-/** Holes with both par and score recorded on a live feed entry. */
-export function feedLiveScoredHoleCount(entry: FeedLiveEntry): number {
-  return (entry.holes ?? []).filter(
-    (hole) => hole.score !== undefined && hole.par !== undefined,
-  ).length;
-}
-
-/** True when a live entry should be hidden from the global feed (round still active locally). */
+/**
+ * True when a live entry should be hidden from the global feed because the
+ * round has been idle too long. The round stays on the owner's profile — it is
+ * only dropped from the shared feed to keep it clean. Idle is measured from the
+ * last update (a score, hole change, etc.), so both never-scored and
+ * abandoned-mid-round rounds eventually fall off.
+ */
 export function isStaleLiveFeedEntry(entry: FeedLiveEntry, now = Date.now()): boolean {
-  if (feedLiveScoredHoleCount(entry) > 0) {
+  const lastActivity = entry.updatedAt ?? entry.startedAt;
+  if (!lastActivity) {
     return false;
   }
-
-  const startedAt = entry.startedAt ?? entry.updatedAt;
-  return now - new Date(startedAt).getTime() >= STALE_LIVE_FEED_MS;
+  return now - new Date(lastActivity).getTime() >= STALE_LIVE_FEED_MS;
 }
 
 /** Completed round posted to the global feed (`feedPosts/{userId}_{roundId}`). */

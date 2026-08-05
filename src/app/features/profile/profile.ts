@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { FocusTrap } from '../../shared/focus-trap.directive';
 import { Card, Round } from '../../core/models';
 import { CardDeckService } from '../../core/services/card-deck.service';
 import {
@@ -28,7 +29,7 @@ interface StatCard {
 
 @Component({
   selector: 'app-profile',
-  imports: [RouterLink, PageHeader],
+  imports: [RouterLink, PageHeader, FocusTrap],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

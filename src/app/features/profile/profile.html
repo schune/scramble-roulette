@@ -230,7 +230,7 @@
 </div>
 
 @if (pendingDelete(); as target) {
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profile-delete-title">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profile-delete-title" srFocusTrap>
     <div class="modal__backdrop" (click)="cancelDelete()"></div>
     <div class="modal__panel sr-card modal__panel--center">
       <h2 id="profile-delete-title" class="modal__title">Delete this round?</h2>

@@ -4,23 +4,24 @@ export const SITE_URL = 'https://scrambleroulette.com';
 export const SITE_NAME = 'Scramble Roulette';
 
 export const DEFAULT_TITLE =
-  'Scramble Roulette — Golf Scramble Card Game for Your Foursome';
+  'Scramble Roulette — Free Golf Bachelor Party Scramble Game';
 
 export const DEFAULT_DESCRIPTION =
-  'Scramble Roulette is a free golf scramble game that adds card-driven chaos to every hole. ' +
-  'Draw cards before you tee off, track your scramble scorecard, and turn any golf outing into a party.';
+  'Scramble Roulette is a free golf bachelor party scramble game. Two teams draw wild card-driven ' +
+  'rules and drinking challenges before every hole, play their own scramble round, and compete for the lowest score.';
 
 export const DEFAULT_KEYWORDS = [
+  'golf bachelor party scramble game',
+  'bachelor party golf game',
+  'free golf bachelor party game',
+  'bachelor party golf scramble',
+  'golf scramble drinking game',
+  'golf bachelor party games',
   'scramble roulette',
-  'scramble golf game',
-  'golf scramble',
   'golf scramble game',
   'scramble format golf',
   'golf card game',
   'golf party game',
-  'scramble golf rules',
-  'golf foursome game',
-  'golf scorecard app',
 ].join(', ');
 
 export const TWITTER_HANDLE = '@scrambleroulette';

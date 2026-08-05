@@ -181,10 +181,11 @@
         </svg>
       </div>
       <h1 class="play-landing__title">Scramble Roulette</h1>
-      <p class="play-landing__tagline">The golf scramble card game for your foursome</p>
+      <p class="play-landing__tagline">The free golf bachelor party scramble game</p>
       <p class="play-landing__copy">
-        Gather your group, draw a card before every tee shot, and see how low your scramble
-        format golf team can go.
+        Rally your team and take on a rival team. Each side draws its own wild cards, plays its own
+        scramble round, and battles for the lowest score. Built for bachelor parties — watch them
+        sweat on the feed.
       </p>
       <button
         type="button"
@@ -197,23 +198,54 @@
     </section>
 
     <section class="play-seo sr-card" aria-labelledby="play-seo-heading">
-      <h2 id="play-seo-heading" class="play-seo__title">What is Scramble Roulette?</h2>
+      <h2 id="play-seo-heading" class="play-seo__title">The free golf bachelor party scramble game</h2>
       <p class="play-seo__copy">
-        Scramble Roulette is a free golf scramble game that layers a deck of cards onto classic
-        scramble format golf. Before your foursome tees off on each hole, you draw a card that
-        sets the rules — who hits, what the team must do, and how much chaos enters the round.
+        Scramble Roulette is a free golf bachelor party scramble game that layers a deck of wild
+        cards onto scramble format golf. Before each team tees off on a hole, they draw a card that
+        sets the rules — who hits, what the team must do, and which dare or drinking challenge is in
+        play. It's the easiest way to turn a bachelor party golf outing into the story everyone
+        retells.
       </p>
       <p class="play-seo__copy">
-        Built for 9- and 18-hole golf outings, it works as a scramble golf party game, a
-        scorecard companion, and a way to settle debates on the fairway. One phone runs the
-        whole round: setup your players, draw cards, enter par and score, and review your
-        golf scramble history when you're done.
+        Two teams play head-to-head: each runs its own round on its own phone across 9 or 18 holes,
+        draws its own cards, and competes for the lowest score. Sign in to broadcast your scores to
+        the feed, scout the other team in real time, and crown a winner when the last card falls —
+        all completely free.
       </p>
       <p class="play-seo__links">
-        <a routerLink="/rules">Read the official golf scramble rules</a>
+        <a routerLink="/rules">Read the official scramble rules</a>
         ·
         <a routerLink="/previous-rounds">Browse past rounds</a>
       </p>
+    </section>
+
+    <section class="play-seo play-faq sr-card" aria-labelledby="play-faq-heading">
+      <h2 id="play-faq-heading" class="play-seo__title">Golf bachelor party scramble game FAQ</h2>
+      <dl class="play-faq__list">
+        <dt class="play-faq__q">Is Scramble Roulette a good bachelor party golf game?</dt>
+        <dd class="play-faq__a">
+          Absolutely. Scramble Roulette is a free golf bachelor party scramble game built for the
+          occasion — the deck is loaded with dares, drinking challenges, and card-driven rules that
+          turn an ordinary golf scramble into the highlight of the trip.
+        </dd>
+        <dt class="play-faq__q">Is Scramble Roulette free?</dt>
+        <dd class="play-faq__a">
+          Yes. Scramble Roulette is completely free to play. There are no downloads and no account
+          is required — just open the site on one phone per team and start drawing cards.
+        </dd>
+        <dt class="play-faq__q">How do you play the golf scramble card game?</dt>
+        <dd class="play-faq__a">
+          Set up your team, pick 9 or 18 holes, and draw one card before every tee shot. The card
+          sets the rules for that hole. Play scramble format golf, enter par and score, and the
+          lowest team total wins the matchup.
+        </dd>
+        <dt class="play-faq__q">How many players do you need for Scramble Roulette?</dt>
+        <dd class="play-faq__a">
+          Each team needs at least two players and a classic foursome is perfect. Two teams play
+          their own rounds and compete head-to-head, and you can track the rival team's live scores
+          on the feed.
+        </dd>
+      </dl>
     </section>
   }
 
@@ -266,7 +298,7 @@
         <!-- Step 3: players -->
         <section class="sr-card setup-section setup-flow__step" aria-labelledby="players-heading">
           <h2 id="players-heading" class="setup-section__title">
-            <span class="setup-section__step">3</span> Add Players
+            <span class="setup-section__step">3</span> Add Your Team
           </h2>
           <p class="setup-section__sub">You'll need at least two to start the draw.</p>
 
@@ -329,8 +361,8 @@
               } @else {
                 <button type="button" class="empty-players" (click)="focusNameInput()">
                   <span class="empty-players__mark" aria-hidden="true"></span>
-                  <span class="empty-players__title">No players yet</span>
-                  <span class="empty-players__copy">Tap to add your foursome (or more) to fill out the card.</span>
+                <span class="empty-players__title">No players yet</span>
+                <span class="empty-players__copy">Tap to add your team (foursome or more) before you take on your rivals.</span>
                 </button>
               }
             </div>
@@ -404,7 +436,7 @@
 </div>
 
 @if (confirmingDiscard()) {
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="discard-title">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="discard-title" srFocusTrap>
     <div class="modal__backdrop" (click)="cancelDiscard()"></div>
     <div class="modal__panel sr-card modal__panel--center">
       <h2 id="discard-title" class="modal__title">Discard this round?</h2>

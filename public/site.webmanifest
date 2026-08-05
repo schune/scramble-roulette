@@ -1,7 +1,7 @@
 {
-  "name": "Scramble Roulette — Golf Scramble Card Game",
+  "name": "Scramble Roulette — Golf Bachelor Party Scramble Game",
   "short_name": "Scramble Roulette",
-  "description": "A free golf scramble game with card-driven rules for every hole.",
+  "description": "A free golf bachelor party scramble game. Two teams draw card-driven rules and drinking challenges before every hole and compete for the lowest score.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

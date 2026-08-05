@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { FocusTrap } from '../../shared/focus-trap.directive';
 import { FeedItem, FeedPostEntry } from '../../core/models';
 import {
   AuthService,
@@ -16,7 +17,7 @@ import {
 
 @Component({
   selector: 'app-feed',
-  imports: [RouterLink, PageHeader],
+  imports: [RouterLink, PageHeader, FocusTrap],
   templateUrl: './feed.html',
   styleUrl: './feed.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

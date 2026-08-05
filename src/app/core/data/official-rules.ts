@@ -17,7 +17,7 @@ export function isMulliganCard(cardId: string): boolean {
 export const OFFICIAL_GOLF_RULES: OfficialRule[] = [
   {
     title: 'Rule #1: Draw Before Teeing Off',
-    copy: 'One card shall be drawn before the first shot on every hole. Once drawn, the card remains in effect for the duration of that hole and must be followed.',
+    copy: 'One phone runs the scramble format for each team. One card shall be drawn before the first shot on every hole. Once drawn, the card remains in effect for the duration of that hole and must be followed.',
   },
   {
     title: 'Rule #2: Team by Default',

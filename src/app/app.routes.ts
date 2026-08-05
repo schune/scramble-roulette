@@ -5,7 +5,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    title: 'Scramble Roulette — Free Golf Scramble Card Game',
+    title: 'Free Golf Bachelor Party Scramble Game — Scramble Roulette',
     loadComponent: () => import('./features/new-round/new-round').then((m) => m.NewRound),
   },
   {
@@ -41,7 +41,7 @@ export const routes: Routes = [
   },
   {
     path: 'rules',
-    title: 'Official Golf Scramble Rules · Scramble Roulette',
+    title: 'Golf Bachelor Party Scramble Rules · Scramble Roulette',
     loadComponent: () => import('./features/rules/rules').then((m) => m.Rules),
   },
   {

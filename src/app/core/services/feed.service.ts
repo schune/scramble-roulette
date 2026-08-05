@@ -23,8 +23,6 @@ export class FeedService {
   private readonly auth = inject(AuthService);
   private readonly firestore = inject(FirestoreService);
 
-  readonly enabled = computed(() => this.auth.isSignedIn());
-
   private readonly _live = signal<FeedLiveEntry[]>([]);
   private readonly _posts = signal<FeedPostEntry[]>([]);
   /** Ticks every minute so stale live entries drop off without a Firestore write. */
@@ -37,7 +35,6 @@ export class FeedService {
 
   readonly liveRounds = this.visibleLive;
   readonly completedPosts = this._posts.asReadonly();
-  readonly liveCount = computed(() => this.visibleLive().length);
 
   readonly items = computed<FeedItem[]>(() => {
     const live: FeedItem[] = this.visibleLive()

@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
 import { Card, Round } from '../../core/models';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { FocusTrap } from '../../shared/focus-trap.directive';
 import {
   AuthService,
   FeedService,
@@ -16,7 +17,7 @@ import {
 
 @Component({
   selector: 'app-scorecard',
-  imports: [RouterLink, PageHeader],
+  imports: [RouterLink, PageHeader, FocusTrap],
   templateUrl: './scorecard.html',
   styleUrl: './scorecard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

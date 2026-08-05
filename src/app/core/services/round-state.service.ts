@@ -27,7 +27,6 @@ export class RoundStateService {
   private readonly _holeCount = signal<HoleCount | null>(null);
   private readonly _draftPlayers = signal<Player[]>([]);
 
-  readonly draftCourseName = this._courseName.asReadonly();
   readonly holeCount = this._holeCount.asReadonly();
   readonly draftPlayers = this._draftPlayers.asReadonly();
   readonly canStart = computed(

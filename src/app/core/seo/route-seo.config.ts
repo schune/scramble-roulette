@@ -1,64 +1,78 @@
 import { DEFAULT_DESCRIPTION, DEFAULT_KEYWORDS, DEFAULT_TITLE, RouteSeo, SITE_NAME, SITE_URL } from './site-seo.constants';
 import { RULES_FAQ_SCHEMA } from './rules-faq.schema';
+import { HOME_FAQ_SCHEMA } from './home-faq.schema';
 
 const brand = SITE_NAME;
 
 /** SEO metadata keyed by route path segment (without leading slash). */
 export const ROUTE_SEO: Record<string, RouteSeo> = {
   '': {
-    title: `${brand} — Free Golf Scramble Card Game`,
+    title: `Free Golf Bachelor Party Scramble Game — ${brand}`,
     description:
-      'Start a golf scramble round in seconds. Add your foursome, draw a card before every tee shot, ' +
-      'and let Scramble Roulette decide the rules for each hole of your scramble format golf outing.',
+      'The free golf bachelor party scramble game. Two teams draw wild card-driven rules and drinking ' +
+      'challenges before every tee shot, play their own scramble round, and compete head-to-head for the lowest score.',
     keywords:
-      'scramble golf game, golf scramble, scramble roulette, golf card game, scramble format golf, golf foursome, free golf game',
+      'golf bachelor party scramble game, bachelor party golf game, free golf bachelor party game, bachelor party golf scramble, golf scramble drinking game, golf scramble game, scramble roulette, golf card game',
     path: '/',
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'WebApplication',
-      name: brand,
-      url: SITE_URL,
-      applicationCategory: 'GameApplication',
-      operatingSystem: 'Web',
-      browserRequirements: 'Requires JavaScript',
-      description: DEFAULT_DESCRIPTION,
-      offers: {
-        '@type': 'Offer',
-        price: '0',
-        priceCurrency: 'USD',
+    structuredData: [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
+        name: brand,
+        alternateName: 'Golf Bachelor Party Scramble Game',
+        url: SITE_URL,
+        applicationCategory: 'GameApplication',
+        applicationSubCategory: 'Golf Bachelor Party Game',
+        operatingSystem: 'Web',
+        browserRequirements: 'Requires JavaScript',
+        description: DEFAULT_DESCRIPTION,
+        keywords:
+          'golf bachelor party scramble game, bachelor party golf game, golf scramble drinking game, scramble format golf',
+        audience: {
+          '@type': 'Audience',
+          audienceType: 'Bachelor parties and golf outings',
+        },
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+        },
+        featureList: [
+          'Free golf bachelor party scramble game',
+          'Card-driven dares and drinking challenges each hole',
+          'Team vs team golf scramble competition',
+          'Live golf scorecard with par and to-par tracking',
+          "Follow rival teams' live scores on the feed",
+          '9- and 18-hole scramble format support',
+        ],
       },
-      featureList: [
-        'Golf scramble card draws before each hole',
-        'Live golf scorecard with par and to-par tracking',
-        '9- and 18-hole scramble format support',
-        'Round history for your golf foursome',
-      ],
-    },
+      HOME_FAQ_SCHEMA,
+    ],
   },
   rules: {
-    title: `Official Golf Scramble Rules — ${brand}`,
+    title: `Golf Bachelor Party Scramble Rules — ${brand}`,
     description:
-      'Read the official Scramble Roulette rules for your golf scramble game: draw before teeing off, ' +
-      'team cards, mulligans, designated driver exemptions, and how to play this scramble format golf card game.',
+      'The official rules for Scramble Roulette, the golf bachelor party scramble game: draw before teeing off, ' +
+      'team cards, mulligans, designated driver exemptions, and drinking challenges hole by hole.',
     keywords:
-      'scramble golf rules, golf scramble rules, scramble roulette rules, how to play scramble golf, golf card game rules',
+      'golf bachelor party scramble rules, scramble golf rules, golf scramble drinking game rules, scramble roulette rules, how to play scramble golf',
     path: '/rules',
     structuredData: RULES_FAQ_SCHEMA,
   },
   profile: {
     title: `Golf Profile & Stats — ${brand}`,
     description:
-      'Track your golf scramble stats — rounds played, holes logged, best to par, and clubhouse history ' +
-      'from every Scramble Roulette outing with your foursome.',
+      "Track your team's golf scramble stats — rounds played, holes logged, best to par, and clubhouse " +
+      'history from every head-to-head Scramble Roulette matchup.',
     keywords: 'golf profile, scramble golf stats, golf round history, golf score tracking',
     path: '/profile',
   },
   feed: {
     title: `Live Golf Feed — ${brand}`,
     description:
-      'See every live scramble round and posted scorecard on Scramble Roulette — check other groups' +
-      ' scores while you are on the course.',
-    keywords: 'live golf scores, scramble golf feed, golf leaderboard, golf scoreboard',
+      'Scout the competition in real time. See every rival team\'s live scramble round and posted ' +
+      'scorecard on Scramble Roulette — track who\'s winning while you\'re on the course.',
+    keywords: 'live golf scores, scramble golf feed, golf leaderboard, golf scoreboard, team golf competition',
     path: '/feed',
   },
   'previous-rounds': {
@@ -81,7 +95,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
   round: {
     title: `Live Golf Scramble Round — ${brand}`,
     description:
-      'Play your active golf scramble round — draw cards, enter scores, and keep the foursome honest hole by hole.',
+      "Play your team's active golf scramble round — draw cards, enter scores, and race the rival team hole by hole.",
     keywords: 'live golf scramble, golf card game, scramble roulette round',
     path: '/round',
     robots: 'noindex, nofollow',

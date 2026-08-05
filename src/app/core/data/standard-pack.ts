@@ -110,9 +110,10 @@ const cards: Card[] = [
   },
   {
     id: 'standard-14',
-    name: 'The Closer',
-    category: 'Hurts',
-    text: '{{player}} is the only player who may putt on this hole.',
+    name: 'Yeet',
+    category: 'Helps',
+    text: 'One player may pick up and throw the ball once this hole — no stroke added. Choose who throws and when.',
+    flavor: 'The ranger is not amused.',
     packId: STANDARD_PACK_ID,
   },
   {

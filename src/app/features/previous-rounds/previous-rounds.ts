@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { FocusTrap } from '../../shared/focus-trap.directive';
 import { ProfileService, RoundHistoryService, ScoreService, ScrollLockService } from '../../core/services';
 import { HoleResult, Round } from '../../core/models';
 
@@ -12,7 +13,7 @@ interface StatCard {
 
 @Component({
   selector: 'app-previous-rounds',
-  imports: [RouterLink, PageHeader],
+  imports: [RouterLink, PageHeader, FocusTrap],
   templateUrl: './previous-rounds.html',
   styleUrl: './previous-rounds.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

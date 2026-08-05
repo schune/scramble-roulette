@@ -12,7 +12,8 @@ import {
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { ProfileService, RoundStateService, ScrollLockService, SoundService } from '../../core/services';
+import { FocusTrap } from '../../shared/focus-trap.directive';
+import { RoundStateService, ScrollLockService, SoundService } from '../../core/services';
 import { HoleCount } from '../../core/models';
 
 type TeeOffPhase = 'charge' | 'fairway' | 'reveal';
@@ -25,7 +26,7 @@ function nonBlank(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-new-round',
-  imports: [RouterLink, ReactiveFormsModule, PageHeader],
+  imports: [RouterLink, ReactiveFormsModule, PageHeader, FocusTrap],
   templateUrl: './new-round.html',
   styleUrl: './new-round.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +36,6 @@ export class NewRound {
   private static readonly MAX_TEAM_SIZE = 4;
 
   private readonly roundState = inject(RoundStateService);
-  private readonly profile = inject(ProfileService);
   private readonly sound = inject(SoundService);
   private readonly scrollLock = inject(ScrollLockService);
   private readonly router = inject(Router);
@@ -44,7 +44,6 @@ export class NewRound {
   protected readonly holeOptions: HoleCount[] = [9, 18];
   protected readonly sparkles = Array.from({ length: 28 }, (_, i) => i);
 
-  protected readonly displayName = this.profile.displayName;
   protected readonly activeRound = this.roundState.activeRound;
   protected readonly holeCount = this.roundState.holeCount;
   protected readonly players = this.roundState.draftPlayers;
@@ -70,6 +69,7 @@ export class NewRound {
   protected readonly addButtonPulsed = signal(false);
 
   private addFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
+  private focusVisibilityTimer: ReturnType<typeof setTimeout> | null = null;
   protected readonly confirmingDiscard = signal(false);
   protected readonly editControl = new FormControl('', {
     nonNullable: true,
@@ -106,6 +106,9 @@ export class NewRound {
       this.clearTeeOffTimers();
       if (this.addFeedbackTimer) {
         clearTimeout(this.addFeedbackTimer);
+      }
+      if (this.focusVisibilityTimer) {
+        clearTimeout(this.focusVisibilityTimer);
       }
     });
 
@@ -149,7 +152,13 @@ export class NewRound {
 
   protected onPlayerNameFocus(): void {
     queueMicrotask(() => this.ensureAddPlayerFormVisible());
-    setTimeout(() => this.ensureAddPlayerFormVisible(), 150);
+    if (this.focusVisibilityTimer) {
+      clearTimeout(this.focusVisibilityTimer);
+    }
+    this.focusVisibilityTimer = setTimeout(() => {
+      this.ensureAddPlayerFormVisible();
+      this.focusVisibilityTimer = null;
+    }, 150);
   }
 
   protected focusNameInput(): void {

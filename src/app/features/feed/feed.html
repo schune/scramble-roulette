@@ -2,7 +2,7 @@
   <app-page-header
     eyebrow="Clubhouse"
     title="Feed"
-    subtitle="Live rounds and posted scorecards from every group on Scramble Roulette."
+    subtitle="Scout rival teams in real time — live rounds and posted scorecards from every team on Scramble Roulette."
   />
 
   @if (!isResolving()) {
@@ -11,11 +11,11 @@
         <div>
           <span class="sr-badge">Sign in required</span>
           <h2 id="feed-gate-heading" class="section-title feed-gate__title">
-            See what every group is shooting
+            See what the other team is shooting
           </h2>
           <p class="feed-gate__copy">
-            Sign in with Google to view live scores during rounds and posted scorecards when groups
-            finish. Your round syncs here automatically while you play.
+            Sign in with Google to track rival teams' live scores during rounds and their posted
+            scorecards when they finish. Your team's round syncs here automatically while you play.
           </p>
         </div>
         <button
@@ -43,8 +43,8 @@
           <section class="sr-card feed-empty">
             <h2 class="section-title">Nothing on the feed yet</h2>
             <p class="feed-empty__copy">
-              When signed-in groups start rounds, their live scores show up here. Finished rounds
-              post their scorecard automatically.
+              When other teams start rounds, their live scores show up here. Finished rounds post
+              their scorecard automatically — so you always know who to beat.
             </p>
             <a routerLink="/" class="sr-btn sr-btn--primary">Start a Round</a>
           </section>
@@ -184,7 +184,7 @@
 </div>
 
 @if (pendingDelete(); as entry) {
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="feed-delete-title">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="feed-delete-title" srFocusTrap>
     <div class="modal__backdrop" (click)="cancelDelete()"></div>
     <div class="modal__panel sr-card modal__panel--center">
       <h2 id="feed-delete-title" class="modal__title">Delete this round?</h2>

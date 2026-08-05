@@ -8,7 +8,7 @@ export const RULES_FAQ_SCHEMA = {
       name: 'Rule #1: Draw Before Teeing Off',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'One card shall be drawn before the first shot on every hole. Once drawn, the card remains in effect for the duration of that hole and must be followed.',
+        text: 'One phone runs the scramble format for each team. One card shall be drawn before the first shot on every hole. Once drawn, the card remains in effect for the duration of that hole and must be followed.',
       },
     },
     {

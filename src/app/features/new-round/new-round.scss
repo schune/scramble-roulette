@@ -329,6 +329,32 @@
   color: var(--sr-green-700);
 }
 
+.play-faq {
+  margin-top: var(--sr-gap);
+}
+
+.play-faq__list {
+  margin: 0;
+}
+
+.play-faq__q {
+  margin: 0 0 0.3rem;
+  font-weight: 700;
+  color: var(--sr-green-900);
+  font-size: 0.95rem;
+}
+
+.play-faq__a {
+  margin: 0 0 0.9rem;
+  color: var(--sr-ink-muted);
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
+.play-faq__a:last-child {
+  margin-bottom: 0;
+}
+
 /* ---------- Tee-off cinematic ---------- */
 .play-page--tee-off .play-landing,
 .play-page--tee-off .setup-flow,

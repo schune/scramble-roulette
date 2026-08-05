@@ -33,24 +33,24 @@ export class Rules {
 
   protected readonly steps: Rule[] = [
     {
-      title: 'Set up your golf foursome',
-      copy: 'Pick 9 or 18 holes for your scramble format golf round and add at least two players. One phone runs the whole golf scramble game.',
+      title: 'Set up your team',
+      copy: 'Pick 9 or 18 holes for your scramble round and add your team — at least two players. Each team runs its own round on its own phone, so the rival team sets up the same way on theirs.',
     },
     {
       title: 'Draw one card per hole',
-      copy: 'Before you tee off, draw the card. It dictates the scramble rules for that hole on the golf course. Follow it.',
+      copy: 'Before your team tees off, draw the card. It dictates the scramble rules for that hole. The other team draws from their own deck, so no two matchups play the same.',
     },
     {
       title: 'No repeats per round',
-      copy: 'Every card is dealt once. Once it has been drawn, it is gone until the next round. The deck resets each round.',
+      copy: 'Every card is dealt once. Once it has been drawn, it is gone until the next round. Each team\'s deck resets each round.',
     },
     {
       title: 'Enter par and score',
-      copy: 'Lock in the hole par and your team score before moving on. We compute your result and running total.',
+      copy: 'Lock in the hole par and your team score before moving on. We compute your result and running total — the lowest team score wins the matchup.',
     },
     {
-      title: 'Monitor live scores on the Feed',
-      copy: 'Sign in and open the Feed tab to follow every group\'s live scores during rounds and posted scorecards when they finish. Your round shows up there automatically while you play.',
+      title: 'Scout the other team on the Feed',
+      copy: 'Sign in and open the Feed tab to follow the rival team\'s live scores while you play, plus posted scorecards when everyone finishes. Your team\'s round shows up there automatically.',
     },
   ];
 }

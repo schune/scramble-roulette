@@ -192,6 +192,7 @@
       role="dialog"
       aria-modal="true"
       aria-labelledby="card-detail-title"
+      srFocusTrap
     >
       <div class="modal__backdrop" (click)="closeCard()"></div>
       <div class="modal__panel sr-card card-detail" [attr.data-category]="card.category">
@@ -224,6 +225,7 @@
       role="dialog"
       aria-modal="true"
       aria-labelledby="mulligan-rules-title"
+      srFocusTrap
     >
       <div class="modal__backdrop" (click)="closeMulliganRules()"></div>
       <div class="modal__panel sr-card modal__panel--center">

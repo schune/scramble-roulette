@@ -12,6 +12,7 @@ import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
 import { isLukesBachelorPack, LUKES_BACHELOR_PACK_NAME } from '../../core/data/standard-pack';
 import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, ScrollLockService, SoundService, CardDeckService } from '../../core/services';
+import { FocusTrap } from '../../shared/focus-trap.directive';
 
 type DrawCinematicPhase = 'charge' | 'shuffle' | 'flip' | 'exit';
 type BachelorScoreCelebration = 'birdie' | 'bogey' | 'double-bogey';
@@ -83,7 +84,7 @@ function bachelorCelebrationForResult(
 
 @Component({
   selector: 'app-round',
-  imports: [RouterLink],
+  imports: [RouterLink, FocusTrap],
   templateUrl: './round.html',
   styleUrl: './round.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -295,12 +296,16 @@ export class Round {
     if (par === null || score === null || score < 1) {
       return;
     }
+    const previousLabel = this.currentHoleResult()?.resultLabel;
     this.roundState.recordCurrentHole(par, score);
     this.editing.set(false);
     this.sound.play('holeComplete');
 
-    const celebration = bachelorCelebrationForResult(this.currentHoleResult()?.resultLabel);
-    if (this.isBachelorDeck() && celebration) {
+    // Only celebrate a fresh result — re-saving the same score after an edit
+    // (e.g. fixing a typo) shouldn't replay the overlay.
+    const newLabel = this.currentHoleResult()?.resultLabel;
+    const celebration = bachelorCelebrationForResult(newLabel);
+    if (this.isBachelorDeck() && celebration && newLabel !== previousLabel) {
       this.scoreCelebration.set(celebration);
     }
   }
@@ -395,6 +400,10 @@ export class Round {
       this.dismissScoreCelebration();
     } else if (this.mulliganRulesOpen()) {
       this.closeMulliganRules();
+    } else if (this.confirmingEnd()) {
+      this.cancelEnd();
+    } else if (this.cinematicRevealed()) {
+      this.dismissCinematic();
     }
   }
 
