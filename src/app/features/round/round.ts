@@ -210,11 +210,16 @@ export class Round {
     this.scheduleCinematic(() => {
       this.drawCinematic.set('flip');
       const card = this.roundState.drawCard();
-      if (card) {
-        this.cinematicCard.set(card);
+      if (!card) {
+        this.finishCinematic();
+        return;
       }
+      this.cinematicCard.set(card);
     }, 1350);
     this.scheduleCinematic(() => {
+      if (!this.cinematicCard()) {
+        return;
+      }
       this.cinematicRevealed.set(true);
       this.sound.play('reveal');
     }, 2100);

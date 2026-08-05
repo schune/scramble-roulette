@@ -30,6 +30,9 @@ function nonBlank(control: AbstractControl): ValidationErrors | null {
   templateUrl: './new-round.html',
   styleUrl: './new-round.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:keydown.escape)': 'onEscape()',
+  },
 })
 export class NewRound {
   /** Standard scramble foursome — stop refocusing the name field once reached. */
@@ -173,6 +176,16 @@ export class NewRound {
 
   protected closePackPreview(): void {
     this.previewPackId.set(null);
+  }
+
+  protected onEscape(): void {
+    if (this.previewPackId()) {
+      this.closePackPreview();
+      return;
+    }
+    if (this.confirmingDiscard()) {
+      this.cancelDiscard();
+    }
   }
 
   protected packLabel(pack: CardPack): string {
