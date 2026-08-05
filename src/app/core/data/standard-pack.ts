@@ -6,9 +6,9 @@ export const STANDARD_PACK_ID = 'standard';
 const cards: Card[] = [
   {
     id: 'standard-01',
-    name: 'Bro Has No Game',
-    category: 'Hurts',
-    text: 'The player with the lowest body count cannot contribute a tee shot. If two people tie, flip a tee.',
+    name: 'Team Mulligan',
+    category: 'Helps',
+    text: 'Your team gets one mulligan on any shot this hole — tee to green. Use it whenever you need it.',
     packId: STANDARD_PACK_ID,
   },
   {

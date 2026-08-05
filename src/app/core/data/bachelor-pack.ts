@@ -1,7 +1,7 @@
 import { Card, CardPack } from '../models';
 
 export const LUKES_BACHELOR_PACK_ID = 'bachelor';
-export const LUKES_BACHELOR_PACK_NAME = "Luke's Bachelor Pack";
+export const LUKES_BACHELOR_PACK_NAME = 'Bachelor Pack';
 
 export function isLukesBachelorPack(packId: string | undefined): boolean {
   return packId === LUKES_BACHELOR_PACK_ID;

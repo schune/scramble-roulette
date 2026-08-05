@@ -5,6 +5,7 @@ export interface OfficialRule {
 
 /** Cards that grant mulligans — show an in-round link to Rule #4. */
 export const MULLIGAN_CARD_IDS = new Set([
+  'standard-01', // Team Mulligan
   'standard-02', // Breakfast Ball
   'standard-13', // Mulligan Roulette
   'standard-15', // Reload
