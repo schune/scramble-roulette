@@ -83,8 +83,7 @@ const cards: Card[] = [
     id: 'standard-10',
     name: 'Bag Swap',
     category: 'Hurts',
-    text: "You cannot use your own clubs on this hole. Choose from any of your teammates' bags.",
-    flavor: 'Lefties are exempt.',
+    text: "You cannot use your own clubs on this hole. Choose from any of your teammates' bags. Lefties are exempt.",
     packId: STANDARD_PACK_ID,
   },
   {
@@ -113,7 +112,6 @@ const cards: Card[] = [
     name: 'Yeet',
     category: 'Helps',
     text: 'One player may pick up and throw the ball once this hole — no stroke added. Choose who throws and when.',
-    flavor: 'The ranger is not amused.',
     packId: STANDARD_PACK_ID,
   },
   {
