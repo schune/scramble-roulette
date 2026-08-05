@@ -5,9 +5,12 @@ export interface OfficialRule {
 
 /** Cards that grant mulligans — show an in-round link to Rule #4. */
 export const MULLIGAN_CARD_IDS = new Set([
-  'standard-03', // Sandbagger's Mulligan
+  'standard-02', // Breakfast Ball
   'standard-13', // Mulligan Roulette
   'standard-15', // Reload
+  'standard-17', // Mulligan Bank
+  'bachelor-13', // Mulligan Roulette
+  'bachelor-15', // Reload
 ]);
 
 export function isMulliganCard(cardId: string): boolean {

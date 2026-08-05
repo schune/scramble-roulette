@@ -26,8 +26,10 @@ export class RoundStateService {
   private readonly _courseName = signal('');
   private readonly _holeCount = signal<HoleCount | null>(null);
   private readonly _draftPlayers = signal<Player[]>([]);
+  private readonly _packId = signal(this.deck.defaultPackId);
 
   readonly holeCount = this._holeCount.asReadonly();
+  readonly packId = this._packId.asReadonly();
   readonly draftPlayers = this._draftPlayers.asReadonly();
   readonly canStart = computed(
     () => this._holeCount() !== null && this._draftPlayers().length >= 2,
@@ -114,6 +116,12 @@ export class RoundStateService {
     this._holeCount.set(count);
   }
 
+  setPackId(packId: string): void {
+    if (this.deck.getPacks().some((pack) => pack.id === packId)) {
+      this._packId.set(packId);
+    }
+  }
+
   addPlayer(name: string): void {
     const trimmed = name.trim();
     if (!trimmed) {
@@ -143,6 +151,7 @@ export class RoundStateService {
     this._courseName.set('');
     this._holeCount.set(null);
     this._draftPlayers.set([]);
+    this._packId.set(this.deck.defaultPackId);
   }
 
   /** Reset setup draft and return the play page to its Tee It Up landing. */
@@ -182,7 +191,7 @@ export class RoundStateService {
       players: players.map((player) => ({ ...player })),
       holes: [],
       currentHole: 1,
-      packId: this.deck.defaultPackId,
+      packId: this._packId(),
       ...(courseName ? { courseName } : {}),
     };
 

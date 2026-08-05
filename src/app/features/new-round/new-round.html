@@ -270,11 +270,34 @@
         />
       </section>
 
+      <!-- Step 2: card pack -->
+      <section class="sr-card setup-section setup-flow__step" aria-labelledby="pack-heading">
+        <h2 id="pack-heading" class="setup-section__title">
+          <span class="setup-section__step">2</span> Choose Card Pack
+        </h2>
+        <p class="setup-section__sub">Which deck are you playing today?</p>
+
+        <div class="format-options" role="group" aria-label="Card pack">
+          @for (pack of packOptions; track pack.id) {
+            <button
+              type="button"
+              class="format-card"
+              [class.is-selected]="packId() === pack.id"
+              [attr.aria-pressed]="packId() === pack.id"
+              (click)="selectPack(pack.id)"
+            >
+              <span class="format-card__label">{{ packLabel(pack) }}</span>
+              <span class="format-card__meta">{{ packMeta(pack) }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
       <div class="setup-grid">
-        <!-- Step 2: format -->
+        <!-- Step 3: format -->
         <section class="sr-card setup-section setup-flow__step" aria-labelledby="format-heading">
           <h2 id="format-heading" class="setup-section__title">
-            <span class="setup-section__step">2</span> Choose Format
+            <span class="setup-section__step">3</span> Choose Format
           </h2>
           <p class="setup-section__sub">How many holes are you playing today?</p>
 
@@ -295,10 +318,10 @@
           </div>
         </section>
 
-        <!-- Step 3: players -->
+        <!-- Step 4: players -->
         <section class="sr-card setup-section setup-flow__step" aria-labelledby="players-heading">
           <h2 id="players-heading" class="setup-section__title">
-            <span class="setup-section__step">3</span> Add Your Team
+            <span class="setup-section__step">4</span> Add Your Team
           </h2>
           <p class="setup-section__sub">You'll need at least two to start the draw.</p>
 
@@ -418,6 +441,7 @@
               @if (courseNameControl.value.trim()) {
                 {{ courseNameControl.value.trim() }} ·
               }
+              {{ selectedPack().name }} ·
               {{ holeCount() }} holes · {{ players().length }} players.
             </span>
           }

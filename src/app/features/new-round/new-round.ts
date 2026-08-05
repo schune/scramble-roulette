@@ -13,8 +13,8 @@ import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } f
 import { Router, RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { FocusTrap } from '../../shared/focus-trap.directive';
-import { RoundStateService, ScrollLockService, SoundService } from '../../core/services';
-import { HoleCount } from '../../core/models';
+import { RoundStateService, ScrollLockService, SoundService, CardDeckService } from '../../core/services';
+import { HoleCount, CardPack } from '../../core/models';
 
 type TeeOffPhase = 'charge' | 'fairway' | 'reveal';
 type PlayPhase = 'landing' | 'setup';
@@ -36,16 +36,22 @@ export class NewRound {
   private static readonly MAX_TEAM_SIZE = 4;
 
   private readonly roundState = inject(RoundStateService);
+  private readonly deck = inject(CardDeckService);
   private readonly sound = inject(SoundService);
   private readonly scrollLock = inject(ScrollLockService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly holeOptions: HoleCount[] = [9, 18];
+  protected readonly packOptions: readonly CardPack[] = this.deck
+    .getPacks()
+    .sort((a, b) => (a.id === this.deck.defaultPackId ? -1 : b.id === this.deck.defaultPackId ? 1 : 0));
   protected readonly sparkles = Array.from({ length: 28 }, (_, i) => i);
 
   protected readonly activeRound = this.roundState.activeRound;
   protected readonly holeCount = this.roundState.holeCount;
+  protected readonly packId = this.roundState.packId;
+  protected readonly selectedPack = computed(() => this.deck.getPack(this.packId()));
   protected readonly players = this.roundState.draftPlayers;
   protected readonly canStart = this.roundState.canStart;
   protected readonly teamIsFull = computed(
@@ -148,6 +154,18 @@ export class NewRound {
 
   protected selectHoles(count: HoleCount): void {
     this.roundState.setHoleCount(count);
+  }
+
+  protected selectPack(packId: string): void {
+    this.roundState.setPackId(packId);
+  }
+
+  protected packLabel(pack: CardPack): string {
+    return pack.name;
+  }
+
+  protected packMeta(pack: CardPack): string {
+    return `${pack.cards.length} cards`;
   }
 
   protected onPlayerNameFocus(): void {

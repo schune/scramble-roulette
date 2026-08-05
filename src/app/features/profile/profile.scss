@@ -99,6 +99,33 @@
   border-top: 1px solid var(--sr-cream-300);
 }
 
+.deck-pack-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0 0.85rem 0.65rem;
+}
+
+.deck-pack-tabs__btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--sr-cream-300);
+  border-radius: var(--sr-radius-sm);
+  background: var(--sr-cream-50);
+  color: var(--sr-green-800);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.deck-pack-tabs__btn.is-selected {
+  border-color: var(--sr-green-700);
+  background: var(--sr-green-800);
+  color: var(--sr-cream-50);
+}
+
 .profile-menu__deck-meta {
   margin: 0 0 0.65rem;
   padding-inline: 0.85rem;

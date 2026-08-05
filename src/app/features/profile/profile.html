@@ -40,12 +40,25 @@
           </button>
 
           @if (deckExpanded()) {
-            <div class="profile-menu__deck" role="region" [attr.aria-label]="packName">
+            <div class="profile-menu__deck" role="region" aria-label="Card packs">
+              <div class="deck-pack-tabs" role="group" aria-label="Choose card pack">
+                @for (pack of packOptions; track pack.id) {
+                  <button
+                    type="button"
+                    class="deck-pack-tabs__btn"
+                    [class.is-selected]="selectedPackId() === pack.id"
+                    [attr.aria-pressed]="selectedPackId() === pack.id"
+                    (click)="selectDeckPack(pack.id)"
+                  >
+                    {{ pack.name }}
+                  </button>
+                }
+              </div>
               <p class="profile-menu__deck-meta">
-                {{ packName }} · {{ deckCards.length }} cards
+                {{ packName() }} · {{ deckCards().length }} cards
               </p>
               <ol class="deck-list">
-                @for (card of deckCards; track card.id; let i = $index) {
+                @for (card of deckCards(); track card.id; let i = $index) {
                   <li class="deck-list__item" [attr.data-category]="card.category">
                     <div class="deck-list__head">
                       <span class="deck-list__num">{{ i + 1 }}</span>

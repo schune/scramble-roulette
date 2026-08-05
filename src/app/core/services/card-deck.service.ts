@@ -7,6 +7,7 @@ export const CARD_PLAYER_PLACEHOLDER = '{{player}}';
 /** Shown beneath cards where a teammate was picked at random. */
 export const RANDOM_PLAYER_HELP_TEXT = 'This player was chosen at random.';
 import { STANDARD_PACK, STANDARD_PACK_ID } from '../data/standard-pack';
+import { LUKES_BACHELOR_PACK } from '../data/bachelor-pack';
 
 /**
  * Owns the card packs and the per-round draw engine.
@@ -23,6 +24,7 @@ import { STANDARD_PACK, STANDARD_PACK_ID } from '../data/standard-pack';
 export class CardDeckService {
   private readonly packs: ReadonlyMap<string, CardPack> = new Map([
     [STANDARD_PACK.id, STANDARD_PACK],
+    [LUKES_BACHELOR_PACK.id, LUKES_BACHELOR_PACK],
   ]);
 
   /** The default pack id ("standard"). */

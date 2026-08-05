@@ -10,7 +10,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { FocusTrap } from '../../shared/focus-trap.directive';
-import { Card, Round } from '../../core/models';
+import { Round } from '../../core/models';
 import { CardDeckService } from '../../core/services/card-deck.service';
 import {
   AuthService,
@@ -50,8 +50,10 @@ export class Profile {
   protected readonly menuOpen = signal(false);
   protected readonly deckExpanded = signal(false);
   protected readonly pendingDelete = signal<Round | null>(null);
-  protected readonly deckCards: readonly Card[] = this.deck.getPack().cards;
-  protected readonly packName = this.deck.getPack().name;
+  protected readonly packOptions = this.deck.getPacks();
+  protected readonly selectedPackId = signal(this.deck.defaultPackId);
+  protected readonly deckCards = computed(() => this.deck.getPack(this.selectedPackId()).cards);
+  protected readonly packName = computed(() => this.deck.getPack(this.selectedPackId()).name);
 
   protected readonly initials = this.profile.initials;
   protected readonly avatar = this.profile.avatar;
@@ -217,6 +219,10 @@ export class Profile {
 
   protected toggleDeck(): void {
     this.deckExpanded.update((open) => !open);
+  }
+
+  protected selectDeckPack(packId: string): void {
+    this.selectedPackId.set(packId);
   }
 
   protected onDocumentClick(event: MouseEvent): void {

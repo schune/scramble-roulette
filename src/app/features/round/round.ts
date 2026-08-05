@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { isMulliganCard, MULLIGAN_RULE } from '../../core/data/official-rules';
-import { isLukesBachelorPack, LUKES_BACHELOR_PACK_NAME } from '../../core/data/standard-pack';
+import { isLukesBachelorPack } from '../../core/data/bachelor-pack';
 import { Card } from '../../core/models';
 import { RoundStateService, ScoreService, ScrollLockService, SoundService, CardDeckService } from '../../core/services';
 import { FocusTrap } from '../../shared/focus-trap.directive';
@@ -101,7 +101,11 @@ export class Round {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly packName = this.deck.getPack().name;
+  protected readonly packName = computed(() => {
+    const round = this.round();
+    const packId = round?.packId ?? this.deck.defaultPackId;
+    return this.deck.getPack(packId).name;
+  });
 
   protected readonly round = this.roundState.activeRound;
   protected readonly currentCard = this.roundState.currentCard;
@@ -157,10 +161,7 @@ export class Round {
     }
     const packId =
       round.packId ?? this.currentHoleResult()?.card.packId ?? this.deck.defaultPackId;
-    return (
-      isLukesBachelorPack(packId) ||
-      this.deck.getPack(packId).name === LUKES_BACHELOR_PACK_NAME
-    );
+    return isLukesBachelorPack(packId);
   });
 
   constructor() {
