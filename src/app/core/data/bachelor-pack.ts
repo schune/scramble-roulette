@@ -14,6 +14,7 @@ const cards: Card[] = [
     category: 'Hurts',
     text: 'The player with the lowest body count cannot contribute a tee shot. If two people tie, flip a tee.',
     packId: LUKES_BACHELOR_PACK_ID,
+    noFirstHole: true,
   },
   {
     id: 'bachelor-02',
@@ -84,6 +85,7 @@ const cards: Card[] = [
     category: 'Hurts',
     text: '{{player}} must use a Happy Gilmore run-up on their tee shot.',
     packId: LUKES_BACHELOR_PACK_ID,
+    noFirstHole: true,
   },
   {
     id: 'bachelor-12',
@@ -126,6 +128,7 @@ const cards: Card[] = [
     category: 'Neutral',
     text: 'Every player must retrieve the emergency beer from their bag and shotgun it before anyone tees off.',
     packId: LUKES_BACHELOR_PACK_ID,
+    noFirstHole: true,
   },
   {
     id: 'bachelor-18',
@@ -133,6 +136,7 @@ const cards: Card[] = [
     category: 'Hurts',
     text: 'The heaviest player on the team must do 20 pushups before anyone tees off. If they cannot, add a stroke to your score.',
     packId: LUKES_BACHELOR_PACK_ID,
+    noFirstHole: true,
   },
 ];
 

@@ -46,22 +46,41 @@ export class CardDeckService {
   }
 
   /** Cards in a pack that have not yet been used this round. */
-  remainingCards(usedCardIds: Iterable<string>, packId: string = STANDARD_PACK_ID): Card[] {
+  remainingCards(
+    usedCardIds: Iterable<string>,
+    packId: string = STANDARD_PACK_ID,
+    holeNumber?: number,
+  ): Card[] {
     const used = new Set(usedCardIds);
-    return this.getPack(packId).cards.filter((card) => !used.has(card.id));
+    let cards = this.getPack(packId).cards.filter((card) => !used.has(card.id));
+    if (holeNumber === 1) {
+      const safe = cards.filter((card) => !card.noFirstHole);
+      if (safe.length > 0) {
+        cards = safe;
+      }
+    }
+    return cards;
   }
 
-  /** Whether every card in the pack has been drawn this round. */
-  isExhausted(usedCardIds: Iterable<string>, packId: string = STANDARD_PACK_ID): boolean {
-    return this.remainingCards(usedCardIds, packId).length === 0;
+  /** Whether every drawable card in the pack has been used this round. */
+  isExhausted(
+    usedCardIds: Iterable<string>,
+    packId: string = STANDARD_PACK_ID,
+    holeNumber?: number,
+  ): boolean {
+    return this.remainingCards(usedCardIds, packId, holeNumber).length === 0;
   }
 
   /**
    * Draw one uniformly-random card that has not been used this round.
    * Returns `null` when the pack is exhausted.
    */
-  draw(usedCardIds: Iterable<string>, packId: string = STANDARD_PACK_ID): Card | null {
-    const remaining = this.remainingCards(usedCardIds, packId);
+  draw(
+    usedCardIds: Iterable<string>,
+    packId: string = STANDARD_PACK_ID,
+    holeNumber?: number,
+  ): Card | null {
+    const remaining = this.remainingCards(usedCardIds, packId, holeNumber);
     if (remaining.length === 0) {
       return null;
     }

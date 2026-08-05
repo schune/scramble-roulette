@@ -22,6 +22,8 @@ export interface Card {
   helpText?: string;
   /** Id of the pack this card belongs to. */
   packId: string;
+  /** When true, never drawn on hole 1 — unusual tee-box rules courses flag on the first tee. */
+  noFirstHole?: boolean;
 }
 
 /**

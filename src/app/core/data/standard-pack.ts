@@ -17,6 +17,7 @@ const cards: Card[] = [
     category: 'Helps',
     text: 'Each player gets one mulligan on their tee shot this hole.',
     packId: STANDARD_PACK_ID,
+    noFirstHole: true,
   },
   {
     id: 'standard-03',
@@ -66,6 +67,7 @@ const cards: Card[] = [
     category: 'Helps',
     text: 'Your team hits two rounds of tee shots and picks the best ball before continuing the hole.',
     packId: STANDARD_PACK_ID,
+    noFirstHole: true,
   },
   {
     id: 'standard-10',
@@ -80,6 +82,7 @@ const cards: Card[] = [
     category: 'Hurts',
     text: '{{player}} must use a Happy Gilmore run-up on their tee shot.',
     packId: STANDARD_PACK_ID,
+    noFirstHole: true,
   },
   {
     id: 'standard-12',

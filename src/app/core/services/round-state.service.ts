@@ -64,7 +64,7 @@ export class RoundStateService {
     if (!round || this.currentHoleResult()) {
       return false;
     }
-    return !this.deck.isExhausted(this.usedCardIds(), round.packId);
+    return !this.deck.isExhausted(this.usedCardIds(), round.packId, round.currentHole);
   });
 
   /** Whether the current hole has a complete score and play can advance. */
@@ -209,7 +209,7 @@ export class RoundStateService {
       return null;
     }
 
-    const drawn = this.deck.draw(this.usedCardIds(), round.packId);
+    const drawn = this.deck.draw(this.usedCardIds(), round.packId, round.currentHole);
     if (!drawn) {
       return null;
     }
