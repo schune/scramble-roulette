@@ -5,7 +5,10 @@ import {
   FeedLiveEntry,
   FeedPostEntry,
   HoleCount,
-  isStaleLiveFeedEntry,
+  feedPostFromLiveEntry,
+  isHiddenLiveFeedEntry,
+  isLiveOnFinalHole,
+  isOldLiveFeedEntry,
   Player,
   Round,
 } from '../models';
@@ -30,7 +33,7 @@ export class FeedService {
 
   private readonly visibleLive = computed(() => {
     const now = this._now();
-    return this._live().filter((entry) => !isStaleLiveFeedEntry(entry, now));
+    return this._live().filter((entry) => !isHiddenLiveFeedEntry(entry, now));
   });
 
   readonly liveRounds = this.visibleLive;
@@ -62,6 +65,7 @@ export class FeedService {
   private liveUnsub: Unsubscribe | null = null;
   private postsUnsub: Unsubscribe | null = null;
   private staleCheckTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly cleanupInFlight = new Set<string>();
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -87,6 +91,7 @@ export class FeedService {
         return;
       }
       this._live.set(entries);
+      void this.cleanupOldLiveEntries(entries);
     });
 
     this.postsUnsub = this.firestore.listenFeedPosts((entries) => {
@@ -112,6 +117,9 @@ export class FeedService {
       (entry) => entry.userId === userId && entry.roundId === roundId,
     );
     if (live) {
+      if (isHiddenLiveFeedEntry(live, this._now())) {
+        return null;
+      }
       return this.roundFromLive(live);
     }
 
@@ -134,6 +142,9 @@ export class FeedService {
 
     const live = await this.firestore.getFeedLive(userId);
     if (live?.roundId === roundId) {
+      if (isHiddenLiveFeedEntry(live)) {
+        return null;
+      }
       return this.roundFromLive(live);
     }
 
@@ -143,6 +154,44 @@ export class FeedService {
     }
 
     return this.firestore.getRound(userId, roundId);
+  }
+
+  /**
+   * Delete week-old live feed entries from Firestore. Entries on the final hole
+   * are published to the feed first so completed scorecards are preserved.
+   */
+  private async cleanupOldLiveEntries(entries: FeedLiveEntry[]): Promise<void> {
+    const now = Date.now();
+    for (const entry of entries) {
+      if (!isOldLiveFeedEntry(entry, now)) {
+        continue;
+      }
+
+      const key = entry.userId;
+      if (this.cleanupInFlight.has(key)) {
+        continue;
+      }
+      this.cleanupInFlight.add(key);
+
+      try {
+        if (isLiveOnFinalHole(entry)) {
+          const exists = await this.firestore.feedPostExists(entry.userId, entry.roundId);
+          if (!exists) {
+            await this.firestore.saveFeedPost(feedPostFromLiveEntry(entry));
+          }
+        }
+
+        await this.firestore.clearFeedLive(entry.userId);
+
+        if (entry.userId === this.auth.uid()) {
+          await this.firestore.clearLiveRound(entry.userId);
+        }
+      } catch (err) {
+        console.warn('[FeedService] Failed to clean up old live feed entry', err);
+      } finally {
+        this.cleanupInFlight.delete(key);
+      }
+    }
   }
 
   private roundFromLive(entry: FeedLiveEntry): Round {

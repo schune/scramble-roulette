@@ -16,6 +16,38 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/users/$(uid)/followers/$(request.auth.uid));
     }
 
+    function feedLiveActivityIso(data) {
+      return data.updatedAt is string ? data.updatedAt : data.startedAt;
+    }
+
+    function isWeekOldIso(iso) {
+      return iso is string
+        && iso.size() >= 19
+        && request.time > timestamp.date(
+             int(iso[0:4]), int(iso[5:7]), int(iso[8:10]),
+             int(iso[11:13]), int(iso[14:16]), int(iso[17:19])
+           ) + duration.value(7, 'd');
+    }
+
+    function isWeekOldFeedLive(data) {
+      return isWeekOldIso(feedLiveActivityIso(data));
+    }
+
+    function isOnFinalHole(data) {
+      return data.currentHole is int
+        && data.holeCount is int
+        && data.currentHole >= data.holeCount;
+    }
+
+    function isRepublishFromStaleLive(data) {
+      let uid = data.userId;
+      let livePath = /databases/$(database)/documents/feedLive/$(uid);
+      return exists(livePath)
+        && get(livePath).data.roundId == data.roundId
+        && isWeekOldFeedLive(get(livePath).data)
+        && isOnFinalHole(get(livePath).data);
+    }
+
     // Searchable public profile slice (no private email, etc.).
     match /publicProfiles/{uid} {
       allow read: if isSignedIn();
@@ -26,13 +58,17 @@ service cloud.firestore {
     // Global live rounds feed — readable by any signed-in player.
     match /feedLive/{uid} {
       allow read: if isSignedIn();
-      allow create, update, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid);
+      allow delete: if isOwner(uid) || (isSignedIn() && isWeekOldFeedLive(resource.data));
     }
 
     // Posted scorecards — readable by any signed-in player.
     match /feedPosts/{postId} {
       allow read: if isSignedIn();
-      allow create, update: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow create, update: if isSignedIn() && (
+        request.resource.data.userId == request.auth.uid
+        || isRepublishFromStaleLive(request.resource.data)
+      );
       allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
